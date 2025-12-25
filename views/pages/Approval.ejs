@@ -1,0 +1,528 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Approvals Management</h4>
+      <p class="text-body-secondary mb-0">Review and process approval requests</p>
+    </div>
+    <button type="button" class="btn btn-primary">
+      <i class="icon-base ti tabler-plus me-2"></i>
+      New Approval
+    </button>
+  </div>
+
+  <!-- Filter and Action Bar -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="d-flex gap-2 flex-wrap">
+          <button type="button" class="btn btn-primary active" data-filter="all">
+            All (5)
+          </button>
+          <button type="button" class="btn btn-label-primary" data-filter="pending">
+            Pending (1)
+          </button>
+          <button type="button" class="btn btn-label-primary" data-filter="in-review">
+            In Review (1)
+          </button>
+          <button type="button" class="btn btn-label-primary" data-filter="escalated">
+            Escalated (1)
+          </button>
+          <button type="button" class="btn btn-label-primary" data-filter="approved">
+            Approved (2)
+          </button>
+        </div>
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-label-secondary">
+            <i class="icon-base ti tabler-filter me-2"></i>
+            Filters
+          </button>
+          <button type="button" class="btn btn-label-secondary">
+            <i class="icon-base ti tabler-download me-2"></i>
+            Export
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Request List -->
+  <div class="row g-4">
+    <!-- First Approval Request: Client Meeting - Dinner Expenses -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="mb-2 fw-bold">Client Meeting - Dinner Expenses</h5>
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span class="badge bg-label-success">APPROVED</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-label-secondary">
+                <i class="icon-base ti tabler-eye me-2"></i>
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">ID</span>
+                <span class="fw-medium">AP-2024-1231</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Branch</span>
+                <span>Branch 078 - Lalitpur</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Description</span>
+                <span>Business dinner with high-value client</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Type</span>
+                <span>Expense Reimbursement</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Department</span>
+                <span>Relationship Management</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Initiator</span>
+                <span>Binita Rai</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Created</span>
+                <span>2024-12-12 04:20 PM</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Amount</span>
+                <span class="fw-bold">NPR 8,500</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Due</span>
+                <span>2024-12-17</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 flex-wrap pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-paperclip text-body-secondary"></i>
+              <span class="text-body-secondary">3 attachments</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-message-circle text-body-secondary"></i>
+              <span class="text-body-secondary">2 comments</span>
+            </div>
+            <div style="max-width: 200px;">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="text-body-secondary small">Level 2/2</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <span class="badge bg-label-success">Within Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Second Approval Request: Marketing Budget Increase Q4 -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="mb-2 fw-bold">Marketing Budget Increase Q4</h5>
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span class="badge bg-label-danger">ESCALATED</span>
+                <span class="badge bg-danger">CRITICAL</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-label-secondary">
+                <i class="icon-base ti tabler-eye me-2"></i>
+                View Details
+              </button>
+              <button type="button" class="btn btn-success">
+                <i class="icon-base ti tabler-check me-2"></i>
+                Approve
+              </button>
+              <button type="button" class="btn btn-danger">
+                <i class="icon-base ti tabler-x me-2"></i>
+                Reject
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">ID</span>
+                <span class="fw-medium">AP-2024-1230</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Branch</span>
+                <span>HO - Head Office</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Description</span>
+                <span>Additional budget needed for year-end marketing campaign</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Type</span>
+                <span>Budget Adjustment</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Department</span>
+                <span>Marketing</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Initiator</span>
+                <span>Pramod Shrestha</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Created</span>
+                <span>2024-12-11 11:00 AM</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Amount</span>
+                <span class="fw-bold">NPR 500,000</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Due</span>
+                <span>2024-12-16</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 flex-wrap pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-paperclip text-body-secondary"></i>
+              <span class="text-body-secondary">5 attachments</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-message-circle text-body-secondary"></i>
+              <span class="text-body-secondary">12 comments</span>
+            </div>
+            <div style="max-width: 200px;">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="text-body-secondary small">Level 3/4</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%" aria-valuenow="75"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <span class="badge bg-label-danger">Exceeds Budget - Approval Required</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Third Approval Request: Software License Renewal - PENDING -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="mb-2 fw-bold">Software License Renewal - Microsoft 365</h5>
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span class="badge bg-label-warning">PENDING</span>
+                <span class="badge bg-label-danger">HIGH</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-label-secondary">
+                <i class="icon-base ti tabler-eye me-2"></i>
+                View Details
+              </button>
+              <button type="button" class="btn btn-success">
+                <i class="icon-base ti tabler-check me-2"></i>
+                Approve
+              </button>
+              <button type="button" class="btn btn-danger">
+                <i class="icon-base ti tabler-x me-2"></i>
+                Reject
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">ID</span>
+                <span class="fw-medium">AP-2024-1234</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Branch</span>
+                <span>Branch 045 - Kathmandu</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Description</span>
+                <span>Annual renewal for Microsoft 365 licenses for IT department (50 users)</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Type</span>
+                <span>Vendor Payment</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Department</span>
+                <span>IT</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Initiator</span>
+                <span>Rajesh Kumar</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Created</span>
+                <span>2024-12-15 10:30 AM</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Amount</span>
+                <span class="fw-bold">NPR 125,000</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Due</span>
+                <span>2024-12-20</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 flex-wrap pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-paperclip text-body-secondary"></i>
+              <span class="text-body-secondary">2 attachments</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-message-circle text-body-secondary"></i>
+              <span class="text-body-secondary">3 comments</span>
+            </div>
+            <div style="max-width: 200px;">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="text-body-secondary small">Level 2/3</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 66.67%" aria-valuenow="66.67"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <span class="badge bg-label-success">Within Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fourth Approval Request: Training - Banking Operations Workshop - IN REVIEW -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="mb-2 fw-bold">Training - Banking Operations Workshop</h5>
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span class="badge bg-label-info">IN REVIEW</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-label-secondary">
+                <i class="icon-base ti tabler-eye me-2"></i>
+                View Details
+              </button>
+              <button type="button" class="btn btn-success">
+                <i class="icon-base ti tabler-check me-2"></i>
+                Approve
+              </button>
+              <button type="button" class="btn btn-danger">
+                <i class="icon-base ti tabler-x me-2"></i>
+                Reject
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">ID</span>
+                <span class="fw-medium">AP-2024-1233</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Branch</span>
+                <span>Branch 112 - Pokhara</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Description</span>
+                <span>Professional development training for operations team</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Type</span>
+                <span>Travel Request</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Department</span>
+                <span>Operations</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Initiator</span>
+                <span>Sita Sharma</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Created</span>
+                <span>2024-12-14 02:15 PM</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Amount</span>
+                <span class="fw-bold">NPR 45,000</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Due</span>
+                <span>2024-12-18</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 flex-wrap pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-paperclip text-body-secondary"></i>
+              <span class="text-body-secondary">1 attachment</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-message-circle text-body-secondary"></i>
+              <span class="text-body-secondary">5 comments</span>
+            </div>
+            <div style="max-width: 200px;">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="text-body-secondary small">Level 1/3</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 33.33%" aria-valuenow="33.33"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <span class="badge bg-label-success">Within Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fifth Approval Request: Office Equipment Purchase - APPROVED -->
+    <div class="col-12">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start mb-3">
+            <div class="flex-grow-1">
+              <h5 class="mb-2 fw-bold">Office Equipment Purchase - Printers & Scanners</h5>
+              <div class="d-flex gap-2 mb-3 flex-wrap">
+                <span class="badge bg-label-success">APPROVED</span>
+              </div>
+            </div>
+            <div class="d-flex gap-2">
+              <button type="button" class="btn btn-label-secondary">
+                <i class="icon-base ti tabler-eye me-2"></i>
+                View Details
+              </button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">ID</span>
+                <span class="fw-medium">AP-2024-1232</span>
+              </div>
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Branch</span>
+                <span>Branch 089 - Biratnagar</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Description</span>
+                <span>Purchase of new printers and scanners for branch office</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Type</span>
+                <span>Purchase Order</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Department</span>
+                <span>Administration</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Initiator</span>
+                <span>Anil Thapa</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Created</span>
+                <span>2024-12-13 09:45 AM</span>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <div class="mb-2">
+                <span class="text-body-secondary d-block small mb-1">Amount</span>
+                <span class="fw-bold">NPR 280,000</span>
+              </div>
+              <div>
+                <span class="text-body-secondary d-block small mb-1">Due</span>
+                <span>2024-12-19</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex align-items-center gap-4 flex-wrap pt-3 border-top">
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-paperclip text-body-secondary"></i>
+              <span class="text-body-secondary">4 attachments</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <i class="icon-base ti tabler-message-circle text-body-secondary"></i>
+              <span class="text-body-secondary">1 comment</span>
+            </div>
+            <div style="max-width: 200px;">
+              <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="text-body-secondary small">Level 2/2</span>
+              </div>
+              <div class="progress" style="height: 8px;">
+                <div class="progress-bar bg-primary" role="progressbar" style="width: 100%" aria-valuenow="100"
+                  aria-valuemin="0" aria-valuemax="100"></div>
+              </div>
+            </div>
+            <span class="badge bg-label-success">Within Budget</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src=".partials/javascript.ejs"></script>

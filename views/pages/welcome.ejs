@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome</title>
+
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --secondary: #22c55e;
+        --dark: #0f172a;
+        --light: #f8fafc;
+        --glass: rgba(255, 255, 255, 0.15);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Poppins", sans-serif;
+      }
+
+      body {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #4f46e5, #06b6d4);
+        color: white;
+        overflow-x: hidden;
+      }
+
+      /* ===== Animated Background ===== */
+      .bg-shapes span {
+        position: absolute;
+        display: block;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.2);
+        animation: float 25s linear infinite;
+        bottom: -150px;
+        border-radius: 50%;
+      }
+
+      .bg-shapes span:nth-child(1) {
+        left: 10%;
+        animation-duration: 20s;
+        width: 80px;
+        height: 80px;
+      }
+      .bg-shapes span:nth-child(2) {
+        left: 25%;
+        animation-duration: 30s;
+      }
+      .bg-shapes span:nth-child(3) {
+        left: 40%;
+        animation-duration: 18s;
+        width: 60px;
+        height: 60px;
+      }
+      .bg-shapes span:nth-child(4) {
+        left: 60%;
+        animation-duration: 22s;
+      }
+      .bg-shapes span:nth-child(5) {
+        left: 75%;
+        animation-duration: 28s;
+        width: 100px;
+        height: 100px;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-1200px) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* ===== Glass Card ===== */
+      .container {
+        position: relative;
+        z-index: 10;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .card {
+        max-width: 900px;
+        width: 100%;
+        background: var(--glass);
+        backdrop-filter: blur(14px);
+        border-radius: 20px;
+        padding: 50px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+        animation: fadeInUp 1.2s ease forwards;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(40px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.2);
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        font-size: 3rem;
+        line-height: 1.2;
+        margin-bottom: 20px;
+      }
+
+      h1 span {
+        color: #22c55e;
+      }
+
+      p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin-bottom: 35px;
+        max-width: 700px;
+      }
+
+      /* ===== Buttons ===== */
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .btn {
+        padding: 14px 28px;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn-primary {
+        background: var(--secondary);
+        color: #022c22;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(34, 197, 94, 0.4);
+      }
+
+      .btn-outline {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.6);
+        color: white;
+      }
+
+      .btn-outline:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-3px);
+      }
+
+      /* ===== Stats ===== */
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 50px;
+      }
+
+      .stat {
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+      }
+
+      .stat h3 {
+        font-size: 2rem;
+        margin-bottom: 5px;
+      }
+
+      .stat span {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      /* ===== Responsive ===== */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.2rem;
+        }
+        .card {
+          padding: 30px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Background Shapes -->
+    <div class="bg-shapes">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+
+    <div class="container">
+      <div class="card">
+        <div class="badge">🚀 Express + EJS</div>
+
+        <h1>Welcome to <span>OAEMS</span></h1>
+
+        <p>
+          Build modern, fast, and scalable web applications using
+          <strong>Express.js</strong> and <strong>EJS templates</strong>. This
+          welcome page demonstrates advanced UI, animations, and dynamic
+          server-side rendering.
+        </p>
+
+        <div class="actions">
+          <a href="/dashboard" class="btn btn-primary">
+            <i class="fas fa-gauge-high"></i> Go to Dashboard
+          </a>
+          <a href="/about" class="btn btn-outline">
+            <i class="fas fa-circle-info"></i> Learn More
+          </a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <h3 id="users">0</h3>
+            <span>Active Users</span>
+          </div>
+          <div class="stat">
+            <h3 id="projects">0</h3>
+            <span>Projects</span>
+          </div>
+          <div class="stat">
+            <h3 id="uptime">0%</h3>
+            <span>Uptime</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== JavaScript ===== -->
+    <script>
+      function animateValue(id, start, end, duration, suffix = "") {
+        const el = document.getElementById(id);
+        let startTimestamp = null;
+
+        function step(timestamp) {
+          if (!startTimestamp) startTimestamp = timestamp;
+          const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+          el.textContent =
+            Math.floor(progress * (end - start) + start) + suffix;
+          if (progress < 1) window.requestAnimationFrame(step);
+        }
+        window.requestAnimationFrame(step);
+      }
+
+      animateValue("users", 0, 1250, 1500);
+      animateValue("projects", 0, 87, 1500);
+      animateValue("uptime", 0, 99, 1500, "%");
+    </script>
+  </body>
+</html>

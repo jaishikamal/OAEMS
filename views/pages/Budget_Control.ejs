@@ -1,0 +1,376 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Budget Control</h4>
+      <p class="text-body-secondary mb-0">Real-time budget monitoring and controls</p>
+    </div>
+    <button type="button" class="btn btn-primary">
+      <i class="icon-base ti tabler-plus me-2"></i>
+      New Budget
+    </button>
+  </div>
+
+  <!-- Key Metrics (KPI Cards) -->
+  <div class="row g-4 mb-4">
+    <!-- Total Allocated -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Total Allocated</p>
+              <h4 class="mb-0">NPR 23.0M</h4>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-primary">
+                <i class="icon-base ti tabler-currency-rupee icon-28px"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Spent -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Total Spent</p>
+              <h4 class="mb-0">NPR 18.0M</h4>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-danger">
+                <i class="icon-base ti tabler-trending-down icon-28px"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Committed -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Committed</p>
+              <h4 class="mb-0">NPR 2.2M</h4>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-warning">
+                <i class="icon-base ti tabler-lock icon-28px"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Available -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Available</p>
+              <h4 class="mb-0">NPR 2.8M</h4>
+            </div>
+            <div class="avatar">
+              <span class="avatar-initial rounded bg-label-success">
+                <i class="icon-base ti tabler-trending-up icon-28px"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Overall Budget Utilization -->
+  <div class="card">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title mb-0">Overall Budget Utilization</h5>
+        <h4 class="mb-0 fw-bold">87.8%</h4>
+      </div>
+      <div class="progress" style="height: 12px;">
+        <div class="progress-bar bg-warning" role="progressbar" style="width: 87.8%" aria-valuenow="87.8"
+          aria-valuemin="0" aria-valuemax="100">
+          <span class="visually-hidden">87.8%</span>
+        </div>
+      </div>
+      <div class="d-flex justify-content-between mt-2">
+        <span class="text-body-secondary small">Spent: NPR 18.0M</span>
+        <span class="text-body-secondary small">Allocated: NPR 23.0M</span>
+      </div>
+    </div>
+  </div>
+  <!-- Charts Section -->
+  <div class="row g-4 mt-4">
+    <!-- Monthly Budget Trend Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Monthly Budget Trend</h5>
+        </div>
+        <div class="card-body">
+          <div id="monthlyBudgetTrendChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Department Budget Breakdown Chart -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="card-title mb-0">Department Budget Breakdown</h5>
+        </div>
+        <div class="card-body">
+          <div id="departmentBudgetChart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Budget Details by Department Table -->
+  <div class="card mt-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Budget Details by Department</h5>
+    </div>
+    <div class="card-datatable table-responsive">
+      <table class="datatables-budget table border-top" id="budgetDetailsTable">
+        <thead>
+          <tr>
+            <th>BUDGET ID</th>
+            <th>DEPARTMENT</th>
+            <th>ALLOCATED</th>
+            <th>SPENT</th>
+            <th>COMMITTED</th>
+            <th>AVAILABLE</th>
+            <th>STATUS</th>
+            <th>CONTROL</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- IT Department -->
+          <tr>
+            <td><a href="javascript:void(0);" class="text-primary">BUD-2024-IT</a></td>
+            <td>
+              <div>
+                <span class="fw-medium">IT</span>
+                <div class="text-body-secondary small">CC-IT-001</div>
+              </div>
+            </td>
+            <td>NPR 5.00M</td>
+            <td>NPR 3.80M</td>
+            <td>NPR 0.50M</td>
+            <td><span class="text-success">NPR 0.70M</span></td>
+            <td>
+              <div>
+                <span class="badge bg-label-success">healthy</span>
+                <div class="progress mt-1" style="height: 4px;">
+                  <div class="progress-bar bg-warning" role="progressbar" style="width: 76%" aria-valuenow="76" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-lock text-success"></i>
+                <span class="text-success">SOFT</span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="Edit">
+                <i class="icon-base ti tabler-pencil"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Marketing Department -->
+          <tr>
+            <td><a href="javascript:void(0);" class="text-primary">BUD-2024-MKT</a></td>
+            <td>
+              <div>
+                <span class="fw-medium">Marketing</span>
+                <div class="text-body-secondary small">CC-MKT-001</div>
+              </div>
+            </td>
+            <td>NPR 3.50M</td>
+            <td>NPR 3.10M</td>
+            <td>NPR 0.30M</td>
+            <td><span class="text-success">NPR 0.10M</span></td>
+            <td>
+              <div>
+                <span class="badge bg-label-warning">warning</span>
+                <div class="progress mt-1" style="height: 4px;">
+                  <div class="progress-bar bg-danger" role="progressbar" style="width: 88.6%" aria-valuenow="88.6" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-lock text-danger"></i>
+                <span class="text-danger">HARD</span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="Edit">
+                <i class="icon-base ti tabler-pencil"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- HR Department -->
+          <tr>
+            <td><a href="javascript:void(0);" class="text-primary">BUD-2024-HR</a></td>
+            <td>
+              <div>
+                <span class="fw-medium">HR</span>
+                <div class="text-body-secondary small">CC-HR-001</div>
+              </div>
+            </td>
+            <td>NPR 2.50M</td>
+            <td>NPR 1.80M</td>
+            <td>NPR 0.20M</td>
+            <td><span class="text-success">NPR 0.50M</span></td>
+            <td>
+              <div>
+                <span class="badge bg-label-success">healthy</span>
+                <div class="progress mt-1" style="height: 4px;">
+                  <div class="progress-bar bg-warning" role="progressbar" style="width: 72%" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-lock text-success"></i>
+                <span class="text-success">SOFT</span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="Edit">
+                <i class="icon-base ti tabler-pencil"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Operations Department -->
+          <tr>
+            <td><a href="javascript:void(0);" class="text-primary">BUD-2024-OPS</a></td>
+            <td>
+              <div>
+                <span class="fw-medium">Operations</span>
+                <div class="text-body-secondary small">CC-OPS-001</div>
+              </div>
+            </td>
+            <td>NPR 8.00M</td>
+            <td>NPR 6.50M</td>
+            <td>NPR 0.80M</td>
+            <td><span class="text-success">NPR 0.70M</span></td>
+            <td>
+              <div>
+                <span class="badge bg-label-warning">warning</span>
+                <div class="progress mt-1" style="height: 4px;">
+                  <div class="progress-bar bg-danger" role="progressbar" style="width: 81.25%" aria-valuenow="81.25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-lock text-danger"></i>
+                <span class="text-danger">HARD</span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="Edit">
+                <i class="icon-base ti tabler-pencil"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Finance Department -->
+          <tr>
+            <td><a href="javascript:void(0);" class="text-primary">BUD-2024-FIN</a></td>
+            <td>
+              <div>
+                <span class="fw-medium">Finance</span>
+                <div class="text-body-secondary small">CC-FIN-001</div>
+              </div>
+            </td>
+            <td>NPR 4.00M</td>
+            <td>NPR 2.80M</td>
+            <td>NPR 0.40M</td>
+            <td><span class="text-success">NPR 0.80M</span></td>
+            <td>
+              <div>
+                <span class="badge bg-label-success">healthy</span>
+                <div class="progress mt-1" style="height: 4px;">
+                  <div class="progress-bar bg-warning" role="progressbar" style="width: 70%" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-lock text-success"></i>
+                <span class="text-success">SOFT</span>
+              </div>
+            </td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="Edit">
+                <i class="icon-base ti tabler-pencil"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Recent Budget Blocks -->
+  <div class="card mt-4">
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-3">
+        <i class="icon-base ti tabler-alert-triangle text-danger me-2 icon-lg"></i>
+        <h5 class="card-title mb-0">Recent Budget Blocks</h5>
+      </div>
+      
+      <div class="row g-3">
+        <!-- First Budget Block -->
+        <div class="col-12">
+          <div class="p-3 bg-label-danger rounded border border-danger">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="fw-bold mb-1">AP-2024-1245 - Marketing</div>
+                <div class="text-body-secondary small">Exceeds available budget</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-bold mb-1">NPR 250,000</div>
+                <div class="text-body-secondary small">10 min ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Second Budget Block -->
+        <div class="col-12">
+          <div class="p-3 bg-label-danger rounded border border-danger">
+            <div class="d-flex justify-content-between align-items-start">
+              <div class="flex-grow-1">
+                <div class="fw-bold mb-1">AP-2024-1240 - Operations</div>
+                <div class="text-body-secondary small">Hard limit reached</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-bold mb-1">NPR 150,000</div>
+                <div class="text-body-secondary small">2 hours ago</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

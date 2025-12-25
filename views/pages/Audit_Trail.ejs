@@ -1,0 +1,324 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Audit Trail</h4>
+      <p class="text-body-secondary mb-0">Immutable log of all system activities</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-label-secondary">
+        <i class="icon-base ti tabler-filter me-2"></i>
+        Advanced Filters
+      </button>
+      <button type="button" class="btn btn-primary">
+        <i class="icon-base ti tabler-download me-2"></i>
+        Export Logs
+      </button>
+    </div>
+  </div>
+
+  <!-- Key Metrics (KPI Cards) -->
+  <div class="row g-4 mb-4">
+    <!-- Total Events Today -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-1 text-body-secondary">Total Events Today</p>
+          <h4 class="mb-0">234</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- Critical Events -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-1 text-body-secondary">Critical Events</p>
+          <h4 class="mb-0">12</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- User Actions -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-1 text-body-secondary">User Actions</p>
+          <h4 class="mb-0">198</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Actions -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-1 text-body-secondary">System Actions</p>
+          <h4 class="mb-0">36</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="input-group">
+        <span class="input-group-text">
+          <i class="icon-base ti tabler-search"></i>
+        </span>
+        <input type="text" class="form-control" id="auditSearch" placeholder="Search by entity, operation, user, or ID...">
+      </div>
+    </div>
+  </div>
+
+  <!-- Audit Trail Table -->
+  <div class="card">
+    <div class="card-datatable table-responsive">
+      <table class="datatables-audit table border-top" id="auditTrailTable">
+        <thead>
+          <tr>
+            <th>TIMESTAMP</th>
+            <th>ENTITY</th>
+            <th>OPERATION</th>
+            <th>USER</th>
+            <th>IP ADDRESS</th>
+            <th>CHANGES</th>
+            <th>ACTIONS</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Row 1 -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:35:22</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">Approval</span>
+                <div class="text-body-secondary small">AP-2024-1234</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-success">APPROVED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">Narayan Shilpakar</span>
+                  <div class="text-body-secondary small">(NS)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.105</td>
+            <td>2 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Row 2 -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:30:15</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">Budget</span>
+                <div class="text-body-secondary small">BUD-2024-MKT</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-warning">MODIFIED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">Finance Admin</span>
+                  <div class="text-body-secondary small">(FA)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.110</td>
+            <td>2 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Row 3 -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:25:48</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">User</span>
+                <div class="text-body-secondary small">USR-456</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-info">ROLE_CHANGED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">Narayan Shilpakar</span>
+                  <div class="text-body-secondary small">(NS)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.105</td>
+            <td>2 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Row 4 -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:20:33</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">Expense</span>
+                <div class="text-body-secondary small">EXP-2024-002</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-success">APPROVED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">Finance Manager</span>
+                  <div class="text-body-secondary small">(FM)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.112</td>
+            <td>1 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Row 5 -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:15:12</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">Approval</span>
+                <div class="text-body-secondary small">AP-2024-1232</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-danger">REJECTED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">Compliance Officer</span>
+                  <div class="text-body-secondary small">(CO)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.115</td>
+            <td>1 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <!-- Additional rows for more data -->
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:10:45</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">Budget</span>
+                <div class="text-body-secondary small">BUD-2024-IT</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-warning">MODIFIED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">IT Admin</span>
+                  <div class="text-body-secondary small">(IA)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.108</td>
+            <td>3 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-calendar text-body-secondary"></i>
+                <span>2024-12-18 10:05:28</span>
+              </div>
+            </td>
+            <td>
+              <div>
+                <span class="fw-medium">User</span>
+                <div class="text-body-secondary small">USR-789</div>
+              </div>
+            </td>
+            <td><span class="badge bg-label-success">CREATED</span></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <i class="icon-base ti tabler-user text-body-secondary"></i>
+                <div>
+                  <span class="fw-medium">HR Manager</span>
+                  <div class="text-body-secondary small">(HM)</div>
+                </div>
+              </div>
+            </td>
+            <td>192.168.1.120</td>
+            <td>5 field(s)</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-icon btn-label-primary" title="View Details">
+                <i class="icon-base ti tabler-eye"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

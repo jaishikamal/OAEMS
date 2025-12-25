@@ -1,0 +1,449 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Header Section -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h4 class="fw-bold mb-1">Expense Management</h4>
+      <p class="text-body-secondary mb-0">Track and manage employee expenses and reimbursements</p>
+    </div>
+    <button type="button" class="btn btn-primary">
+      <i class="icon-base ti tabler-plus me-2"></i>
+      New Expense
+    </button>
+  </div>
+
+  <!-- Key Metrics (KPI Cards) -->
+  <div class="row g-4 mb-4">
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="avatar me-3">
+              <span class="avatar-initial rounded bg-label-warning">
+                <i class="icon-base ti tabler-clock icon-28px"></i>
+              </span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Pending Expenses</p>
+              <h4 class="mb-0">12</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="avatar me-3">
+              <span class="avatar-initial rounded bg-label-success">
+                <i class="icon-base ti tabler-check icon-28px"></i>
+              </span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Approved This Month</p>
+              <h4 class="mb-0">45</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="avatar me-3">
+              <span class="avatar-initial rounded bg-label-primary">
+                <i class="icon-base ti tabler-currency-rupee icon-28px"></i>
+              </span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Total Amount</p>
+              <h4 class="mb-0">NPR 425K</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center">
+            <div class="avatar me-3">
+              <span class="avatar-initial rounded bg-label-info">
+                <i class="icon-base ti tabler-timer icon-28px"></i>
+              </span>
+            </div>
+            <div class="flex-grow-1">
+              <p class="mb-1 text-body-secondary">Avg Processing Time</p>
+              <h4 class="mb-0">1.8 days</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Spending Limits and Expense Policy Rules -->
+  <div class="row g-4 mb-4">
+    <!-- Category Spending Limits Card -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Category Spending Limits</h5>
+
+          <!-- Travel - Domestic -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Travel - Domestic</span>
+              <span class="fw-medium">NPR 35,000 / 50,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 70%" aria-valuenow="70"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Travel - International -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Travel - International</span>
+              <span class="fw-medium">NPR 95,000 / 150,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-success" role="progressbar" style="width: 63%" aria-valuenow="63"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Meals & Entertainment -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Meals & Entertainment</span>
+              <span class="fw-medium">NPR 22,000 / 30,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 73%" aria-valuenow="73"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Office Supplies -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Office Supplies</span>
+              <span class="fw-medium">NPR 14,000 / 20,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 70%" aria-valuenow="70"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Training -->
+          <div class="mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Training</span>
+              <span class="fw-medium">NPR 78,000 / 100,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 78%" aria-valuenow="78"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+
+          <!-- Fuel -->
+          <div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="text-body">Fuel</span>
+              <span class="fw-medium">NPR 28,000 / 40,000</span>
+            </div>
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-warning" role="progressbar" style="width: 70%" aria-valuenow="70"
+                aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense Policy Rules Card -->
+    <div class="col-lg-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title mb-4">Expense Policy Rules</h5>
+
+          <!-- Receipts Required -->
+          <div class="mb-3 p-3 bg-label-secondary rounded">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-body d-block">Receipts Required</span>
+                <span class="text-body-secondary small">NPR 1,000+</span>
+              </div>
+              <span class="badge bg-label-success">active</span>
+            </div>
+          </div>
+
+          <!-- Per Diem - Domestic -->
+          <div class="mb-3 p-3 bg-label-secondary rounded">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-body d-block">Per Diem - Domestic</span>
+                <span class="text-body-secondary small">NPR 2,000/day</span>
+              </div>
+              <span class="badge bg-label-success">active</span>
+            </div>
+          </div>
+
+          <!-- Per Diem - International -->
+          <div class="mb-3 p-3 bg-label-secondary rounded">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-body d-block">Per Diem - International</span>
+                <span class="text-body-secondary small">USD 75/day</span>
+              </div>
+              <span class="badge bg-label-success">active</span>
+            </div>
+          </div>
+
+          <!-- Manager Approval -->
+          <div class="mb-3 p-3 bg-label-secondary rounded">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-body d-block">Manager Approval</span>
+                <span class="text-body-secondary small">NPR 10,000+</span>
+              </div>
+              <span class="badge bg-label-success">active</span>
+            </div>
+          </div>
+
+          <!-- GM Approval -->
+          <div class="p-3 bg-label-secondary rounded">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="text-body d-block">GM Approval</span>
+                <span class="text-body-secondary small">NPR 50,000+</span>
+              </div>
+              <span class="badge bg-label-success">active</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Tabs -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+          <button type="button" class="nav-link active" id="expenses-tab" data-bs-toggle="tab"
+            data-bs-target="#expenses" role="tab" aria-controls="expenses" aria-selected="true">
+            <i class="icon-base ti tabler-currency-rupee me-2"></i>
+            Expenses
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-link" id="reimbursements-tab" data-bs-toggle="tab"
+            data-bs-target="#reimbursements" role="tab" aria-controls="reimbursements" aria-selected="false">
+            <i class="icon-base ti tabler-wallet me-2"></i>
+            Reimbursements
+          </button>
+        </li>
+        <li class="nav-item">
+          <button type="button" class="nav-link" id="card-transactions-tab" data-bs-toggle="tab"
+            data-bs-target="#card-transactions" role="tab" aria-controls="card-transactions" aria-selected="false">
+            <i class="icon-base ti tabler-credit-card me-2"></i>
+            Card Transactions
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- Expenses Tab -->
+    <div class="tab-pane fade show active" id="expenses" role="tabpanel" aria-labelledby="expenses-tab">
+      <div class="card">
+        <div class="card-datatable table-responsive">
+          <table class="datatables-expenses table border-top" id="expensesTable">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>EMPLOYEE</th>
+                <th>CATEGORY</th>
+                <th>MERCHANT</th>
+                <th>AMOUNT</th>
+                <th>DATE</th>
+                <th>POLICY</th>
+                <th>STATUS</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-001</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Rajesh Kumar</span>
+                    <div class="text-body-secondary small">Sales</div>
+                  </div>
+                </td>
+                <td>Travel - Domestic</td>
+                <td>Buddha Air</td>
+                <td><span class="fw-bold">NPR 15,000</span></td>
+                <td>2024-12-15</td>
+                <td><span class="badge bg-label-success">compliant</span></td>
+                <td><span class="badge bg-label-warning">pending</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-success" title="Approve">
+                      <i class="icon-base ti tabler-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-icon btn-danger" title="Reject">
+                      <i class="icon-base ti tabler-x"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-002</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Sita Sharma</span>
+                    <div class="text-body-secondary small">Marketing</div>
+                  </div>
+                </td>
+                <td>Meals & Entertainment</td>
+                <td>Hotel Annapurna</td>
+                <td><span class="fw-bold">NPR 8,500</span></td>
+                <td>2024-12-14</td>
+                <td><span class="badge bg-label-success">compliant</span></td>
+                <td><span class="badge bg-label-success">approved</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-label-secondary" title="View">
+                      <i class="icon-base ti tabler-eye"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-003</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Anil Thapa</span>
+                    <div class="text-body-secondary small">IT</div>
+                  </div>
+                </td>
+                <td>Office Supplies</td>
+                <td>Tech Store</td>
+                <td><span class="fw-bold">NPR 12,000</span></td>
+                <td>2024-12-13</td>
+                <td><span class="badge bg-label-warning">warning</span></td>
+                <td><span class="badge bg-label-warning">pending</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-success" title="Approve">
+                      <i class="icon-base ti tabler-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-icon btn-danger" title="Reject">
+                      <i class="icon-base ti tabler-x"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-004</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Binita Rai</span>
+                    <div class="text-body-secondary small">HR</div>
+                  </div>
+                </td>
+                <td>Training</td>
+                <td>Training Institute</td>
+                <td><span class="fw-bold">NPR 25,000</span></td>
+                <td>2024-12-12</td>
+                <td><span class="badge bg-label-success">compliant</span></td>
+                <td><span class="badge bg-label-success">approved</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-label-secondary" title="View">
+                      <i class="icon-base ti tabler-eye"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-005</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Pramod Shrestha</span>
+                    <div class="text-body-secondary small">Marketing</div>
+                  </div>
+                </td>
+                <td>Travel - International</td>
+                <td>Emirates Airlines</td>
+                <td><span class="fw-bold">NPR 85,000</span></td>
+                <td>2024-12-11</td>
+                <td><span class="badge bg-label-success">compliant</span></td>
+                <td><span class="badge bg-label-warning">pending</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-success" title="Approve">
+                      <i class="icon-base ti tabler-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-icon btn-danger" title="Reject">
+                      <i class="icon-base ti tabler-x"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="fw-medium">EXP-2024-006</span></td>
+                <td>
+                  <div>
+                    <span class="fw-medium">Kiran Basnet</span>
+                    <div class="text-body-secondary small">Operations</div>
+                  </div>
+                </td>
+                <td>Meals & Entertainment</td>
+                <td>Restaurant XYZ</td>
+                <td><span class="fw-bold">NPR 5,500</span></td>
+                <td>2024-12-10</td>
+                <td><span class="badge bg-label-success">compliant</span></td>
+                <td><span class="badge bg-label-success">approved</span></td>
+                <td>
+                  <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-sm btn-icon btn-label-secondary" title="View">
+                      <i class="icon-base ti tabler-eye"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reimbursements Tab -->
+    <div class="tab-pane fade" id="reimbursements" role="tabpanel" aria-labelledby="reimbursements-tab">
+      <div class="card">
+        <div class="card-body">
+          <p class="text-body-secondary">Reimbursements content will be displayed here.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card Transactions Tab -->
+    <div class="tab-pane fade" id="card-transactions" role="tabpanel" aria-labelledby="card-transactions-tab">
+      <div class="card">
+        <div class="card-body">
+          <p class="text-body-secondary">Card transactions content will be displayed here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

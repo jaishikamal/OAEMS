@@ -1,0 +1,763 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <div class="row g-6">
+    <!-- Card Border Shadow -->
+    <div class="col-lg-3 col-sm-6">
+      <div class="card card-border-shadow-primary h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2 ">
+            <div class="avatar me-4">
+              <span class="avatar-initial rounded bg-label-primary"><i
+                  class="icon-base ti tabler-hourglass icon-28px"></i></span>
+            </div>
+            <span class="text-heading fw-medium me-2 ">+8%</span>
+
+          </div>
+          <p class="mb-1">Pending Approvals</p>
+          <p class="mb-0">
+          <h4 class="mb-0">45</h4>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card card-border-shadow-warning h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <div class="avatar me-4">
+              <span class="avatar-initial rounded bg-label-warning"><i
+                  class="icon-base ti tabler-circle-check icon-28px"></i></span>
+            </div>
+            <span class="text-heading fw-medium me-2">+12%</span>
+          </div>
+          <p class="mb-1">Approve This month</p>
+          <p class="mb-0">
+          <h4 class="mb-0">320</h4>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card card-border-shadow-danger h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <div class="avatar me-4">
+              <span class="avatar-initial rounded bg-label-danger"><i
+                  class="icon-base ti tabler-currency-dollar icon-28px"></i></span>
+            </div>
+            <span class="text-heading fw-medium me-2">+5%</span>
+          </div>
+          <p class="mb-1">Budgets Utilization</p>
+          <p class="mb-0">
+          <h4 class="mb-0">68%</h4>
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-sm-6">
+      <div class="card card-border-shadow-info h-100">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-2">
+            <div class="avatar me-4">
+              <span class="avatar-initial rounded bg-label-info"><i
+                  class="icon-base ti tabler-clock-hour-4 icon-28px"></i></span>
+            </div>
+            <span class="text-heading fw-medium me-2">-15%</span>
+          </div>
+          <p class="mb-1">Avg Delivery Time</p>
+          <p class="mb-0">
+          <h4 class="mb-0">2.1 days</h4>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Card Border Shadow -->
+    <!-- Vehicles overview -->
+    <div class="col-xxl-6">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="m-0 me-2">Approved This Month</h5>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-text-secondary rounded-pill p-2 border-0 me-n1" type="button" id="vehiclesOverview"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base ti tabler-dots-vertical icon-md text-body-secondary"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="vehiclesOverview">
+              <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+              <a class="dropdown-item" href="javascript:void(0);">Share</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="d-none d-lg-flex vehicles-progress-labels mb-6">
+            <div class="vehicles-progress-label on-the-way-text" style="width: 39.7%">
+              Pending
+            </div>
+            <div class="vehicles-progress-label unloading-text" style="width: 28.3%">
+              Approved
+            </div>
+            <div class="vehicles-progress-label loading-text" style="width: 17.4%">
+              in Review
+            </div>
+            <div class="vehicles-progress-label waiting-text text-nowrap" style="width: 14.6%">
+              Reject
+            </div>
+          </div>
+          <div class="vehicles-overview-progress progress rounded-3 mb-3 bg-transparent overflow-hidden"
+            style="height: 46px">
+            <div class="progress-bar fw-medium text-start shadow-none bg-warning text-white px-4 rounded-0"
+              role="progressbar" style="width: 39.7%" aria-valuenow="39.7" aria-valuemin="0" aria-valuemax="100">
+              39.7%
+            </div>
+            <div class="progress-bar fw-medium text-start shadow-none bg-success px-4" role="progressbar"
+              style="width: 28.3%" aria-valuenow="28.3" aria-valuemin="0" aria-valuemax="100">
+              28.3%
+            </div>
+            <div class="progress-bar fw-medium text-start shadow-none text-bg-info px-2 px-sm-4" role="progressbar"
+              style="width: 17.4%" aria-valuenow="17.4" aria-valuemin="0" aria-valuemax="100">
+              17.4%
+            </div>
+            <div
+              class="progress-bar fw-medium text-start shadow-none bg-danger snackbar text-paper px-1 px-sm-3 rounded-0 px-lg-4"
+              role="progressbar" style="width: 14.6%" aria-valuenow="14.6" aria-valuemin="0" aria-valuemax="100">
+              14.6%
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="table card-table table-border-top-0 table-border-bottom-0">
+              <tbody>
+                <tr>
+                  <td class="w-50 ps-0">
+                    <div class="d-flex justify-content-start align-items-center">
+                      <div class="me-2">
+                        <i class="icon-base ti tabler-car icon-lg text-heading"></i>
+                      </div>
+                      <h6 class="mb-0 fw-normal">Expenses Task</h6>
+                    </div>
+                  </td>
+                  <td class="text-end pe-0 text-nowrap">
+                    <h6 class="mb-0">109</h6>
+                  </td>
+                  <td class="text-end pe-0">
+                    <span>39.7%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="w-50 ps-0">
+                    <div class="d-flex justify-content-start align-items-center">
+                      <div class="me-2">
+                        <i class="icon-base ti tabler-circle-arrow-down icon-lg text-heading"></i>
+                      </div>
+                      <h6 class="mb-0 fw-normal">Budget Approval</h6>
+                    </div>
+                  </td>
+                  <td class="text-end pe-0 text-nowrap">
+                    <h6 class="mb-0">85</h6>
+                  </td>
+                  <td class="text-end pe-0">
+                    <span>28.3%</span>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="w-50 ps-0">
+                    <div class="d-flex justify-content-start align-items-center">
+                      <div class="me-2">
+                        <i class="icon-base ti tabler-circle-arrow-up icon-lg text-heading"></i>
+                      </div>
+                      <h6 class="mb-0 fw-normal">New User Verified</h6>
+                    </div>
+                  </td>
+                  <td class="text-end pe-0 text-nowrap">
+                    <h6 class="mb-0">65</h6>
+                  </td>
+                  <td class="text-end pe-0">
+                    <span>17.4%</span>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Vehicles overview -->
+
+    <!-- Shipment statistics-->
+    <div class="col-xxl-6 col-lg-7">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="mb-1">Monthly Approved Trends</h5>
+            <p class="card-subtitle">Monthly Approve Trends 2320</p>
+          </div>
+          <div class="btn-group">
+            <button type="button" class="btn btn-label-primary">January</button>
+            <button type="button" class="btn btn-label-primary dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">January</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">February</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">March</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">April</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">May</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">June</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">July</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">August</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">September</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">October</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">November</a>
+              </li>
+              <li>
+                <a class="dropdown-item" href="javascript:void(0);">December</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="shipmentStatisticsChart"></div>
+        </div>
+      </div>
+    </div>
+    <!--/ Shipment statistics -->
+
+    <!-- Delivery Performance -->
+    <div class="col-xxl-8 col-lg-5">
+      <div class="card h-100">
+        <div class="card-header d-flex justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="mb-1 me-2">Monthly Task Approved Rate</h5>
+            <p class="card-subtitle">12% increase in this month</p>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-text-secondary rounded-pill p-2 me-n1" type="button" id="deliveryPerformance"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryPerformance">
+              <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+              <a class="dropdown-item" href="javascript:void(0);">Share</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <ul class="p-0 m-0">
+            <li class="d-flex mb-6 align-items-center">
+              <div class="avatar flex-shrink-0 me-4">
+                <span class="avatar-initial rounded bg-label-primary"><i
+                    class="icon-base ti tabler-package icon-26px"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-1 fw-normal">Budget Approved</h6>
+                  <small class="text-success mb-0">
+                    <i class="icon-base ti tabler-chevron-up me-1"></i>
+                    25.8%
+                  </small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="text-body mb-0">10k</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex mb-6 align-items-center">
+              <div class="avatar flex-shrink-0 me-4">
+                <span class="avatar-initial rounded bg-label-info"><i
+                    class="icon-base ti tabler-truck icon-28px"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-1 fw-normal">New Request for Light </h6>
+                  <small class="text-success mb-0">
+                    <i class="icon-base ti tabler-chevron-up me-1"></i>
+                    4.3%
+                  </small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="text-body mb-0">5k</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex mb-6 align-items-center">
+              <div class="avatar flex-shrink-0 me-4">
+                <span class="avatar-initial rounded bg-label-success"><i
+                    class="icon-base ti tabler-circle-check icon-26px"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-1 fw-normal">For IT support</h6>
+                  <small class="text-danger mb-0">
+                    <i class="icon-base ti tabler-chevron-down me-1"></i>
+                    12.5
+                  </small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="text-body mb-0">15k</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex mb-6 align-items-center">
+              <div class="avatar flex-shrink-0 me-4">
+                <span class="avatar-initial rounded bg-label-warning"><i
+                    class="icon-base ti tabler-percentage icon-26px"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-1 fw-normal">Desktop PC Purchase</h6>
+                  <small class="text-success mb-0">
+                    <i class="icon-base ti tabler-chevron-up me-1"></i>
+                    35.6%
+                  </small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="text-body mb-0">95%</h6>
+                </div>
+              </div>
+            </li>
+            <li class="d-flex align-items-center">
+              <div class="avatar flex-shrink-0 me-4">
+                <span class="avatar-initial rounded bg-label-danger"><i
+                    class="icon-base ti tabler-users icon-26px"></i></span>
+              </div>
+              <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
+                <div class="me-2">
+                  <h6 class="mb-1 fw-normal">Customer satisfaction</h6>
+                  <small class="text-success mb-0">
+                    <i class="icon-base ti tabler-chevron-up me-1"></i>
+                    5.7%
+                  </small>
+                </div>
+                <div class="user-progress">
+                  <h6 class="text-body mb-0">4.5/5</h6>
+                </div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!--/ Delivery Performance -->
+
+    <!-- Reasons for delivery exceptions -->
+    <div class="col-xxl-4 col-lg-6">
+      <div class="card h-100">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="m-0 me-2">Budget Overview by Department</h5>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-text-secondary rounded-pill p-2 me-n1" type="button" id="deliveryExceptions"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base ti tabler-dots-vertical icon-md text-body-secondary"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="deliveryExceptions">
+              <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+              <a class="dropdown-item" href="javascript:void(0);">Share</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div id="deliveryExceptionsChart"></div>
+        </div>
+      </div>
+    </div>
+    <!--/ Reasons for delivery exceptions -->
+
+    <!-- Top Approval Types -->
+    <div class="col-12 order-4">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="m-0 me-2">Top Approval Types</h5>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-text-secondary rounded-pill p-2 me-n1" type="button" id="topApprovalTypes"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="topApprovalTypes">
+              <a class="dropdown-item" href="javascript:void(0);">View All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Export</a>
+              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+              <div class="card border h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="avatar me-3">
+                      <span class="avatar-initial rounded bg-label-primary">
+                        <i class="icon-base ti tabler-file-dollar icon-28px"></i>
+                      </span>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-semibold">Vendor Payment</h6>
+                      <p class="mb-2 text-body-secondary small">
+                        <i class="icon-base ti tabler-clock me-1"></i>
+                        Avg: 2.3 days
+                      </p>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="text-heading fw-semibold">145</span>
+                        <span class="text-body-secondary small">requests</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="card border h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="avatar me-3">
+                      <span class="avatar-initial rounded bg-label-info">
+                        <i class="icon-base ti tabler-plane icon-28px"></i>
+                      </span>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-semibold">Travel Request</h6>
+                      <p class="mb-2 text-body-secondary small">
+                        <i class="icon-base ti tabler-clock me-1"></i>
+                        Avg: 1.5 days
+                      </p>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="text-heading fw-semibold">89</span>
+                        <span class="text-body-secondary small">requests</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="card border h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="avatar me-3">
+                      <span class="avatar-initial rounded bg-label-warning">
+                        <i class="icon-base ti tabler-shopping-cart icon-28px"></i>
+                      </span>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-semibold">Purchase Order</h6>
+                      <p class="mb-2 text-body-secondary small">
+                        <i class="icon-base ti tabler-clock me-1"></i>
+                        Avg: 3.1 days
+                      </p>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="text-heading fw-semibold">67</span>
+                        <span class="text-body-secondary small">requests</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+              <div class="card border h-100">
+                <div class="card-body">
+                  <div class="d-flex align-items-start">
+                    <div class="avatar me-3">
+                      <span class="avatar-initial rounded bg-label-success">
+                        <i class="icon-base ti tabler-receipt icon-28px"></i>
+                      </span>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1 fw-semibold">Expense Reimbursement</h6>
+                      <p class="mb-2 text-body-secondary small">
+                        <i class="icon-base ti tabler-clock me-1"></i>
+                        Avg: 1.2 days
+                      </p>
+                      <div class="d-flex align-items-center justify-content-between">
+                        <span class="text-heading fw-semibold">156</span>
+                        <span class="text-body-secondary small">requests</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ Top Approval Types -->
+
+    <!-- On route vehicles Table -->
+    <div class="col-12 order-5">
+      <div class="card">
+        <div class="card-header d-flex align-items-center justify-content-between">
+          <div class="card-title mb-0">
+            <h5 class="m-0 me-2">On route vehicles</h5>
+          </div>
+          <div class="dropdown">
+            <button class="btn btn-text-secondary rounded-pill p-2 me-n1" type="button" id="routeVehicles"
+              data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+            </button>
+            <div class="dropdown-menu dropdown-menu-end" aria-labelledby="routeVehicles">
+              <a class="dropdown-item" href="javascript:void(0);">Select All</a>
+              <a class="dropdown-item" href="javascript:void(0);">Refresh</a>
+              <a class="dropdown-item" href="javascript:void(0);">Share</a>
+            </div>
+          </div>
+        </div>
+        <div class="card-datatable border-top">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-nowrap">ID</th>
+                  <th class="text-nowrap">TYPE</th>
+                  <th class="text-nowrap">Initiator</th>
+                  <th class="text-nowrap">Branch</th>
+                  <th class="text-nowrap text-end">Amount</th>
+                  <th class="text-nowrap">Priority</th>
+                  <th class="text-nowrap w-20">Status</th>
+                  <th class="text-nowrap text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1234</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-file-dollar me-2 text-primary"></i>
+                      <span>Vendor Payment</span>
+                    </div>
+                  </td>
+                  <td>Rajesh Kumar</td>
+                  <td><span class="badge bg-label-secondary">Branch 045</span></td>
+                  <td class="text-end fw-medium">NPR 125,000</td>
+                  <td><span class="badge bg-label-danger">High</span></td>
+                  <td><span class="badge bg-label-warning">Pending</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1233</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-plane me-2 text-info"></i>
+                      <span>Travel Request</span>
+                    </div>
+                  </td>
+                  <td>Sita Sharma</td>
+                  <td><span class="badge bg-label-secondary">Branch 112</span></td>
+                  <td class="text-end fw-medium">NPR 45,000</td>
+                  <td><span class="badge bg-label-info">Normal</span></td>
+                  <td><span class="badge bg-label-warning">Pending</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1232</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-shopping-cart me-2 text-warning"></i>
+                      <span>Purchase Order</span>
+                    </div>
+                  </td>
+                  <td>Anil Thapa</td>
+                  <td><span class="badge bg-label-secondary">HO</span></td>
+                  <td class="text-end fw-medium">NPR 280,000</td>
+                  <td><span class="badge bg-label-danger">High</span></td>
+                  <td><span class="badge bg-label-info">In Review</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1231</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-receipt me-2 text-success"></i>
+                      <span>Expense Reimbursement</span>
+                    </div>
+                  </td>
+                  <td>Binita Rai</td>
+                  <td><span class="badge bg-label-secondary">Branch 078</span></td>
+                  <td class="text-end fw-medium">NPR 8,500</td>
+                  <td><span class="badge bg-label-info">Normal</span></td>
+                  <td><span class="badge bg-label-success">Approved</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1230</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-package me-2 text-secondary"></i>
+                      <span>Office Supplies</span>
+                    </div>
+                  </td>
+                  <td>Prakash Gurung</td>
+                  <td><span class="badge bg-label-secondary">Branch 089</span></td>
+                  <td class="text-end fw-medium">NPR 15,000</td>
+                  <td><span class="badge bg-label-secondary">Low</span></td>
+                  <td><span class="badge bg-label-success">Approved</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td><span class="fw-medium text-primary">AP-2024-1229</span></td>
+                  <td>
+                    <div class="d-flex align-items-center">
+                      <i class="icon-base ti tabler-device-desktop me-2 text-danger"></i>
+                      <span>Equipment Purchase</span>
+                    </div>
+                  </td>
+                  <td>Sunita Tamang</td>
+                  <td><span class="badge bg-label-secondary">Branch 034</span></td>
+                  <td class="text-end fw-medium">NPR 450,000</td>
+                  <td><span class="badge bg-label-danger">High</span></td>
+                  <td><span class="badge bg-label-danger">Rejected</span></td>
+                  <td class="text-center">
+                    <div class="dropdown">
+                      <button type="button" class="btn btn-sm btn-text-secondary rounded-pill p-1"
+                        data-bs-toggle="dropdown">
+                        <i class="icon-base ti tabler-dots-vertical icon-md"></i>
+                      </button>
+                      <div class="dropdown-menu dropdown-menu-end">
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-eye me-2"></i>View
+                        </a>
+                        <a class="dropdown-item" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-edit me-2"></i>Edit
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item text-danger" href="javascript:void(0);">
+                          <i class="icon-base ti tabler-trash me-2"></i>Delete
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--/ On route vehicles Table -->
+  </div>
+</div>

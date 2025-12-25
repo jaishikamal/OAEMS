@@ -1,0 +1,1187 @@
+<script src="assets/vendor/libs/jquery/jquery.js"></script>
+
+<script src="assets/vendor/libs/popper/popper.js"></script>
+<script src="assets/vendor/js/bootstrap.js"></script>
+<script src="assets/vendor/libs/node-waves/node-waves.js"></script>
+
+<script src="assets/vendor/libs/pickr/pickr.js"></script>
+
+<script src="assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+<script src="assets/vendor/libs/hammer/hammer.js"></script>
+
+<script src="assets/vendor/libs/i18n/i18n.js"></script>
+
+<script src="assets/vendor/js/menu.js"></script>
+
+<!-- endbuild -->
+
+<!-- Vendors JS -->
+<script src="assets/vendor/libs/apex-charts/apexcharts.js"></script>
+<script src="assets/vendor/libs/datatables-bs5/datatables-bootstrap5.js"></script>
+<script src="assets/vendor/libs/sweetalert2/sweetalert2.js"></script>
+
+<!-- Main JS -->
+
+<script src="assets/js/main.js"></script>
+
+<!-- Page JS -->
+<script src="assets/js/app-logistics-dashboard.js"></script>
+
+<!-- for branches page -->
+<script src="assets/js/tables-datatables-basic.js"></script>
+
+<!--for Approvals-->
+<script>
+  // Filter tab functionality
+  document.addEventListener('DOMContentLoaded', function () {
+    const filterButtons = document.querySelectorAll('[data-filter]');
+
+    filterButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Remove active class from all buttons
+        filterButtons.forEach(btn => {
+          btn.classList.remove('active', 'btn-primary');
+          btn.classList.add('btn-label-primary');
+        });
+
+        // Add active class to clicked button
+        this.classList.add('active', 'btn-primary');
+        this.classList.remove('btn-label-primary');
+
+        // Here you would filter the approval cards based on the selected filter
+        const filter = this.getAttribute('data-filter');
+        // Filter logic would go here
+      });
+    });
+  });
+</script>
+
+<!--for Expenses-->
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables for Expenses
+    if ($('#expensesTable').length) {
+      const dtExpenses = $('#expensesTable').DataTable({
+        order: [[5, 'desc']], // Sort by date descending
+        pageLength: 10,
+        language: {
+          search: '',
+          searchPlaceholder: 'Search expenses...',
+          lengthMenu: 'Show _MENU_ entries'
+        },
+        columnDefs: [
+          {
+            targets: -1, // Actions column
+            orderable: false,
+            searchable: false
+          }
+        ]
+      });
+    }
+  });
+</script>
+
+<!--for Budget Control-->
+<script>
+  $(document).ready(function () {
+    // Budget utilization animation
+    const progressBar = document.querySelector('.progress-bar[aria-valuenow="87.8"]');
+    if (progressBar) {
+      // Animate progress bar on page load
+      setTimeout(() => {
+        progressBar.style.transition = 'width 1s ease-in-out';
+      }, 100);
+    }
+
+    // Monthly Budget Trend Chart
+    if (document.getElementById('monthlyBudgetTrendChart')) {
+      const monthlyTrendOptions = {
+        series: [
+          {
+            name: 'Budget',
+            data: [4000000, 4000000, 4000000, 4000000, 4000000, 4000000]
+          },
+          {
+            name: 'Spent',
+            data: [3050000, 3150000, 3300000, 3450000, 3500000, 3000000]
+          },
+          {
+            name: 'Committed',
+            data: [250000, 280000, 300000, 270000, 290000, 250000]
+          }
+        ],
+        chart: {
+          type: 'line',
+          height: 350,
+          toolbar: {
+            show: false
+          }
+        },
+        colors: ['#6c757d', '#696cff', '#ffab00'],
+        stroke: {
+          width: 3,
+          curve: 'smooth'
+        },
+        markers: {
+          size: 5
+        },
+        xaxis: {
+          categories: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return (val / 1000000).toFixed(1) + 'M';
+            }
+          },
+          min: 0,
+          max: 4000000
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right'
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return 'NPR ' + (val / 1000000).toFixed(2) + 'M';
+            }
+          }
+        },
+        grid: {
+          borderColor: '#e7e7e7',
+          strokeDashArray: 3
+        }
+      };
+
+      const monthlyTrendChart = new ApexCharts(document.querySelector('#monthlyBudgetTrendChart'), monthlyTrendOptions);
+      monthlyTrendChart.render();
+    }
+
+    // Department Budget Breakdown Chart
+    if (document.getElementById('departmentBudgetChart')) {
+      const departmentBudgetOptions = {
+        series: [
+          {
+            name: 'Allocated',
+            data: [5.0, 3.5, 2.5, 8.0, 4.0]
+          },
+          {
+            name: 'Spent',
+            data: [3.8, 3.0, 1.8, 6.5, 2.8]
+          },
+          {
+            name: 'Available',
+            data: [0.8, 0.2, 0.6, 0.8, 1.0]
+          }
+        ],
+        chart: {
+          type: 'bar',
+          height: 350,
+          toolbar: {
+            show: false
+          }
+        },
+        colors: ['#d3d3d3', '#696cff', '#71dd37'],
+        plotOptions: {
+          bar: {
+            horizontal: false,
+            columnWidth: '55%',
+            endingShape: 'rounded'
+          }
+        },
+        dataLabels: {
+          enabled: false
+        },
+        xaxis: {
+          categories: ['IT', 'Marketing', 'HR', 'Operations', 'Finance']
+        },
+        yaxis: {
+          labels: {
+            formatter: function (val) {
+              return val.toFixed(1) + 'M';
+            }
+          },
+          min: 0,
+          max: 8
+        },
+        legend: {
+          position: 'top',
+          horizontalAlign: 'right'
+        },
+        tooltip: {
+          y: {
+            formatter: function (val) {
+              return 'NPR ' + val.toFixed(1) + 'M';
+            }
+          }
+        },
+        grid: {
+          borderColor: '#e7e7e7',
+          strokeDashArray: 3
+        }
+      };
+
+      const departmentBudgetChart = new ApexCharts(document.querySelector('#departmentBudgetChart'), departmentBudgetOptions);
+      departmentBudgetChart.render();
+    }
+
+    // Real-time budget updates (if needed)
+    // This can be extended to fetch live data via AJAX
+    function updateBudgetMetrics() {
+      // Example: Fetch updated budget data
+      // $.ajax({
+      //   url: '/api/budget/metrics',
+      //   method: 'GET',
+      //   success: function(data) {
+      //     // Update KPI cards and progress bar
+      //   }
+      // });
+    }
+
+    // Update every 30 seconds (optional)
+    // setInterval(updateBudgetMetrics, 30000);
+
+    // Initialize DataTables for Budget Details
+    if ($('#budgetDetailsTable').length) {
+      const dtBudgetDetails = $('#budgetDetailsTable').DataTable({
+        order: [[1, 'asc']], // Sort by department name
+        pageLength: 10,
+        language: {
+          search: '',
+          searchPlaceholder: 'Search budgets...',
+          lengthMenu: 'Show _MENU_ entries'
+        },
+        columnDefs: [
+          {
+            targets: -1, // Actions column
+            orderable: false,
+            searchable: false
+          },
+          {
+            targets: [2, 3, 4, 5], // Monetary columns
+            type: 'num'
+          }
+        ]
+      });
+    }
+  });
+</script>
+
+<!--for Audit Trail-->
+<script>
+  $(document).ready(function () {
+    // Initialize DataTables for Audit Trail
+    if ($('#auditTrailTable').length) {
+      const dtAuditTrail = $('#auditTrailTable').DataTable({
+        order: [[0, 'desc']], // Sort by timestamp descending (newest first)
+        pageLength: 10,
+        language: {
+          search: '',
+          searchPlaceholder: 'Search audit logs...',
+          lengthMenu: 'Show _MENU_ entries'
+        },
+        columnDefs: [
+          {
+            targets: -1, // Actions column
+            orderable: false,
+            searchable: false
+          },
+          {
+            targets: 0, // Timestamp column
+            type: 'date'
+          }
+        ]
+      });
+
+      // Custom search functionality
+      $('#auditSearch').on('keyup', function () {
+        dtAuditTrail.search(this.value).draw();
+      });
+    }
+  });
+</script>
+
+<!--for Settings-->
+<script>
+  $(document).ready(function () {
+    // Wait for SweetAlert2 to be loaded
+    if (typeof Swal === 'undefined') {
+      console.error('SweetAlert2 is not loaded');
+      return;
+    }
+
+    // Save Settings button click handler
+    $('#saveSettingsBtn').on('click', function (e) {
+      e.preventDefault();
+
+      // Collect all settings values
+      const settings = {
+        systemName: $('#systemName').val(),
+        organizationName: $('#organizationName').val(),
+        fiscalYear: $('#fiscalYear').val(),
+        autoEscalation: $('#autoEscalation').is(':checked'),
+        budgetPreCommitment: $('#budgetPreCommitment').is(':checked'),
+        slaWarningThreshold: $('#slaWarningThreshold').val(),
+        emailNotifications: $('#emailNotifications').is(':checked'),
+        smsNotifications: $('#smsNotifications').is(':checked'),
+        coreBankingApi: $('#coreBankingApi').val(),
+        accountingSystemApi: $('#accountingSystemApi').val(),
+        ldapServer: $('#ldapServer').val(),
+        auditLogRetention: $('#auditLogRetention').val(),
+        documentStorage: $('#documentStorage').val()
+      };
+
+      // Show confirmation popup using SweetAlert2
+      Swal.fire({
+        title: 'Save Settings?',
+        text: 'Are you sure you want to save these settings?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Save Settings',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-label-secondary'
+        },
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Here you can add AJAX call to save settings to server
+          // Example:
+          // $.ajax({
+          //   url: '/api/settings/save',
+          //   method: 'POST',
+          //   data: settings,
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'Settings Saved!',
+          //       text: 'Your settings have been saved successfully.',
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to save settings. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success popup (for demo purposes)
+          Swal.fire({
+            title: 'Settings Saved!',
+            text: 'Your settings have been saved successfully.',
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 2000,
+            timerProgressBar: true
+          });
+        }
+      });
+    });
+  });
+</script>
+
+<!--for User Management-->
+<script>
+  $(document).ready(function () {
+    // Wait for SweetAlert2 to be loaded
+    if (typeof Swal === 'undefined') {
+      console.error('SweetAlert2 is not loaded');
+      return;
+    }
+
+    // Select All checkbox functionality
+    $('#selectAll').on('change', function () {
+      const isChecked = $(this).is(':checked');
+      $('.user-checkbox').prop('checked', isChecked);
+      updateSelectedCount();
+    });
+
+    // Individual checkbox change
+    $(document).on('change', '.user-checkbox', function () {
+      updateSelectAllState();
+      updateSelectedCount();
+    });
+
+    // Update select all checkbox state
+    function updateSelectAllState() {
+      const totalCheckboxes = $('.user-checkbox').length;
+      const checkedCheckboxes = $('.user-checkbox:checked').length;
+      $('#selectAll').prop('checked', totalCheckboxes === checkedCheckboxes && totalCheckboxes > 0);
+    }
+
+    // Update selected count and button state
+    function updateSelectedCount() {
+      const selectedCount = $('.user-checkbox:checked').length;
+      $('#selectedCount').text(selectedCount + ' selected');
+
+      if (selectedCount > 0) {
+        $('#assignRoleBtn').prop('disabled', false);
+        $('#manageRolesBtn').prop('disabled', false);
+      } else {
+        $('#assignRoleBtn').prop('disabled', true);
+        $('#manageRolesBtn').prop('disabled', true);
+      }
+    }
+
+    // Get selected user IDs
+    function getSelectedUserIds() {
+      const selectedIds = [];
+      $('.user-checkbox:checked').each(function () {
+        selectedIds.push($(this).val());
+      });
+      return selectedIds;
+    }
+
+    // Get selected user names (for display)
+    function getSelectedUserNames() {
+      const selectedNames = [];
+      $('.user-checkbox:checked').each(function () {
+        const row = $(this).closest('tr');
+        const name = row.find('td:eq(2) .fw-medium').text();
+        selectedNames.push(name);
+      });
+      return selectedNames;
+    }
+
+    // Assign Role button click handler (Simple role assignment)
+    $('#assignRoleBtn').on('click', function (e) {
+      e.preventDefault();
+
+      const selectedIds = getSelectedUserIds();
+      const selectedNames = getSelectedUserNames();
+
+      if (selectedIds.length === 0) {
+        Swal.fire({
+          title: 'No Selection',
+          text: 'Please select at least one user.',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+        return;
+      }
+
+      // Available Roles
+      const availableRoles = [
+        { value: 'administrator', label: 'Administrator', badge: 'bg-label-primary' },
+        { value: 'manager', label: 'Manager', badge: 'bg-label-warning' },
+        { value: 'user', label: 'User', badge: 'bg-label-success' },
+        { value: 'support', label: 'Support', badge: 'bg-label-info' },
+        { value: 'restricted', label: 'Restricted User', badge: 'bg-label-danger' }
+      ];
+
+      // Build HTML form for role assignment
+      let rolesHtml = '<div class="mb-3"><label class="form-label fw-bold">Select Role to Assign:</label>';
+      availableRoles.forEach(role => {
+        rolesHtml += `
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="assignRole" id="assignRole_${role.value}" value="${role.value}">
+            <label class="form-check-label" for="assignRole_${role.value}">
+              <span class="badge ${role.badge} me-2">${role.label}</span>
+            </label>
+          </div>
+        `;
+      });
+      rolesHtml += '</div>';
+
+      const formHtml = `
+        <div class="text-start">
+          <p class="mb-3"><strong>Selected Users:</strong> ${selectedNames.join(', ')}</p>
+          ${rolesHtml}
+          <p class="text-muted small mt-2">Note: Assigning a role will automatically grant all permissions associated with that role.</p>
+        </div>
+      `;
+
+      // Show popup form using SweetAlert2
+      Swal.fire({
+        title: 'Assign Role to Users',
+        html: formHtml,
+        width: '600px',
+        showCancelButton: true,
+        confirmButtonText: 'Assign Role',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-label-secondary',
+          popup: 'text-start'
+        },
+        buttonsStyling: false,
+        preConfirm: () => {
+          const selectedRole = $('input[name="assignRole"]:checked').val();
+
+          if (!selectedRole) {
+            Swal.showValidationMessage('Please select a role');
+            return false;
+          }
+
+          return {
+            userIds: selectedIds,
+            role: selectedRole
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const data = result.value;
+          const roleLabel = availableRoles.find(r => r.value === data.role)?.label || data.role;
+
+          // Here you can add AJAX call to assign role to users
+          // Example:
+          // $.ajax({
+          //   url: '/api/users/assign-role',
+          //   method: 'POST',
+          //   data: data,
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'Role Assigned!',
+          //       text: `Role "${roleLabel}" has been assigned to ${data.userIds.length} user(s).`,
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     }).then(() => {
+          //       location.reload();
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to assign role. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success alert message
+          Swal.fire({
+            title: 'Role Assigned Successfully!',
+            html: `
+              <p><strong>Role:</strong> <span class="badge bg-label-primary">${roleLabel}</span></p>
+              <p><strong>Assigned to:</strong> ${data.userIds.length} user(s)</p>
+              <p class="text-muted small mt-2">The role has been assigned to the selected users.</p>
+            `,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          // Uncheck all checkboxes after successful assignment
+          $('.user-checkbox').prop('checked', false);
+          $('#selectAll').prop('checked', false);
+          updateSelectedCount();
+        }
+      });
+    });
+
+    // Manage Permissions button click handler (Full permissions management)
+    $('#manageRolesBtn').on('click', function (e) {
+      e.preventDefault();
+
+      const selectedIds = getSelectedUserIds();
+      const selectedNames = getSelectedUserNames();
+
+      if (selectedIds.length === 0) {
+        Swal.fire({
+          title: 'No Selection',
+          text: 'Please select at least one user.',
+          icon: 'warning',
+          confirmButtonText: 'OK',
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+        return;
+      }
+
+      // Available Roles
+      const availableRoles = [
+        { value: 'administrator', label: 'Administrator' },
+        { value: 'manager', label: 'Manager' },
+        { value: 'user', label: 'User' },
+        { value: 'support', label: 'Support' },
+        { value: 'restricted', label: 'Restricted User' }
+      ];
+
+      // Available Permissions
+      const availablePermissions = [
+        { value: 'management', label: 'Management' },
+        { value: 'manage_billing', label: 'Manage Billing & Roles' },
+        { value: 'add_remove_users', label: 'Add & Remove Users' },
+        { value: 'project_planning', label: 'Project Planning' },
+        { value: 'manage_email', label: 'Manage Email Sequences' },
+        { value: 'client_communication', label: 'Client Communication' },
+        { value: 'only_view', label: 'Only View' },
+        { value: 'financial_management', label: 'Financial Management' },
+        { value: 'manage_tasks', label: 'Manage Others\' Tasks' }
+      ];
+
+      // Build HTML form for roles and permissions
+      let rolesHtml = '<div class="mb-3"><label class="form-label fw-bold">Select Role:</label>';
+      availableRoles.forEach(role => {
+        rolesHtml += `
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="userRole" id="role_${role.value}" value="${role.value}">
+            <label class="form-check-label" for="role_${role.value}">${role.label}</label>
+          </div>
+        `;
+      });
+      rolesHtml += '</div>';
+
+      let permissionsHtml = '<div class="mb-3"><label class="form-label fw-bold">Select Permissions:</label>';
+      availablePermissions.forEach(permission => {
+        permissionsHtml += `
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="userPermissions" id="perm_${permission.value}" value="${permission.value}">
+            <label class="form-check-label" for="perm_${permission.value}">${permission.label}</label>
+          </div>
+        `;
+      });
+      permissionsHtml += '</div>';
+
+      const formHtml = `
+        <div class="text-start">
+          <p class="mb-3"><strong>Selected Users:</strong> ${selectedNames.join(', ')}</p>
+          ${rolesHtml}
+          ${permissionsHtml}
+          <p class="text-muted small mt-2">Note: You can customize permissions for selected users. The role determines default permissions.</p>
+        </div>
+      `;
+
+      // Show popup form using SweetAlert2
+      Swal.fire({
+        title: 'Manage Roles & Permissions',
+        html: formHtml,
+        width: '600px',
+        showCancelButton: true,
+        confirmButtonText: 'Save Changes',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-label-secondary',
+          popup: 'text-start'
+        },
+        buttonsStyling: false,
+        didOpen: () => {
+          // Set default role (first option)
+          $('#role_administrator').prop('checked', true);
+        },
+        preConfirm: () => {
+          const selectedRole = $('input[name="userRole"]:checked').val();
+          const selectedPermissions = [];
+          $('input[name="userPermissions"]:checked').each(function () {
+            selectedPermissions.push($(this).val());
+          });
+
+          if (!selectedRole) {
+            Swal.showValidationMessage('Please select a role');
+            return false;
+          }
+
+          return {
+            userIds: selectedIds,
+            role: selectedRole,
+            permissions: selectedPermissions
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const data = result.value;
+
+          // Here you can add AJAX call to save roles and permissions to server
+          // Example:
+          // $.ajax({
+          //   url: '/api/users/roles-permissions',
+          //   method: 'POST',
+          //   data: data,
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'Success!',
+          //       text: 'Roles and permissions have been updated successfully.',
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to update roles and permissions. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success message (for demo purposes)
+          const roleLabel = availableRoles.find(r => r.value === data.role)?.label || data.role;
+          const permCount = data.permissions.length;
+
+          Swal.fire({
+            title: 'Roles & Permissions Updated!',
+            html: `
+              <p><strong>Role:</strong> ${roleLabel}</p>
+              <p><strong>Permissions:</strong> ${permCount} permission(s) assigned</p>
+              <p class="text-muted small mt-2">Changes have been saved successfully.</p>
+            `,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+
+          // Uncheck all checkboxes after successful save
+          $('.user-checkbox').prop('checked', false);
+          $('#selectAll').prop('checked', false);
+          updateSelectedCount();
+        }
+      });
+    });
+
+    // Initialize selected count on page load
+    updateSelectedCount();
+
+    // Add User button click handler
+    $('#addUserBtn').on('click', function (e) {
+      e.preventDefault();
+
+      // Build HTML form for adding new user
+      const addUserFormHtml = `
+        <div class="text-start">
+          <div class="mb-3">
+            <label class="form-label" for="addFullName">Full Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="addFullName" placeholder="Enter full name" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="addEmail">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="addEmail" placeholder="Enter email address" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="addRole">Role <span class="text-danger">*</span></label>
+            <select class="form-select" id="addRole" required>
+              <option value="">Select a role</option>
+              <option value="administrator">Administrator</option>
+              <option value="manager">Manager</option>
+              <option value="user">User</option>
+              <option value="support">Support</option>
+              <option value="restricted">Restricted User</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="addDepartment">Department <span class="text-danger">*</span></label>
+            <select class="form-select" id="addDepartment" required>
+              <option value="">Select a department</option>
+              <option value="IT">IT</option>
+              <option value="Finance">Finance</option>
+              <option value="Operations">Operations</option>
+              <option value="HR">HR</option>
+              <option value="Marketing">Marketing</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="addStatus">Status</label>
+            <select class="form-select" id="addStatus">
+              <option value="active" selected>Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+      `;
+
+      // Show Add User popup form using SweetAlert2
+      Swal.fire({
+        title: 'Add New User',
+        html: addUserFormHtml,
+        width: '600px',
+        showCancelButton: true,
+        confirmButtonText: 'Add User',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-label-secondary',
+          popup: 'text-start'
+        },
+        buttonsStyling: false,
+        preConfirm: () => {
+          const fullName = $('#addFullName').val().trim();
+          const email = $('#addEmail').val().trim();
+          const role = $('#addRole').val();
+          const department = $('#addDepartment').val();
+          const status = $('#addStatus').val();
+
+          // Validation
+          if (!fullName) {
+            Swal.showValidationMessage('Please enter full name');
+            return false;
+          }
+          if (!email) {
+            Swal.showValidationMessage('Please enter email address');
+            return false;
+          }
+          if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            Swal.showValidationMessage('Please enter a valid email address');
+            return false;
+          }
+          if (!role) {
+            Swal.showValidationMessage('Please select a role');
+            return false;
+          }
+          if (!department) {
+            Swal.showValidationMessage('Please select a department');
+            return false;
+          }
+
+          return {
+            fullName: fullName,
+            email: email,
+            role: role,
+            department: department,
+            status: status
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const userData = result.value;
+
+          // Here you can add AJAX call to save new user to server
+          // Example:
+          // $.ajax({
+          //   url: '/api/users/add',
+          //   method: 'POST',
+          //   data: userData,
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'User Added!',
+          //       text: 'New user has been added successfully.',
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     }).then(() => {
+          //       // Reload page or update table
+          //       location.reload();
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to add user. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success alert message
+          Swal.fire({
+            title: 'User Added Successfully!',
+            html: `
+              <p><strong>Name:</strong> ${userData.fullName}</p>
+              <p><strong>Email:</strong> ${userData.email}</p>
+              <p><strong>Role:</strong> ${userData.role}</p>
+              <p><strong>Department:</strong> ${userData.department}</p>
+              <p class="text-muted small mt-2">The new user has been added to the system.</p>
+            `,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+        }
+      });
+    });
+
+    // Edit User functionality
+    $(document).on('click', '.edit-user', function (e) {
+      e.preventDefault();
+      const row = $(this).closest('tr');
+      const userId = row.find('.user-checkbox').val();
+      const fullName = row.find('td:eq(2) .fw-medium').text();
+      const email = row.find('td:eq(3)').text();
+      const role = row.find('td:eq(4) .badge').text();
+      const department = row.find('td:eq(5)').text();
+      const status = row.find('td:eq(6) .badge').text();
+
+      // Build HTML form for editing user
+      const editUserFormHtml = `
+        <div class="text-start">
+          <div class="mb-3">
+            <label class="form-label" for="editFullName">Full Name <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="editFullName" value="${fullName}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editEmail">Email <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="editEmail" value="${email}" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editRole">Role <span class="text-danger">*</span></label>
+            <select class="form-select" id="editRole" required>
+              <option value="administrator" ${role.includes('Administrator') ? 'selected' : ''}>Administrator</option>
+              <option value="manager" ${role.includes('Manager') ? 'selected' : ''}>Manager</option>
+              <option value="user" ${role.includes('User') && !role.includes('Restricted') ? 'selected' : ''}>User</option>
+              <option value="support" ${role.includes('Support') ? 'selected' : ''}>Support</option>
+              <option value="restricted" ${role.includes('Restricted') ? 'selected' : ''}>Restricted User</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editDepartment">Department <span class="text-danger">*</span></label>
+            <select class="form-select" id="editDepartment" required>
+              <option value="IT" ${department === 'IT' ? 'selected' : ''}>IT</option>
+              <option value="Finance" ${department === 'Finance' ? 'selected' : ''}>Finance</option>
+              <option value="Operations" ${department === 'Operations' ? 'selected' : ''}>Operations</option>
+              <option value="HR" ${department === 'HR' ? 'selected' : ''}>HR</option>
+              <option value="Marketing" ${department === 'Marketing' ? 'selected' : ''}>Marketing</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editStatus">Status</label>
+            <select class="form-select" id="editStatus">
+              <option value="active" ${status.includes('Active') ? 'selected' : ''}>Active</option>
+              <option value="inactive" ${status.includes('Inactive') ? 'selected' : ''}>Inactive</option>
+            </select>
+          </div>
+        </div>
+      `;
+
+      // Show Edit User popup form
+      Swal.fire({
+        title: 'Edit User',
+        html: editUserFormHtml,
+        width: '600px',
+        showCancelButton: true,
+        confirmButtonText: 'Save Changes',
+        cancelButtonText: 'Cancel',
+        customClass: {
+          confirmButton: 'btn btn-primary',
+          cancelButton: 'btn btn-label-secondary',
+          popup: 'text-start'
+        },
+        buttonsStyling: false,
+        preConfirm: () => {
+          const fullName = $('#editFullName').val().trim();
+          const email = $('#editEmail').val().trim();
+          const role = $('#editRole').val();
+          const department = $('#editDepartment').val();
+          const status = $('#editStatus').val();
+
+          // Validation
+          if (!fullName) {
+            Swal.showValidationMessage('Please enter full name');
+            return false;
+          }
+          if (!email) {
+            Swal.showValidationMessage('Please enter email address');
+            return false;
+          }
+          if (!email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            Swal.showValidationMessage('Please enter a valid email address');
+            return false;
+          }
+          if (!role) {
+            Swal.showValidationMessage('Please select a role');
+            return false;
+          }
+          if (!department) {
+            Swal.showValidationMessage('Please select a department');
+            return false;
+          }
+
+          return {
+            userId: userId,
+            fullName: fullName,
+            email: email,
+            role: role,
+            department: department,
+            status: status
+          };
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          const userData = result.value;
+
+          // Here you can add AJAX call to update user on server
+          // Example:
+          // $.ajax({
+          //   url: '/api/users/update',
+          //   method: 'PUT',
+          //   data: userData,
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'User Updated!',
+          //       text: 'User information has been updated successfully.',
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     }).then(() => {
+          //       location.reload();
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to update user. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success alert message
+          Swal.fire({
+            title: 'User Updated Successfully!',
+            html: `
+              <p><strong>Name:</strong> ${userData.fullName}</p>
+              <p><strong>Email:</strong> ${userData.email}</p>
+              <p><strong>Role:</strong> ${userData.role}</p>
+              <p><strong>Department:</strong> ${userData.department}</p>
+              <p class="text-muted small mt-2">User information has been updated.</p>
+            `,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 3000,
+            timerProgressBar: true
+          });
+        }
+      });
+    });
+
+    // Delete User functionality
+    $(document).on('click', '.delete-user', function (e) {
+      e.preventDefault();
+      const row = $(this).closest('tr');
+      const userId = row.find('.user-checkbox').val();
+      const fullName = row.find('td:eq(2) .fw-medium').text();
+
+      // Show confirmation alert before deleting
+      Swal.fire({
+        title: 'Delete User?',
+        html: `<p>Are you sure you want to delete <strong>${fullName}</strong>?</p><p class="text-danger">This action cannot be undone.</p>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, Delete',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#d33',
+        customClass: {
+          confirmButton: 'btn btn-danger',
+          cancelButton: 'btn btn-label-secondary'
+        },
+        buttonsStyling: false
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Here you can add AJAX call to delete user from server
+          // Example:
+          // $.ajax({
+          //   url: '/api/users/delete',
+          //   method: 'DELETE',
+          //   data: { userId: userId },
+          //   success: function(response) {
+          //     Swal.fire({
+          //       title: 'Deleted!',
+          //       text: 'User has been deleted successfully.',
+          //       icon: 'success',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     }).then(() => {
+          //       location.reload();
+          //     });
+          //   },
+          //   error: function(error) {
+          //     Swal.fire({
+          //       title: 'Error!',
+          //       text: 'Failed to delete user. Please try again.',
+          //       icon: 'error',
+          //       confirmButtonText: 'OK',
+          //       customClass: {
+          //         confirmButton: 'btn btn-primary'
+          //       },
+          //       buttonsStyling: false
+          //     });
+          //   }
+          // });
+
+          // Show success alert message
+          Swal.fire({
+            title: 'User Deleted!',
+            text: `${fullName} has been deleted successfully.`,
+            icon: 'success',
+            confirmButtonText: 'OK',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false,
+            timer: 2000,
+            timerProgressBar: true
+          });
+        }
+      });
+    });
+  });
+</script>

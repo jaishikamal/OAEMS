@@ -1,0 +1,228 @@
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- System Settings Header -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <h4 class="fw-bold py-3 mb-1">System Settings</h4>
+      <p class="text-muted mb-4">Configure OEMS system preferences</p>
+    </div>
+  </div>
+
+  <!-- General Settings -->
+  <div class="card mb-4">
+    <div class="card-header d-flex align-items-center">
+      <i class="icon-base ti tabler-shield me-2 text-primary"></i>
+      <h5 class="card-title mb-0 fw-bold">General Settings</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label class="form-label" for="systemName">System Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="systemName"
+            value="OEMS by BizEngine"
+            placeholder="Enter system name"
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="organizationName">Organization Name</label>
+          <input
+            type="text"
+            class="form-control"
+            id="organizationName"
+            value="Commercial Bank Ltd."
+            placeholder="Enter organization name"
+          />
+        </div>
+        <div class="col-md-4">
+          <label class="form-label" for="fiscalYear">Fiscal Year</label>
+          <input
+            type="text"
+            class="form-control"
+            id="fiscalYear"
+            value="FY 2024/2025"
+            placeholder="Enter fiscal year"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Approval Workflow Settings -->
+  <div class="card mb-4">
+    <div class="card-header">
+      <h5 class="card-title mb-0 fw-bold">Approval Workflow Settings</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="form-label mb-1 fw-medium">Auto-escalation</label>
+              <p class="text-muted small mb-0">Automatically escalate overdue approvals</p>
+            </div>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="autoEscalation"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="form-label mb-1 fw-medium">Budget Pre-commitment</label>
+              <p class="text-muted small mb-0">Reserve budget when approval is initiated</p>
+            </div>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="budgetPreCommitment"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="slaWarningThreshold">SLA Warning Threshold (hours)</label>
+          <input
+            type="number"
+            class="form-control"
+            id="slaWarningThreshold"
+            value="24"
+            placeholder="Enter hours"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Settings -->
+  <div class="card mb-4">
+    <div class="card-header d-flex align-items-center">
+      <i class="icon-base ti tabler-bell me-2 text-primary"></i>
+      <h5 class="card-title mb-0 fw-bold">Notification Settings</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="form-label mb-1 fw-medium">Email Notifications</label>
+              <p class="text-muted small mb-0">Send email for approval requests</p>
+            </div>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="emailNotifications"
+                checked
+              />
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <label class="form-label mb-1 fw-medium">SMS Notifications</label>
+              <p class="text-muted small mb-0">Send SMS for critical approvals</p>
+            </div>
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                id="smsNotifications"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Integration Settings -->
+  <div class="card mb-4">
+    <div class="card-header d-flex align-items-center">
+      <i class="icon-base ti tabler-link me-2 text-primary"></i>
+      <h5 class="card-title mb-0 fw-bold">Integration Settings</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label" for="coreBankingApi">Core Banking API Endpoint</label>
+          <input
+            type="text"
+            class="form-control"
+            id="coreBankingApi"
+            value="https://api.corebanking.com/v1"
+            placeholder="Enter API endpoint"
+          />
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="accountingSystemApi">Accounting System API</label>
+          <input
+            type="text"
+            class="form-control"
+            id="accountingSystemApi"
+            value="https://api.accounting.com/v2"
+            placeholder="Enter API endpoint"
+          />
+        </div>
+        <div class="col-12">
+          <label class="form-label" for="ldapServer">LDAP Server</label>
+          <input
+            type="text"
+            class="form-control"
+            id="ldapServer"
+            value="ldap://ldap.company.com"
+            placeholder="Enter LDAP server"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Retention & Compliance -->
+  <div class="card mb-4">
+    <div class="card-header d-flex align-items-center">
+      <i class="icon-base ti tabler-database me-2 text-primary"></i>
+      <h5 class="card-title mb-0 fw-bold">Data Retention & Compliance</h5>
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label" for="auditLogRetention">Audit Log Retention (years)</label>
+          <input
+            type="number"
+            class="form-control"
+            id="auditLogRetention"
+            value="7"
+            placeholder="Enter years"
+          />
+          <small class="text-muted">As per Nepal Rastra Bank requirements.</small>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="documentStorage">Approved Document Storage</label>
+          <select class="form-select" id="documentStorage">
+            <option value="database">Database</option>
+            <option value="object-storage">Object Storage (S3)</option>
+            <option value="database-object-storage" selected>Database + Object Storage (S3)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Settings Button -->
+  <div class="d-flex justify-content-end mb-4">
+    <button type="button" class="btn btn-primary" id="saveSettingsBtn">
+      <i class="icon-base ti tabler-device-floppy me-2"></i>
+      Save Settings
+    </button>
+  </div>
+</div>
