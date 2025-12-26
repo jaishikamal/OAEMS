@@ -4,23 +4,25 @@
     <div class="col-lg-6">
       <div class="d-flex align-items-start gap-2">
         <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
-          <span class="avatar-initial rounded"><i class="icon-base ti tabler-users"></i></span>
+          <span class="avatar-initial rounded"
+            ><i class="icon-base ti ti-users"></i
+          ></span>
         </div>
         <div>
           <h4 class="mb-1">User Management</h4>
-          <p class="text-muted mb-0">Monitor users, roles, permissions, and security signals</p>
+          <p class="text-muted mb-0">Manage users, roles, and permissions</p>
         </div>
       </div>
     </div>
     <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
       <button type="button" class="btn btn-outline-secondary">
-        <i class="icon-base ti tabler-cloud-upload me-1"></i>Import
+        <i class="icon-base ti ti-cloud-upload me-1"></i>Import
       </button>
       <button type="button" class="btn btn-outline-secondary">
-        <i class="icon-base ti tabler-download me-1"></i>Export CSV
+        <i class="icon-base ti ti-download me-1"></i>Export CSV
       </button>
       <button type="button" class="btn btn-label-primary" id="addUserBtn">
-        <i class="icon-base ti tabler-plus me-1"></i>Add User
+        <i class="icon-base ti ti-plus me-1"></i>Add User
       </button>
     </div>
   </div>
@@ -32,11 +34,13 @@
         <div class="card-body d-flex align-items-start justify-content-between">
           <div>
             <p class="text-muted mb-1">Total users</p>
-            <h4 class="mb-1">248</h4>
-            <small class="text-success">+12 this week</small>
+            <h4 class="mb-1"><%= totalUsers %></h4>
+            <small class="text-success">Active system</small>
           </div>
           <div class="avatar avatar-sm bg-label-primary">
-            <span class="avatar-initial rounded"><i class="icon-base ti tabler-users"></i></span>
+            <span class="avatar-initial rounded"
+              ><i class="icon-base ti ti-users"></i
+            ></span>
           </div>
         </div>
       </div>
@@ -45,12 +49,14 @@
       <div class="card h-100">
         <div class="card-body d-flex align-items-start justify-content-between">
           <div>
-            <p class="text-muted mb-1">Active</p>
-            <h4 class="mb-1">214</h4>
-            <small class="text-success">92% health</small>
+            <p class="text-muted mb-1">Active Users</p>
+            <h4 class="mb-1"><%= users.filter(u => u.is_active).length %></h4>
+            <small class="text-success">Online</small>
           </div>
           <div class="avatar avatar-sm bg-label-success">
-            <span class="avatar-initial rounded"><i class="icon-base ti tabler-activity"></i></span>
+            <span class="avatar-initial rounded"
+              ><i class="icon-base ti ti-activity"></i
+            ></span>
           </div>
         </div>
       </div>
@@ -59,12 +65,14 @@
       <div class="card h-100">
         <div class="card-body d-flex align-items-start justify-content-between">
           <div>
-            <p class="text-muted mb-1">Pending invites</p>
-            <h4 class="mb-1">18</h4>
-            <small class="text-warning">Follow-ups needed</small>
+            <p class="text-muted mb-1">Roles</p>
+            <h4 class="mb-1"><%= roles.length %></h4>
+            <small class="text-info">Available</small>
           </div>
           <div class="avatar avatar-sm bg-label-warning">
-            <span class="avatar-initial rounded"><i class="icon-base ti tabler-mail"></i></span>
+            <span class="avatar-initial rounded"
+              ><i class="icon-base ti ti-shield"></i
+            ></span>
           </div>
         </div>
       </div>
@@ -74,87 +82,85 @@
         <div class="card-body d-flex align-items-start justify-content-between">
           <div>
             <p class="text-muted mb-1">Admins</p>
-            <h4 class="mb-1">12</h4>
-            <small class="text-danger">Review access quarterly</small>
+            <h4 class="mb-1">
+              <%= users.filter(u => u.roles.some(r => r.slug ===
+              'admin')).length %>
+            </h4>
+            <small class="text-danger">Privileged access</small>
           </div>
           <div class="avatar avatar-sm bg-label-danger">
-            <span class="avatar-initial rounded"><i class="icon-base ti tabler-shield"></i></span>
+            <span class="avatar-initial rounded"
+              ><i class="icon-base ti ti-shield-check"></i
+            ></span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Filters + bulk actions -->
+  <!-- Filters -->
   <div class="card mb-4">
     <div class="card-body">
       <div class="row gy-3 align-items-center">
         <div class="col-lg-4">
           <label class="form-label mb-1">Quick search</label>
           <div class="input-group input-group-merge">
-            <span class="input-group-text"><i class="icon-base ti tabler-search"></i></span>
-            <input type="text" class="form-control" id="searchUserInput" placeholder="Search name, email, role" />
+            <span class="input-group-text"
+              ><i class="icon-base ti ti-search"></i
+            ></span>
+            <input
+              type="text"
+              class="form-control"
+              id="searchUserInput"
+              placeholder="Search name, email, role"
+            />
           </div>
         </div>
         <div class="col-sm-6 col-lg-2">
           <label class="form-label mb-1">Role</label>
           <select class="form-select" id="roleFilter">
             <option value="">All roles</option>
-            <option value="Administrator">Administrator</option>
-            <option value="Manager">Manager</option>
-            <option value="User">User</option>
-            <option value="Support">Support</option>
-            <option value="Restricted">Restricted</option>
+            <% roles.forEach(role => { %>
+            <option value="<%= role.slug %>"><%= role.name %></option>
+            <% }); %>
           </select>
         </div>
         <div class="col-sm-6 col-lg-2">
           <label class="form-label mb-1">Status</label>
           <select class="form-select" id="statusFilter">
             <option value="">Any status</option>
-            <option value="Active">Active</option>
-            <option value="Inactive">Inactive</option>
-            <option value="Pending">Pending</option>
+            <option value="true">Active</option>
+            <option value="false">Inactive</option>
           </select>
         </div>
-        <div class="col-sm-6 col-lg-2">
-          <label class="form-label mb-1">Department</label>
-          <select class="form-select" id="departmentFilter">
-            <option value="">All</option>
-            <option value="IT">IT</option>
-            <option value="Finance">Finance</option>
-            <option value="Operations">Operations</option>
-            <option value="Marketing">Marketing</option>
-            <option value="HR">HR</option>
-          </select>
-        </div>
-        <div class="col-sm-6 col-lg-2 d-flex align-items-end justify-content-lg-end gap-2">
-          <button type="button" class="btn btn-outline-secondary" id="resetFiltersBtn">
-            <i class="icon-base ti tabler-rotate-clockwise"></i>
-          </button>
-          <button type="button" class="btn btn-outline-primary" id="advancedFiltersBtn">
-            <i class="icon-base ti tabler-adjustments-horizontal me-1"></i>Advanced
+        <div
+          class="col-sm-6 col-lg-2 d-flex align-items-end justify-content-lg-end gap-2"
+        >
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            id="resetFiltersBtn"
+          >
+            <i class="icon-base ti ti-rotate-clockwise"></i>
           </button>
         </div>
       </div>
-      <hr class="my-4">
-      <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+      <hr class="my-4" />
+      <div
+        class="d-flex flex-wrap align-items-center justify-content-between gap-2"
+      >
         <div class="d-flex flex-wrap align-items-center gap-2">
-          <button type="button" class="btn btn-primary" id="assignRoleBtn" disabled>
-            <i class="icon-base ti tabler-user-check me-1"></i>Assign role
+          <button
+            type="button"
+            class="btn btn-primary"
+            id="assignRoleBtn"
+            disabled
+          >
+            <i class="icon-base ti ti-user-check me-1"></i>Assign role
           </button>
-          <button type="button" class="btn btn-label-primary" id="manageRolesBtn" disabled>
-            <i class="icon-base ti tabler-shield me-1"></i>Manage permissions
-          </button>
-          <span class="badge bg-label-secondary" id="selectedCount">0 selected</span>
-        </div>
-        <div class="d-flex align-items-center gap-3">
-          <div class="form-check form-switch mb-0">
-            <input class="form-check-input" type="checkbox" id="flaggedOnlyToggle">
-            <label class="form-check-label" for="flaggedOnlyToggle">Flagged only</label>
-          </div>
-          <button type="button" class="btn btn-sm btn-outline-secondary">
-            <i class="icon-base ti tabler-alert-triangle me-1"></i>Security review
-          </button>
+          <span class="badge bg-label-secondary" id="selectedCount"
+            >0 selected</span
+          >
         </div>
       </div>
     </div>
@@ -167,9 +173,6 @@
         <p class="text-muted mb-1">Roles overview</p>
         <h5 class="mb-0">Roles & Permissions</h5>
       </div>
-      <button type="button" class="btn btn-sm btn-label-primary" id="viewRolesBtn">
-        <i class="icon-base ti tabler-eye me-1"></i>View matrix
-      </button>
     </div>
     <div class="card-body">
       <div class="table-responsive">
@@ -177,157 +180,62 @@
           <thead>
             <tr>
               <th>Role</th>
-              <th>Key permissions</th>
-              <th width="180">Usage</th>
+              <th>Description</th>
+              <th width="180">Users</th>
               <th class="text-end">Actions</th>
             </tr>
           </thead>
           <tbody>
+            <% roles.forEach(role => { const userCount = users.filter(u =>
+            u.roles.some(r => r.id === role.id)).length; let badgeClass =
+            'bg-label-secondary'; if (role.slug === 'admin') badgeClass =
+            'bg-label-primary'; else if (role.slug === 'risk_manager')
+            badgeClass = 'bg-label-warning'; else if (role.slug === 'staff')
+            badgeClass = 'bg-label-success'; %>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-label-primary">Administrator</span>
-                  <small class="text-muted">Full platform access</small>
+                  <span class="badge <%= badgeClass %>"><%= role.name %></span>
                 </div>
               </td>
               <td>
-                <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-label-info">Billing</span>
-                  <span class="badge bg-label-info">User lifecycle</span>
-                  <span class="badge bg-label-info">Audit logs</span>
-                  <span class="badge bg-label-info">All reports</span>
-                </div>
+                <small class="text-muted"><%= role.description %></small>
               </td>
               <td>
                 <div class="d-flex align-items-center justify-content-between">
-                  <small class="text-muted">12 users</small>
-                  <span class="badge bg-label-success">Healthy</span>
+                  <small class="text-muted"><%= userCount %> users</small>
+                  <span
+                    class="badge <%= userCount > 0 ? 'bg-label-success' : 'bg-label-secondary' %>"
+                  >
+                    <%= userCount > 0 ? 'Active' : 'Unused' %>
+                  </span>
                 </div>
               </td>
               <td class="text-end">
-                <button class="btn btn-sm btn-label-primary edit-role-permissions" data-role="Administrator">
-                  <i class="icon-base ti tabler-pencil me-1"></i>Edit
+                <button
+                  class="btn btn-sm btn-label-primary view-role-permissions"
+                  data-role-id="<%= role.id %>"
+                  data-role-name="<%= role.name %>"
+                >
+                  <i class="icon-base ti ti-eye me-1"></i>View
                 </button>
               </td>
             </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-label-warning text-dark">Manager</span>
-                  <small class="text-muted">Project & finance</small>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-label-info">Finance</span>
-                  <span class="badge bg-label-info">Project plans</span>
-                  <span class="badge bg-label-info">Team reviews</span>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center justify-content-between">
-                  <small class="text-muted">32 users</small>
-                  <span class="badge bg-label-primary">Growing</span>
-                </div>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-label-primary edit-role-permissions" data-role="Manager">
-                  <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-label-success">User</span>
-                  <small class="text-muted">Standard usage</small>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-label-info">Tasks</span>
-                  <span class="badge bg-label-info">Email</span>
-                  <span class="badge bg-label-info">Project view</span>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center justify-content-between">
-                  <small class="text-muted">148 users</small>
-                  <span class="badge bg-label-secondary">Default</span>
-                </div>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-label-primary edit-role-permissions" data-role="User">
-                  <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-label-info">Support</span>
-                  <small class="text-muted">Customer support</small>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-label-info">Tickets</span>
-                  <span class="badge bg-label-info">Tasks</span>
-                  <span class="badge bg-label-info">Email</span>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center justify-content-between">
-                  <small class="text-muted">22 users</small>
-                  <span class="badge bg-label-info">Stable</span>
-                </div>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-label-primary edit-role-permissions" data-role="Support">
-                  <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                </button>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="badge bg-label-danger">Restricted</span>
-                  <small class="text-muted">View only</small>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex flex-wrap gap-1">
-                  <span class="badge bg-label-info">Read only</span>
-                  <span class="badge bg-label-info">Limited assets</span>
-                </div>
-              </td>
-              <td>
-                <div class="d-flex align-items-center justify-content-between">
-                  <small class="text-muted">34 users</small>
-                  <span class="badge bg-label-warning">Review</span>
-                </div>
-              </td>
-              <td class="text-end">
-                <button class="btn btn-sm btn-label-primary edit-role-permissions" data-role="Restricted">
-                  <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                </button>
-              </td>
-            </tr>
+            <% }); %>
           </tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- Users -->
+  <!-- Users Table -->
   <div class="card">
-    <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div
+      class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2"
+    >
       <div>
-        <p class="text-muted mb-1">People directory</p>
-        <h5 class="mb-0">Users table</h5>
-      </div>
-      <div class="badge bg-label-info">
-        <i class="icon-base ti tabler-info-circle me-1"></i>Inline actions update UI only
+        <p class="text-muted mb-1">User directory</p>
+        <h5 class="mb-0">Users</h5>
       </div>
     </div>
     <div class="table-responsive text-nowrap">
@@ -335,305 +243,241 @@
         <thead class="table-light">
           <tr>
             <th width="48">
-              <input type="checkbox" class="form-check-input" id="selectAll">
+              <input type="checkbox" class="form-check-input" id="selectAll" />
             </th>
             <th>ID</th>
-            <th>Full Name</th>
+            <th>Name</th>
             <th>Email</th>
-            <th>Role</th>
-            <th>Department</th>
+            <th>Role(s)</th>
+            <th>Branches</th>
             <th>Status</th>
             <th class="text-end">Actions</th>
           </tr>
         </thead>
         <tbody class="table-border-bottom-0">
-          <tr data-id="1" data-name="John Doe" data-email="john.doe@example.com" data-role="Administrator" data-department="IT" data-status="Active">
+          <% users.forEach(user => { %>
+          <tr
+            data-id="<%= user.id %>"
+            data-name="<%= user.name %>"
+            data-email="<%= user.email %>"
+            data-status="<%= user.is_active %>"
+            data-roles="<%= user.roles.map(r => r.slug).join(',') %>"
+          >
             <td>
-              <input type="checkbox" class="form-check-input user-checkbox" value="1">
+              <input
+                type="checkbox"
+                class="form-check-input user-checkbox"
+                value="<%= user.id %>"
+              />
             </td>
-            <td><span class="fw-medium">1</span></td>
-            <td data-field="name">
+            <td><span class="fw-medium"><%= user.id %></span></td>
+            <td>
               <div class="d-flex align-items-center">
                 <div class="avatar avatar-sm me-2">
-                  <span class="avatar-initial rounded-circle bg-label-primary">JD</span>
+                  <span class="avatar-initial rounded-circle bg-label-primary">
+                    <%= user.name.split(' ').map(n =>
+                    n[0]).join('').toUpperCase().slice(0, 2) %>
+                  </span>
                 </div>
                 <div>
-                  <span class="fw-medium">John Doe</span>
-                  <div class="text-muted small">Last active 2m ago</div>
+                  <span class="fw-medium"><%= user.name %></span>
                 </div>
               </div>
             </td>
-            <td data-field="email">john.doe@example.com</td>
-            <td data-field="role"><span class="badge bg-label-primary">Administrator</span></td>
-            <td data-field="department">IT</td>
-            <td data-field="status">
-              <span class="badge bg-label-success">Active</span>
+            <td><%= user.email %></td>
+            <td>
+              <div class="d-flex flex-wrap gap-1">
+                <% if (user.roles.length > 0) { %> <% user.roles.forEach(role =>
+                { %>
+                <span class="badge bg-label-info"><%= role.name %></span>
+                <% }); %> <% } else { %>
+                <span class="badge bg-label-secondary">No role</span>
+                <% } %>
+              </div>
+            </td>
+            <td>
+              <% if (user.branches.length > 0) { %>
+              <span class="badge bg-label-success"
+                ><%= user.branches.length %> branch(es)</span
+              >
+              <% } else { %>
+              <span class="badge bg-label-secondary">None</span>
+              <% } %>
+            </td>
+            <td>
+              <span
+                class="badge <%= user.is_active ? 'bg-label-success' : 'bg-label-danger' %>"
+              >
+                <%= user.is_active ? 'Active' : 'Inactive' %>
+              </span>
             </td>
             <td class="text-end">
               <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
+                <button
+                  type="button"
+                  class="btn p-0 dropdown-toggle hide-arrow"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="icon-base ti ti-dots-vertical"></i>
                 </button>
                 <div class="dropdown-menu">
-                  <a class="dropdown-item edit-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-pencil me-1"></i>Edit
+                  <a
+                    class="dropdown-item edit-user"
+                    href="javascript:void(0);"
+                    data-user="<%= JSON.stringify(user) %>"
+                  >
+                    <i class="icon-base ti ti-pencil me-1"></i>Edit
                   </a>
-                  <a class="dropdown-item delete-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-trash me-1"></i>Archive
+                  <a
+                    class="dropdown-item delete-user"
+                    href="javascript:void(0);"
+                    data-user-id="<%= user.id %>"
+                    data-user-name="<%= user.name %>"
+                  >
+                    <i class="icon-base ti ti-trash me-1"></i>Delete
                   </a>
                 </div>
               </div>
             </td>
           </tr>
-          <tr data-id="2" data-name="Jane Smith" data-email="jane.smith@example.com" data-role="Manager" data-department="Finance" data-status="Active">
-            <td>
-              <input type="checkbox" class="form-check-input user-checkbox" value="2">
-            </td>
-            <td><span class="fw-medium">2</span></td>
-            <td data-field="name">
-              <div class="d-flex align-items-center">
-                <div class="avatar avatar-sm me-2">
-                  <span class="avatar-initial rounded-circle bg-label-success">JS</span>
-                </div>
-                <div>
-                  <span class="fw-medium">Jane Smith</span>
-                  <div class="text-muted small">Manager, Finance</div>
-                </div>
-              </div>
-            </td>
-            <td data-field="email">jane.smith@example.com</td>
-            <td data-field="role"><span class="badge bg-label-warning text-dark">Manager</span></td>
-            <td data-field="department">Finance</td>
-            <td data-field="status">
-              <span class="badge bg-label-success">Active</span>
-            </td>
-            <td class="text-end">
-              <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item edit-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                  </a>
-                  <a class="dropdown-item delete-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-trash me-1"></i>Archive
-                  </a>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr data-id="3" data-name="Robert Brown" data-email="robert.brown@example.com" data-role="User" data-department="Operations" data-status="Active">
-            <td>
-              <input type="checkbox" class="form-check-input user-checkbox" value="3">
-            </td>
-            <td><span class="fw-medium">3</span></td>
-            <td data-field="name">
-              <div class="d-flex align-items-center">
-                <div class="avatar avatar-sm me-2">
-                  <span class="avatar-initial rounded-circle bg-label-info">RB</span>
-                </div>
-                <div>
-                  <span class="fw-medium">Robert Brown</span>
-                  <div class="text-muted small">Ops specialist</div>
-                </div>
-              </div>
-            </td>
-            <td data-field="email">robert.brown@example.com</td>
-            <td data-field="role"><span class="badge bg-label-success">User</span></td>
-            <td data-field="department">Operations</td>
-            <td data-field="status">
-              <span class="badge bg-label-success">Active</span>
-            </td>
-            <td class="text-end">
-              <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item edit-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                  </a>
-                  <a class="dropdown-item delete-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-trash me-1"></i>Archive
-                  </a>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="table-warning" data-id="4" data-name="Emily Wilson" data-email="emily.wilson@example.com" data-role="Support" data-department="HR" data-status="Pending">
-            <td>
-              <input type="checkbox" class="form-check-input user-checkbox" value="4">
-            </td>
-            <td><span class="fw-medium">4</span></td>
-            <td data-field="name">
-              <div class="d-flex align-items-center">
-                <div class="avatar avatar-sm me-2">
-                  <span class="avatar-initial rounded-circle bg-label-warning">EW</span>
-                </div>
-                <div>
-                  <span class="fw-medium">Emily Wilson</span>
-                  <div class="text-muted small">Awaiting activation</div>
-                </div>
-              </div>
-            </td>
-            <td data-field="email">emily.wilson@example.com</td>
-            <td data-field="role"><span class="badge bg-label-info">Support</span></td>
-            <td data-field="department">HR</td>
-            <td data-field="status">
-              <span class="badge bg-label-warning text-dark">Pending</span>
-            </td>
-            <td class="text-end">
-              <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item edit-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                  </a>
-                  <a class="dropdown-item delete-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-trash me-1"></i>Archive
-                  </a>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr data-id="5" data-name="Michael Johnson" data-email="michael.johnson@example.com" data-role="Restricted" data-department="Marketing" data-status="Active">
-            <td>
-              <input type="checkbox" class="form-check-input user-checkbox" value="5">
-            </td>
-            <td><span class="fw-medium">5</span></td>
-            <td data-field="name">
-              <div class="d-flex align-items-center">
-                <div class="avatar avatar-sm me-2">
-                  <span class="avatar-initial rounded-circle bg-label-danger">MJ</span>
-                </div>
-                <div>
-                  <span class="fw-medium">Michael Johnson</span>
-                  <div class="text-muted small">Limited scope</div>
-                </div>
-              </div>
-            </td>
-            <td data-field="email">michael.johnson@example.com</td>
-            <td data-field="role"><span class="badge bg-label-danger">Restricted</span></td>
-            <td data-field="department">Marketing</td>
-            <td data-field="status">
-              <span class="badge bg-label-success">Active</span>
-            </td>
-            <td class="text-end">
-              <div class="dropdown">
-                <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                  <i class="icon-base ti tabler-dots-vertical"></i>
-                </button>
-                <div class="dropdown-menu">
-                  <a class="dropdown-item edit-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-pencil me-1"></i>Edit
-                  </a>
-                  <a class="dropdown-item delete-user" href="javascript:void(0);">
-                    <i class="icon-base ti tabler-trash me-1"></i>Archive
-                  </a>
-                </div>
-              </div>
-            </td>
-          </tr>
+          <% }); %>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- User modal -->
+  <!-- User Modal -->
   <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <form class="modal-content" id="userForm">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="icon-base ti tabler-user-plus me-2"></i>User</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">
+            <i class="icon-base ti ti-user-plus me-2"></i>
+            <span id="modalTitle">Add User</span>
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
+          <input type="hidden" name="userId" id="userId" />
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">Full name</label>
-              <input type="text" class="form-control" name="fullName" required>
+              <label class="form-label"
+                >Full name <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="name"
+                id="userName"
+                required
+              />
             </div>
             <div class="col-md-6">
-              <label class="form-label">Email</label>
-              <input type="email" class="form-control" name="email" required>
+              <label class="form-label"
+                >Email <span class="text-danger">*</span></label
+              >
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                id="userEmail"
+                required
+              />
             </div>
-            <div class="col-md-4">
-              <label class="form-label">Role</label>
-              <select class="form-select" name="role">
-                <option>Administrator</option>
-                <option>Manager</option>
-                <option>User</option>
-                <option>Support</option>
-                <option>Restricted</option>
+            <div class="col-md-6">
+              <label class="form-label"
+                >Password
+                <span class="text-danger" id="passwordRequired">*</span></label
+              >
+              <input
+                type="password"
+                class="form-control"
+                name="password"
+                id="userPassword"
+              />
+              <small class="text-muted"
+                >Leave blank to keep current password</small
+              >
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"
+                >Role <span class="text-danger">*</span></label
+              >
+              <select class="form-select" name="role_id" id="userRole" required>
+                <option value="">Select role</option>
+                <% roles.forEach(role => { %>
+                <option value="<%= role.id %>"><%= role.name %></option>
+                <% }); %>
               </select>
             </div>
-            <div class="col-md-4">
-              <label class="form-label">Department</label>
-              <input type="text" class="form-control" name="department" placeholder="e.g. Finance" required>
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
               <label class="form-label">Status</label>
-              <select class="form-select" name="status">
-                <option>Active</option>
-                <option>Inactive</option>
-                <option>Pending</option>
+              <select class="form-select" name="is_active" id="userStatus">
+                <option value="true">Active</option>
+                <option value="false">Inactive</option>
               </select>
-            </div>
-            <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea class="form-control" name="notes" rows="2" placeholder="Access scope, onboarding steps, etc."></textarea>
-            </div>
-            <div class="col-12">
-              <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" name="twoFactor" id="twoFactorToggle">
-                <label class="form-check-label" for="twoFactorToggle">Require 2FA</label>
-              </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary">
+            <span
+              class="spinner-border spinner-border-sm d-none me-2"
+              id="submitSpinner"
+            ></span>
+            Save User
+          </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Role modal -->
+  <!-- Role Permissions Modal -->
   <div class="modal fade" id="roleModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="icon-base ti tabler-shield me-2"></i>Role permissions</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          <h5 class="modal-title">
+            <i class="icon-base ti ti-shield me-2"></i>
+            <span id="roleModalTitle">Role Permissions</span>
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
         </div>
         <div class="modal-body">
-          <p class="text-muted mb-3">This is a lightweight overview. Wire the buttons to your backend to persist updates.</p>
-          <ul class="list-group list-group-flush" id="roleDetailsList">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Billing & subscriptions
-              <span class="badge bg-label-success">Allowed</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              User lifecycle
-              <span class="badge bg-label-success">Allowed</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Audit trail
-              <span class="badge bg-label-info">View only</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Projects & tasks
-              <span class="badge bg-label-info">Scoped</span>
-            </li>
-          </ul>
+          <div id="rolePermissionsContent">
+            <div class="text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
+              <p class="mt-2 text-muted">Loading permissions...</p>
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            Close
+          </button>
         </div>
       </div>
     </div>
@@ -641,12 +485,18 @@
 
   <!-- Toast -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="feedbackToast" class="toast align-items-center text-bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div
+      id="feedbackToast"
+      class="toast align-items-center border-0"
+      role="alert"
+    >
       <div class="d-flex">
-        <div class="toast-body">
-          Action completed. Connect to backend to persist changes.
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div class="toast-body"></div>
+        <button
+          type="button"
+          class="btn-close me-2 m-auto"
+          data-bs-dismiss="toast"
+        ></button>
       </div>
     </div>
   </div>
@@ -655,10 +505,11 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     const selectAll = document.getElementById("selectAll");
-    const userCheckboxes = Array.from(document.querySelectorAll(".user-checkbox"));
+    const userCheckboxes = Array.from(
+      document.querySelectorAll(".user-checkbox")
+    );
     const selectedCount = document.getElementById("selectedCount");
     const assignRoleBtn = document.getElementById("assignRoleBtn");
-    const manageRolesBtn = document.getElementById("manageRolesBtn");
     const addUserBtn = document.getElementById("addUserBtn");
     const userForm = document.getElementById("userForm");
     const userModalEl = document.getElementById("userModal");
@@ -666,20 +517,18 @@
     const searchInput = document.getElementById("searchUserInput");
     const roleFilter = document.getElementById("roleFilter");
     const statusFilter = document.getElementById("statusFilter");
-    const departmentFilter = document.getElementById("departmentFilter");
     const resetFiltersBtn = document.getElementById("resetFiltersBtn");
-    const flaggedOnlyToggle = document.getElementById("flaggedOnlyToggle");
     const rows = Array.from(document.querySelectorAll("#usersTable tbody tr"));
     const toastEl = document.getElementById("feedbackToast");
 
     const userModal = userModalEl ? new bootstrap.Modal(userModalEl) : null;
     const roleModal = roleModalEl ? new bootstrap.Modal(roleModalEl) : null;
 
+    // Selection management
     const updateSelectionState = () => {
       const checked = userCheckboxes.filter((cb) => cb.checked).length;
       selectedCount.textContent = `${checked} selected`;
       assignRoleBtn.disabled = checked === 0;
-      manageRolesBtn.disabled = checked === 0;
       selectAll.checked = checked > 0 && checked === userCheckboxes.length;
       selectAll.indeterminate = checked > 0 && checked < userCheckboxes.length;
     };
@@ -691,73 +540,228 @@
       updateSelectionState();
     });
 
-    userCheckboxes.forEach((cb) => cb.addEventListener("change", updateSelectionState));
+    userCheckboxes.forEach((cb) =>
+      cb.addEventListener("change", updateSelectionState)
+    );
     updateSelectionState();
 
-    const showToast = (message) => {
+    // Toast notification
+    const showToast = (message, type = "success") => {
       if (!toastEl) return;
-      toastEl.querySelector(".toast-body").textContent = message;
+      const toastBody = toastEl.querySelector(".toast-body");
+      toastBody.textContent = message;
+      toastEl.className = `toast align-items-center border-0 text-bg-${type}`;
       const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
       toast.show();
     };
 
+    // Add user button
     addUserBtn?.addEventListener("click", () => {
       if (!userModal) return;
       userForm.reset();
+      document.getElementById("userId").value = "";
+      document.getElementById("modalTitle").textContent = "Add User";
+      document.getElementById("passwordRequired").classList.remove("d-none");
+      document.getElementById("userPassword").required = true;
       userModal.show();
     });
 
+    // Edit user
     document.querySelectorAll(".edit-user").forEach((btn) => {
       btn.addEventListener("click", (event) => {
         if (!userModal) return;
-        const row = event.target.closest("tr");
-        userForm.fullName.value = row.dataset.name || "";
-        userForm.email.value = row.dataset.email || "";
-        userForm.role.value = row.dataset.role || "User";
-        userForm.department.value = row.dataset.department || "";
-        userForm.status.value = row.dataset.status || "Active";
-        userModal.show();
+        try {
+          const userData = JSON.parse(event.currentTarget.dataset.user);
+          document.getElementById("userId").value = userData.id;
+          document.getElementById("userName").value = userData.name;
+          document.getElementById("userEmail").value = userData.email;
+          document.getElementById("userStatus").value =
+            userData.is_active.toString();
+          document.getElementById("modalTitle").textContent = "Edit User";
+          document.getElementById("passwordRequired").classList.add("d-none");
+          document.getElementById("userPassword").required = false;
+
+          if (userData.roles && userData.roles.length > 0) {
+            document.getElementById("userRole").value = userData.roles[0].id;
+          }
+
+          userModal.show();
+        } catch (error) {
+          console.error("Error parsing user data:", error);
+          showToast("Error loading user data", "danger");
+        }
       });
     });
 
+    // Delete user
     document.querySelectorAll(".delete-user").forEach((btn) => {
-      btn.addEventListener("click", () => showToast("Archived locally. Hook up API to persist."));
-    });
+      btn.addEventListener("click", async (event) => {
+        const userId = event.currentTarget.dataset.userId;
+        const userName = event.currentTarget.dataset.userName;
 
-    document.querySelectorAll(".edit-role-permissions").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        if (!roleModal) return;
-        roleModal.show();
+        if (!confirm(`Are you sure you want to delete user "${userName}"?`)) {
+          return;
+        }
+
+        try {
+          const response = await fetch(`/api/users/${userId}`, {
+            method: "DELETE",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            showToast("User deleted successfully", "success");
+            setTimeout(() => window.location.reload(), 1500);
+          } else {
+            showToast(data.message || "Failed to delete user", "danger");
+          }
+        } catch (error) {
+          console.error("Error deleting user:", error);
+          showToast("Error deleting user", "danger");
+        }
       });
     });
 
-    userForm?.addEventListener("submit", (e) => {
-      e.preventDefault();
-      userModal?.hide();
-      showToast("Saved locally. Wire this form to your backend to persist.");
+    // View role permissions
+    document.querySelectorAll(".view-role-permissions").forEach((btn) => {
+      btn.addEventListener("click", async (event) => {
+        if (!roleModal) return;
+        const roleId = event.currentTarget.dataset.roleId;
+        const roleName = event.currentTarget.dataset.roleName;
+
+        document.getElementById(
+          "roleModalTitle"
+        ).textContent = `${roleName} - Permissions`;
+        roleModal.show();
+
+        try {
+          const response = await fetch(`/api/roles/${roleId}/permissions`);
+          const data = await response.json();
+
+          const content = document.getElementById("rolePermissionsContent");
+
+          if (data.success && data.data && data.data.length > 0) {
+            // Group permissions by category
+            const grouped = data.data.reduce((acc, perm) => {
+              if (!acc[perm.category]) {
+                acc[perm.category] = [];
+              }
+              acc[perm.category].push(perm);
+              return acc;
+            }, {});
+
+            let html = "";
+            Object.keys(grouped).forEach((category) => {
+              html += `
+              <div class="mb-4">
+                <h6 class="text-uppercase text-muted mb-3">${category}</h6>
+                <ul class="list-group list-group-flush">
+            `;
+              grouped[category].forEach((perm) => {
+                html += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                  <div>
+                    <strong>${perm.name}</strong>
+                    <div class="text-muted small">${perm.description}</div>
+                  </div>
+                  <span class="badge bg-label-success">Granted</span>
+                </li>
+              `;
+              });
+              html += `</ul></div>`;
+            });
+            content.innerHTML = html;
+          } else {
+            content.innerHTML =
+              '<div class="alert alert-info">No permissions assigned to this role.</div>';
+          }
+        } catch (error) {
+          console.error("Error fetching permissions:", error);
+          document.getElementById("rolePermissionsContent").innerHTML =
+            '<div class="alert alert-danger">Error loading permissions</div>';
+        }
+      });
     });
 
+    // Submit user form
+    userForm?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const spinner = document.getElementById("submitSpinner");
+
+      submitBtn.disabled = true;
+      spinner.classList.remove("d-none");
+
+      const userId = document.getElementById("userId").value;
+      const formData = {
+        name: document.getElementById("userName").value,
+        email: document.getElementById("userEmail").value,
+        role_id: document.getElementById("userRole").value,
+        is_active: document.getElementById("userStatus").value === "true",
+      };
+
+      const password = document.getElementById("userPassword").value;
+      if (password) {
+        formData.password = password;
+        formData.password_confirmation = password;
+      }
+
+      try {
+        const url = userId ? `/api/users/${userId}` : "/api/users";
+        const method = userId ? "PUT" : "POST";
+
+        const response = await fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          userModal?.hide();
+          showToast(
+            userId ? "User updated successfully" : "User created successfully",
+            "success"
+          );
+          setTimeout(() => window.location.reload(), 1500);
+        } else {
+          showToast(data.message || "Failed to save user", "danger");
+        }
+      } catch (error) {
+        console.error("Error saving user:", error);
+        showToast("Error saving user", "danger");
+      } finally {
+        submitBtn.disabled = false;
+        spinner.classList.add("d-none");
+      }
+    });
+
+    // Filters
     const applyFilters = () => {
       const searchTerm = searchInput.value.toLowerCase();
       const role = roleFilter.value;
       const status = statusFilter.value;
-      const department = departmentFilter.value;
-      const flagged = flaggedOnlyToggle.checked;
 
       rows.forEach((row) => {
         const matchSearch =
           row.dataset.name.toLowerCase().includes(searchTerm) ||
-          row.dataset.email.toLowerCase().includes(searchTerm) ||
-          row.dataset.role.toLowerCase().includes(searchTerm);
-        const matchRole = !role || row.dataset.role === role;
+          row.dataset.email.toLowerCase().includes(searchTerm);
+        const matchRole = !role || row.dataset.roles.includes(role);
         const matchStatus = !status || row.dataset.status === status;
-        const matchDepartment = !department || row.dataset.department === department;
-        const matchFlagged = !flagged || row.classList.contains("table-warning");
-        row.style.display = matchSearch && matchRole && matchStatus && matchDepartment && matchFlagged ? "" : "none";
+
+        row.style.display =
+          matchSearch && matchRole && matchStatus ? "" : "none";
       });
     };
 
-    [searchInput, roleFilter, statusFilter, departmentFilter, flaggedOnlyToggle].forEach((el) =>
+    [searchInput, roleFilter, statusFilter].forEach((el) =>
       el?.addEventListener("input", applyFilters)
     );
 
@@ -765,8 +769,6 @@
       searchInput.value = "";
       roleFilter.value = "";
       statusFilter.value = "";
-      departmentFilter.value = "";
-      flaggedOnlyToggle.checked = false;
       applyFilters();
     });
 

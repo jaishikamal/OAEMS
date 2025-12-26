@@ -16,6 +16,7 @@ const Branches = require("../Controllers/Branches");
 const Approve_Type = require("../Controllers/Approve_Type");
 
 
+
 // All Router Here:-
 userRouter.get("/", authController.login);
 userRouter.post("/login", authController.postLogin);
@@ -31,4 +32,14 @@ userRouter.get("/userManagement",User_Management.userManagement);
 userRouter.get("/setting",Setting.setting);
 userRouter.get("/branches", Branches.branches);
 userRouter.get("/approve_type", Approve_Type.approve_type);
+
+// Page route
+// userRouter.get('/user-management', userController.userManagement);
+
+// API routes
+userRouter.post('/api/users', User_Management.createUser);
+userRouter.put('/api/users/:id', User_Management.updateUser);
+userRouter.delete('/api/users/:id', User_Management.deleteUser);
+userRouter.post('/api/users/:userId/roles', User_Management.assignRole);
+userRouter.get('/api/roles/:roleId/permissions', User_Management.getRolePermissions);
 module.exports = userRouter;
