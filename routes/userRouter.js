@@ -19,6 +19,7 @@ const Approve_Type = require("../Controllers/Approve_Type");
 // All Router Here:-
 userRouter.get("/", authController.login);
 userRouter.post("/login", authController.postLogin);
+userRouter.post("/logout", authController.logout);
 userRouter.get("/dashboard", dashboardController.dashboard);
 userRouter.get("/approval", Approval.approval);
 userRouter.get("/expenses", Expenses.expenses);

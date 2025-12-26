@@ -3,6 +3,10 @@ const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const userRouter = require("./routes/userRouter");
+const session = require("express-session");
+
+
+
 
 // Initialize the app
 const app = express();
@@ -17,6 +21,13 @@ app.set("layout", "main"); // This points to views/main.ejs
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json()); 
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: "secret-key",
+    resave: false,
+    saveUninitialized: true,
+  })
+);
 app.use("/", userRouter);
 
 app.listen(3001, () => {
