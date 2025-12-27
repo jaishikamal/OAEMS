@@ -1185,3 +1185,125 @@
     });
   });
 </script>
+<!-- End User Management -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const selectAll = document.getElementById("selectAll");
+    const userCheckboxes = Array.from(document.querySelectorAll(".user-checkbox"));
+    const selectedCount = document.getElementById("selectedCount");
+    const assignRoleBtn = document.getElementById("assignRoleBtn");
+    const manageRolesBtn = document.getElementById("manageRolesBtn");
+    const addUserBtn = document.getElementById("addUserBtn");
+    const userForm = document.getElementById("userForm");
+    const userModalEl = document.getElementById("userModal");
+    const roleModalEl = document.getElementById("roleModal");
+    const searchInput = document.getElementById("searchUserInput");
+    const roleFilter = document.getElementById("roleFilter");
+    const statusFilter = document.getElementById("statusFilter");
+    const departmentFilter = document.getElementById("departmentFilter");
+    const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+    const flaggedOnlyToggle = document.getElementById("flaggedOnlyToggle");
+    const rows = Array.from(document.querySelectorAll("#usersTable tbody tr"));
+    const toastEl = document.getElementById("feedbackToast");
+
+    const userModal = userModalEl ? new bootstrap.Modal(userModalEl) : null;
+    const roleModal = roleModalEl ? new bootstrap.Modal(roleModalEl) : null;
+
+    const updateSelectionState = () => {
+      const checked = userCheckboxes.filter((cb) => cb.checked).length;
+      selectedCount.textContent = `${checked} selected`;
+      assignRoleBtn.disabled = checked === 0;
+      manageRolesBtn.disabled = checked === 0;
+      selectAll.checked = checked > 0 && checked === userCheckboxes.length;
+      selectAll.indeterminate = checked > 0 && checked < userCheckboxes.length;
+    };
+
+    selectAll?.addEventListener("change", (e) => {
+      userCheckboxes.forEach((cb) => {
+        cb.checked = e.target.checked;
+      });
+      updateSelectionState();
+    });
+
+    userCheckboxes.forEach((cb) => cb.addEventListener("change", updateSelectionState));
+    updateSelectionState();
+
+    const showToast = (message) => {
+      if (!toastEl) return;
+      toastEl.querySelector(".toast-body").textContent = message;
+      const toast = bootstrap.Toast.getOrCreateInstance(toastEl);
+      toast.show();
+    };
+
+    addUserBtn?.addEventListener("click", () => {
+      if (!userModal) return;
+      userForm.reset();
+      userModal.show();
+    });
+
+    document.querySelectorAll(".edit-user").forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        if (!userModal) return;
+        const row = event.target.closest("tr");
+        userForm.fullName.value = row.dataset.name || "";
+        userForm.email.value = row.dataset.email || "";
+        userForm.role.value = row.dataset.role || "User";
+        userForm.department.value = row.dataset.department || "";
+        userForm.status.value = row.dataset.status || "Active";
+        userModal.show();
+      });
+    });
+
+    document.querySelectorAll(".delete-user").forEach((btn) => {
+      btn.addEventListener("click", () => showToast("Archived locally. Hook up API to persist."));
+    });
+
+    document.querySelectorAll(".edit-role-permissions").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        if (!roleModal) return;
+        roleModal.show();
+      });
+    });
+
+    userForm?.addEventListener("submit", (e) => {
+      e.preventDefault();
+      userModal?.hide();
+      showToast("Saved locally. Wire this form to your backend to persist.");
+    });
+
+    const applyFilters = () => {
+      const searchTerm = searchInput.value.toLowerCase();
+      const role = roleFilter.value;
+      const status = statusFilter.value;
+      const department = departmentFilter.value;
+      const flagged = flaggedOnlyToggle.checked;
+
+      rows.forEach((row) => {
+        const matchSearch =
+          row.dataset.name.toLowerCase().includes(searchTerm) ||
+          row.dataset.email.toLowerCase().includes(searchTerm) ||
+          row.dataset.role.toLowerCase().includes(searchTerm);
+        const matchRole = !role || row.dataset.role === role;
+        const matchStatus = !status || row.dataset.status === status;
+        const matchDepartment = !department || row.dataset.department === department;
+        const matchFlagged = !flagged || row.classList.contains("table-warning");
+        row.style.display = matchSearch && matchRole && matchStatus && matchDepartment && matchFlagged ? "" : "none";
+      });
+    };
+
+    [searchInput, roleFilter, statusFilter, departmentFilter, flaggedOnlyToggle].forEach((el) =>
+      el?.addEventListener("input", applyFilters)
+    );
+
+    resetFiltersBtn?.addEventListener("click", () => {
+      searchInput.value = "";
+      roleFilter.value = "";
+      statusFilter.value = "";
+      departmentFilter.value = "";
+      flaggedOnlyToggle.checked = false;
+      applyFilters();
+    });
+
+    applyFilters();
+  });
+</script>
