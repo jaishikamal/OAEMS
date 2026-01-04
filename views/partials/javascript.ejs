@@ -832,19 +832,6 @@
         </div>
       `;
 
-      // Show Add User popup form using SweetAlert2
-      Swal.fire({
-        title: 'Add New User',
-        html: addUserFormHtml,
-        width: '600px',
-        showCancelButton: true,
-        confirmButtonText: 'Add User',
-        cancelButtonText: 'Cancel',
-        customClass: {
-          confirmButton: 'btn btn-primary',
-          cancelButton: 'btn btn-label-secondary',
-          popup: 'text-start'
-        },
         buttonsStyling: false,
         preConfirm: () => {
           const fullName = $('#addFullName').val().trim();
