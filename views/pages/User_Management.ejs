@@ -253,7 +253,7 @@
             </td>
             <td data-field="department">
               <% if (u.department_name && u.department_name.trim() !== '') { %>
-              <%= u.department_name %>  <% } else { %>
+              <%= u.department_name %> <% } else { %>
               <span class="text-muted">Not set</span>
               <% } %>
             </td>
@@ -443,7 +443,7 @@
           >
             Cancel
           </button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary" id="submitUserBtn">Save</button>
         </div>
       </form>
     </div>
@@ -495,6 +495,7 @@
       // State management
       let selectedUsers = new Set();
       let currentEditingUserId = null;
+      let isSubmitting = false; // FIXED: Add flag to prevent double submission
 
       // ============================================
       // HELPER FUNCTIONS
@@ -542,7 +543,7 @@
           const name = row.cells[2].textContent.toLowerCase();
           const email = row.cells[3].textContent.toLowerCase();
           const role = row.cells[4].textContent.trim();
-          const department = row.cells[5].textContent.trim(); // This gets the department_name from the cell
+          const department = row.cells[5].textContent.trim();
           const status = row.cells[7].textContent.trim();
 
           const matchesSearch =
@@ -626,7 +627,16 @@
 
       addUserBtn?.addEventListener("click", function () {
         currentEditingUserId = null;
+        isSubmitting = false; // FIXED: Reset flag
         userForm.reset();
+        
+        // FIXED: Reset submit button
+        const submitBtn = document.getElementById("submitUserBtn");
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Save";
+        }
+        
         document.querySelector("#userModal .modal-title").innerHTML =
           '<i class="icon-base ti tabler-user-plus me-2"></i>Add New User';
         userModal.show();
@@ -644,6 +654,7 @@
 
           if (row) {
             currentEditingUserId = userId;
+            isSubmitting = false; // FIXED: Reset flag
 
             // Get data from data attributes and cells
             const name =
@@ -671,6 +682,13 @@
             document.getElementById("userStatus").value = statusBadge;
             document.getElementById("userBranch").value = branchId;
             document.getElementById("userDepartment").value = departmentId;
+
+            // FIXED: Reset submit button
+            const submitBtn = document.getElementById("submitUserBtn");
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Save";
+            }
 
             document.querySelector("#userModal .modal-title").innerHTML =
               '<i class="icon-base ti tabler-user-edit me-2"></i>Edit User';
@@ -717,10 +735,16 @@
       });
 
       // ============================================
-      // SUBMIT USER FORM
+      // SUBMIT USER FORM - FIXED
       // ============================================
       userForm?.addEventListener("submit", function (e) {
         e.preventDefault();
+
+        // FIXED: Prevent double submission
+        if (isSubmitting) {
+          console.log("Form already submitting, ignoring duplicate submit");
+          return;
+        }
 
         // Get form values
         const branchId = document.getElementById("userBranch").value;
@@ -738,12 +762,13 @@
           return;
         }
 
+        // FIXED: Build form data without department name
         const formData = {
           name: document.getElementById("userFullName").value.trim(),
           email: document.getElementById("userEmail").value.trim(),
           role: document.getElementById("userRole").value,
           branch_id: branchId,
-          department_id: departmentId,
+          department_id: departmentId, // FIXED: Only send department_id
           status: document.getElementById("userStatus").value,
           notes: document.getElementById("userNotes").value.trim(),
           two_factor: document.getElementById("twoFactorToggle").checked,
@@ -755,6 +780,15 @@
           ? `/api/users/${currentEditingUserId}`
           : "/api/users";
         const method = currentEditingUserId ? "PUT" : "POST";
+
+        // FIXED: Disable submit button and set flag
+        isSubmitting = true;
+        const submitBtn = document.getElementById("submitUserBtn");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1"></span>Saving...';
+        }
 
         fetch(url, {
           method: method,
@@ -776,11 +810,23 @@
               setTimeout(() => location.reload(), 1000);
             } else {
               showToast(data.message || "Error saving user", "error");
+              // FIXED: Re-enable button on error
+              isSubmitting = false;
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Save";
+              }
             }
           })
           .catch((error) => {
             console.error("Error:", error);
             showToast("Error connecting to server", "error");
+            // FIXED: Re-enable button on error
+            isSubmitting = false;
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.textContent = "Save";
+            }
           });
       });
 

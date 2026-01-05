@@ -31,11 +31,17 @@ userRouter.get("/setting", Setting.setting);
 userRouter.get("/branches", Branches.branches);
 userRouter.get("/approve_type", Approve_Type.approve_type);
 
-// // API routes
-//  userRouter.post("/api/users", User_Management.createUser);
-//  userRouter.put("/api/users/:id", User_Management.updateUser);
-//  userRouter.delete("/api/users/:id", User_Management.deleteUser);
-//  userRouter.post("/api/users/:userId/roles", User_Management.assignRole);
-//  userRouter.get("/api/roles/:roleId/permissions", User_Management.getRolePermissions);
-//  userRouter.post("/api/users/bulk/assign-role", User_Management.bulkAssignRole);
+// API routes
+userRouter.post("/api/users", User_Management.createUser);
+userRouter.put("/api/users/:id", User_Management.updateUser);
+userRouter.delete("/api/users/:id", User_Management.deleteUser);
+userRouter.post(
+  "/api/admin/users/:userId/assign-role",
+  User_Management.assignRole
+);
+userRouter.get(
+  "/api/roles/:roleId/permissions",
+  User_Management.getRolePermissions
+);
+userRouter.post("/api/users/bulk/assign-role", User_Management.bulkAssignRole);
 module.exports = userRouter;

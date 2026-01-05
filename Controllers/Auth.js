@@ -17,31 +17,37 @@ exports.login = (req, res) => {
 exports.postLogin = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Call external login API
+    
     const response = await axios.post(
       "https://oprsk.bizengineconsulting.com/api/auth/login",
       { email, password }
     );
-
-    // Save token in session
+    
     req.session.token = response.data.data.token;
-
+    req.session.user = response.data.data.user;
+    
     console.log("Login successful:", response.data);
-
-    // Redirect to dashboard after login
-    return res.redirect("/dashboard");
-
+    
+    // FIXED: Save session before redirect for Vercel
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session save error:", err);
+        return res.status(500).render("auth/login", {
+          pageTitle: "Login",
+          layout: false,
+          errorMessage: "Session error. Please try again.",
+        });
+      }
+      return res.redirect("/dashboard");
+    });
+    
   } catch (error) {
     console.error(error.response?.data || error.message);
-
     const status = error.response?.status;
     let errorMessage = "Login failed. Please try again later.";
-
     if (status === 400 || status === 401) {
       errorMessage = "Invalid credentials.";
     }
-
     return res.status(status || 500).render("auth/login", {
       pageTitle: "Login",
       layout: false,

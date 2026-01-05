@@ -64,8 +64,8 @@ exports.userManagement = async (req, res) => {
     const rolesData = await rolesResponse.json();
     const permissionsData = await permissionsResponse.json();
     const branchesData = await branchesResponse.json();
-    const riskAreasData = riskAreasResponse.ok 
-      ? await riskAreasResponse.json() 
+    const riskAreasData = riskAreasResponse.ok
+      ? await riskAreasResponse.json()
       : { data: { items: [] } };
 
     // Debug: Log available departments
@@ -99,30 +99,46 @@ exports.userManagement = async (req, res) => {
       }
 
       // Resolve department/risk area information
-      let departmentId = user.department_id ? parseInt(user.department_id, 10) : null;
+      let departmentId = user.department_id
+        ? parseInt(user.department_id, 10)
+        : null;
       let departmentName = null;
 
       console.log(`\n=== Processing user: ${user.name} ===`);
-      console.log("  user.department_id:", user.department_id, typeof user.department_id);
+      console.log(
+        "  user.department_id:",
+        user.department_id,
+        typeof user.department_id
+      );
 
       // Priority 1: Check if department is an object with id and title
-      if (user.department && typeof user.department === "object" && user.department.id) {
+      if (
+        user.department &&
+        typeof user.department === "object" &&
+        user.department.id
+      ) {
         departmentId = parseInt(user.department.id, 10);
         departmentName = user.department.title || user.department.name;
         console.log("  → Found from object:", departmentName);
-      } 
+      }
       // Priority 2: Check if department is a string (direct name)
-      else if (user.department && typeof user.department === "string" && user.department.trim() !== "") {
+      else if (
+        user.department &&
+        typeof user.department === "string" &&
+        user.department.trim() !== ""
+      ) {
         departmentName = user.department.trim();
         console.log("  → Found from string:", departmentName);
-      } 
+      }
       // Priority 3: Look up by department_id in risk areas
       else if (departmentId && riskAreasData?.data?.items?.length > 0) {
         console.log("  → Searching in riskAreasData for ID:", departmentId);
         const dept = riskAreasData.data.items.find((d) => {
           const deptId = parseInt(d.id, 10);
           const match = deptId === departmentId;
-          console.log(`    Comparing: ${deptId} === ${departmentId} = ${match}`);
+          console.log(
+            `    Comparing: ${deptId} === ${departmentId} = ${match}`
+          );
           return match;
         });
         if (dept) {
@@ -187,7 +203,7 @@ exports.userManagement = async (req, res) => {
   }
 };
 
-// Create user
+// Create user - FIXED TO SEND department_id
 exports.createUser = async (req, res) => {
   try {
     if (!req.session.token) {
@@ -207,29 +223,35 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    if (!req.body.department || req.body.department.trim() === "") {
+    if (!req.body.department_id || req.body.department_id.trim() === "") {
       return res.status(400).json({
         success: false,
         message: "Department is required",
       });
     }
 
+    const token = req.session.token;
+    const departmentId = parseInt(req.body.department_id, 10);
+
     // Transform frontend data to API format
+    // The API expects department_id as an integer, not department as string
     const userData = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password || "TempPass123!",
-      department: req.body.department.trim(),
+      department_id: departmentId, // Send department_id instead of department
       branch_ids: [parseInt(req.body.branch_id, 10)],
       is_active: req.body.status === "Active",
       notes: req.body.notes || "",
       two_factor_enabled: req.body.two_factor || false,
     };
 
+    console.log("Sending to API:", userData);
+
     const response = await fetch(`${BASE_URL}/admin/users`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${req.session.token}`,
+        Authorization: `Bearer ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -239,22 +261,41 @@ exports.createUser = async (req, res) => {
     const data = await response.json();
     console.log("API Response:", data);
 
-    // If user created successfully and role specified, assign role
-    if (data.success && req.body.role && data.data?.id) {
-      console.log("Assigning role:", req.body.role);
-      await fetch(`${BASE_URL}/admin/users/${data.data.id}/roles`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${req.session.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: req.body.role }),
+    if (!response.ok || !data.success) {
+      return res.status(response.status || 400).json({
+        success: false,
+        message: data.message || "Error creating user",
+        error: data.error || null,
       });
     }
 
+    // If user created successfully and role specified, assign role
+    if (data.success && req.body.role && data.data?.id) {
+      console.log("Assigning role:", req.body.role);
+      try {
+        const roleResponse = await fetch(
+          `${BASE_URL}/admin/users/${data.data.id}/roles`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ role: req.body.role }),
+          }
+        );
+
+        const roleData = await roleResponse.json();
+        console.log("Role assignment response:", roleData);
+      } catch (roleError) {
+        console.error("Error assigning role (non-fatal):", roleError);
+        // Don't fail the entire request if role assignment fails
+      }
+    }
+
     return res.json({
-      success: data.success || response.ok,
+      success: true,
       message: data.message || "User created successfully",
       data: data.data,
     });
@@ -268,7 +309,7 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Update user
+// Update user - FIXED TO SEND department_id
 exports.updateUser = async (req, res) => {
   try {
     if (!req.session.token) {
@@ -279,9 +320,10 @@ exports.updateUser = async (req, res) => {
     }
 
     const { id } = req.params;
+    const token = req.session.token;
 
     // Validate department if provided
-    if (req.body.department && req.body.department.trim() === "N/A") {
+    if (req.body.department_id && req.body.department_id.trim() === "N/A") {
       return res.status(400).json({
         success: false,
         message: "Please provide a valid department",
@@ -296,13 +338,13 @@ exports.updateUser = async (req, res) => {
       two_factor_enabled: req.body.two_factor || false,
     };
 
-    // Only add department if it's provided and not "N/A"
+    // Handle department update - send department_id as integer
     if (
-      req.body.department &&
-      req.body.department.trim() !== "" &&
-      req.body.department !== "N/A"
+      req.body.department_id &&
+      req.body.department_id.trim() !== "" &&
+      req.body.department_id !== "N/A"
     ) {
-      userData.department = req.body.department.trim();
+      userData.department_id = parseInt(req.body.department_id, 10);
     }
 
     // Only add notes if provided
@@ -320,7 +362,7 @@ exports.updateUser = async (req, res) => {
     const response = await fetch(`${BASE_URL}/admin/users/${id}`, {
       method: "PUT",
       headers: {
-        Authorization: `Bearer ${req.session.token}`,
+        Authorization: `Bearer ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -330,22 +372,41 @@ exports.updateUser = async (req, res) => {
     const data = await response.json();
     console.log("Update response:", data);
 
-    // If role specified, update role
-    if (data.success && req.body.role) {
-      console.log("Updating role to:", req.body.role);
-      await fetch(`${BASE_URL}/admin/users/${id}/roles`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${req.session.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ role: req.body.role }),
+    if (!response.ok || !data.success) {
+      return res.status(response.status || 400).json({
+        success: false,
+        message: data.message || "Error updating user",
+        error: data.error || null,
       });
     }
 
+    // If role specified, update role
+    if (data.success && req.body.role) {
+      console.log("Updating role to:", req.body.role);
+      try {
+        const roleResponse = await fetch(
+          `${BASE_URL}/admin/users/${id}/roles`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ role: req.body.role }),
+          }
+        );
+
+        const roleData = await roleResponse.json();
+        console.log("Role update response:", roleData);
+      } catch (roleError) {
+        console.error("Error updating role (non-fatal):", roleError);
+        // Don't fail the entire request if role update fails
+      }
+    }
+
     return res.json({
-      success: data.success || response.ok,
+      success: true,
       message: data.message || "User updated successfully",
       data: data.data,
     });

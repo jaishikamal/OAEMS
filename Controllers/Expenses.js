@@ -1,3 +1,3 @@
-exports.expenses = (req, res) => {
+exports.expense = (req, res) => {
   res.render("pages/Expense");
 };
