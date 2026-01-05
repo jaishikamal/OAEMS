@@ -1,19 +1,19 @@
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+// No fetch import needed - it's built-in
 
 const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 
 // Main page render
-// Main page render
 exports.userManagement = async (req, res) => {
   try {
-    // UNCOMMENT THIS - Enable login check
+    // Enable login check
     if (!req.session || !req.session.token) {
       console.log("No session or token, redirecting to login");
       return res.redirect("/");
     }
     
     const token = req.session.token;
+    
+    console.log("Starting fetch for user management data...");
 
     // Fetch users, roles, permissions, branches, and departments in parallel
     const [
@@ -29,6 +29,9 @@ exports.userManagement = async (req, res) => {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
+      }).catch((err) => {
+        console.error("Users fetch error:", err);
+        return { ok: false, status: 500 };
       }),
       fetch(`${BASE_URL}/admin/roles`, {
         method: "GET",
@@ -36,6 +39,9 @@ exports.userManagement = async (req, res) => {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
+      }).catch((err) => {
+        console.error("Roles fetch error:", err);
+        return { ok: false, status: 500 };
       }),
       fetch(`${BASE_URL}/admin/permissions`, {
         method: "GET",
@@ -43,6 +49,9 @@ exports.userManagement = async (req, res) => {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
+      }).catch((err) => {
+        console.error("Permissions fetch error:", err);
+        return { ok: false, status: 500 };
       }),
       fetch(`${BASE_URL}/branches`, {
         method: "GET",
@@ -50,6 +59,9 @@ exports.userManagement = async (req, res) => {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
+      }).catch((err) => {
+        console.error("Branches fetch error:", err);
+        return { ok: false, status: 500 };
       }),
       fetch(`${BASE_URL}/kri/risk-areas`, {
         method: "GET",
@@ -62,6 +74,8 @@ exports.userManagement = async (req, res) => {
         return { ok: false, json: async () => ({ data: { items: [] } }) };
       }),
     ]);
+
+    console.log("Fetch completed, checking responses...");
 
     // Check if any critical API call failed
     if (!usersResponse.ok || !rolesResponse.ok || !permissionsResponse.ok || !branchesResponse.ok) {
@@ -80,14 +94,21 @@ exports.userManagement = async (req, res) => {
       ) {
         console.log("Unauthorized (401), clearing session and redirecting to login");
         // Destroy session and redirect
-        return req.session.destroy(() => {
+        return req.session.destroy((err) => {
+          if (err) console.error("Session destroy error:", err);
           res.redirect("/");
         });
       }
       
-      // For other errors, throw to be caught below
-      throw new Error("Failed to fetch data from API");
+      // For other errors, redirect to login (safe fallback)
+      console.log("API error, redirecting to login");
+      return req.session.destroy((err) => {
+        if (err) console.error("Session destroy error:", err);
+        res.redirect("/");
+      });
     }
+
+    console.log("Parsing responses...");
 
     const usersData = await usersResponse.json();
     const rolesData = await rolesResponse.json();
@@ -96,6 +117,8 @@ exports.userManagement = async (req, res) => {
     const riskAreasData = riskAreasResponse.ok
       ? await riskAreasResponse.json()
       : { data: { items: [] } };
+
+    console.log("Data parsed successfully");
 
     // Safely access nested data with fallbacks
     const users = (usersData?.data?.data || []).map((user) => {
@@ -161,6 +184,8 @@ exports.userManagement = async (req, res) => {
       (u) => u.roles && u.roles.some((r) => r.name === "Administrator")
     ).length;
 
+    console.log("Rendering page with", users.length, "users");
+
     return res.render("pages/user_management", {
       pageTitle: "User Management",
       layout: "main",
@@ -175,21 +200,21 @@ exports.userManagement = async (req, res) => {
       adminUsers: adminUsers,
     });
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("Error in userManagement:", error);
+    console.error("Error stack:", error.stack);
     
-    // If there's any error, redirect to login instead of showing error page
-    // This handles network errors, timeouts, etc.
-    console.log("Error occurred, redirecting to login");
-    return req.session.destroy(() => {
+    // Redirect to login on any error
+    return req.session.destroy((err) => {
+      if (err) console.error("Session destroy error:", err);
       res.redirect("/");
     });
   }
 };
 
-// Create user - FIXED TO SEND department_id
+// Create user
 exports.createUser = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -216,13 +241,11 @@ exports.createUser = async (req, res) => {
     const token = req.session.token;
     const departmentId = parseInt(req.body.department_id, 10);
 
-    // Transform frontend data to API format
-    // The API expects department_id as an integer, not department as string
     const userData = {
       name: req.body.name,
       email: req.body.email,
       password: req.body.password || "TempPass123!",
-      department_id: departmentId, // Send department_id instead of department
+      department_id: departmentId,
       branch_ids: [parseInt(req.body.branch_id, 10)],
       is_active: req.body.status === "Active",
       notes: req.body.notes || "",
@@ -245,6 +268,14 @@ exports.createUser = async (req, res) => {
     console.log("API Response:", data);
 
     if (!response.ok || !data.success) {
+      // Check for 401
+      if (response.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
+      
       return res.status(response.status || 400).json({
         success: false,
         message: data.message || "Error creating user",
@@ -273,7 +304,6 @@ exports.createUser = async (req, res) => {
         console.log("Role assignment response:", roleData);
       } catch (roleError) {
         console.error("Error assigning role (non-fatal):", roleError);
-        // Don't fail the entire request if role assignment fails
       }
     }
 
@@ -292,10 +322,10 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// Update user - FIXED TO SEND department_id
+// Update user
 exports.updateUser = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -305,7 +335,6 @@ exports.updateUser = async (req, res) => {
     const { id } = req.params;
     const token = req.session.token;
 
-    // Validate department if provided
     if (req.body.department_id && req.body.department_id.trim() === "N/A") {
       return res.status(400).json({
         success: false,
@@ -313,7 +342,6 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    // Transform frontend data to API format
     const userData = {
       name: req.body.name,
       email: req.body.email,
@@ -321,7 +349,6 @@ exports.updateUser = async (req, res) => {
       two_factor_enabled: req.body.two_factor || false,
     };
 
-    // Handle department update - send department_id as integer
     if (
       req.body.department_id &&
       req.body.department_id.trim() !== "" &&
@@ -330,12 +357,10 @@ exports.updateUser = async (req, res) => {
       userData.department_id = parseInt(req.body.department_id, 10);
     }
 
-    // Only add notes if provided
     if (req.body.notes && req.body.notes.trim() !== "") {
       userData.notes = req.body.notes.trim();
     }
 
-    // Add branch_ids if provided
     if (req.body.branch_id) {
       userData.branch_ids = [parseInt(req.body.branch_id, 10)];
     }
@@ -356,6 +381,13 @@ exports.updateUser = async (req, res) => {
     console.log("Update response:", data);
 
     if (!response.ok || !data.success) {
+      if (response.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
+      
       return res.status(response.status || 400).json({
         success: false,
         message: data.message || "Error updating user",
@@ -363,7 +395,6 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    // If role specified, update role
     if (data.success && req.body.role) {
       console.log("Updating role to:", req.body.role);
       try {
@@ -384,7 +415,6 @@ exports.updateUser = async (req, res) => {
         console.log("Role update response:", roleData);
       } catch (roleError) {
         console.error("Error updating role (non-fatal):", roleError);
-        // Don't fail the entire request if role update fails
       }
     }
 
@@ -406,7 +436,7 @@ exports.updateUser = async (req, res) => {
 // Delete user
 exports.deleteUser = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -424,6 +454,13 @@ exports.deleteUser = async (req, res) => {
 
     const data = await response.json();
 
+    if (response.status === 401) {
+      return res.status(401).json({
+        success: false,
+        message: "Session expired - Please login again",
+      });
+    }
+
     return res.json({
       success: data.success || response.ok,
       message: data.message || "User deleted successfully",
@@ -440,7 +477,7 @@ exports.deleteUser = async (req, res) => {
 // Assign role to user
 exports.assignRole = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -460,6 +497,13 @@ exports.assignRole = async (req, res) => {
 
     const data = await response.json();
 
+    if (response.status === 401) {
+      return res.status(401).json({
+        success: false,
+        message: "Session expired - Please login again",
+      });
+    }
+
     return res.json({
       success: data.success || response.ok,
       message: data.message || "Role assigned successfully",
@@ -477,7 +521,7 @@ exports.assignRole = async (req, res) => {
 // Get role permissions
 exports.getRolePermissions = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",
@@ -498,6 +542,13 @@ exports.getRolePermissions = async (req, res) => {
 
     const data = await response.json();
 
+    if (response.status === 401) {
+      return res.status(401).json({
+        success: false,
+        message: "Session expired - Please login again",
+      });
+    }
+
     return res.json({
       success: data.success || response.ok,
       data: data.data || data,
@@ -515,7 +566,7 @@ exports.getRolePermissions = async (req, res) => {
 // Bulk assign role to multiple users
 exports.bulkAssignRole = async (req, res) => {
   try {
-    if (!req.session.token) {
+    if (!req.session || !req.session.token) {
       return res.status(401).json({
         success: false,
         message: "Unauthorized",

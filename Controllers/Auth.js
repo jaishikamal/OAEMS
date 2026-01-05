@@ -1,8 +1,6 @@
 const axios = require("axios");
 
-// polyfill fetch for CommonJS
-const fetch = (...args) =>
-  import("node-fetch").then(({ default: fetch }) => fetch(...args));
+// NO fetch import needed - it's built-in in Node.js 18+
 
 // Render login page (GET request)
 exports.login = (req, res) => {
@@ -26,9 +24,9 @@ exports.postLogin = async (req, res) => {
     req.session.token = response.data.data.token;
     req.session.user = response.data.data.user;
     
-    console.log("Login successful:", response.data);
+    console.log("Login successful, saving session...");
     
-    // THIS IS CRITICAL FOR VERCEL:
+    // CRITICAL FOR VERCEL: Save session explicitly
     req.session.save((err) => {
       if (err) {
         console.error("Session save error:", err);
@@ -38,21 +36,27 @@ exports.postLogin = async (req, res) => {
           errorMessage: "Session error. Please try again.",
         });
       }
+      console.log("Session saved successfully");
       return res.redirect("/dashboard");
     });
     
   } catch (error) {
-    // ... error handling
+    console.error("Login error:", error);
+    return res.status(500).render("auth/login", {
+      pageTitle: "Login",
+      layout: false,
+      errorMessage: error.response?.data?.message || "Login failed. Please try again.",
+    });
   }
 };
 
 // Handle logout
 exports.logout = async (req, res) => {
   try {
-    const token = req.session.token;
+    const token = req.session?.token;
 
     if (!token) {
-      return res.redirect("/login");
+      return res.redirect("/");
     }
 
     // Call external logout API
@@ -67,11 +71,12 @@ exports.logout = async (req, res) => {
       }
     );
 
-    const data = await  response.json();
+    const data = await response.json();
     console.log("Logout API response:", data);
 
     // Clear session and redirect to login
-    req.session.destroy(() => {
+    req.session.destroy((err) => {
+      if (err) console.error("Session destroy error:", err);
       return res.redirect("/");
     });
 
@@ -79,7 +84,8 @@ exports.logout = async (req, res) => {
     console.error("Logout error:", error);
 
     // Even if API fails, clear session
-    req.session.destroy(() => {
+    req.session.destroy((err) => {
+      if (err) console.error("Session destroy error:", err);
       return res.redirect("/");
     });
   }
