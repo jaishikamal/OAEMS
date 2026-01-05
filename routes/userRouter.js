@@ -21,7 +21,7 @@ userRouter.post("/login", authController.postLogin);
 userRouter.post("/logout", authController.logout);
 userRouter.get("/dashboard", dashboardController.dashboard);
 userRouter.get("/approval", Approval.approval);
-userRouter.get("/expenses", Expenses.expenses);
+userRouter.get("/expenses", Expenses.expense);
 userRouter.get("/budget", Budget.budget);
 userRouter.get("/audit", Audit_Trail.aduit);
 userRouter.get("/report", Report.report);
