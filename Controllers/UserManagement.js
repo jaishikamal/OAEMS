@@ -4,12 +4,15 @@ const fetch = (...args) =>
 const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 
 // Main page render
+// Main page render
 exports.userManagement = async (req, res) => {
   try {
-    // Login check - UNCOMMENT THIS!
-    // if (!req.session.token) {
-    //   return res.redirect("/");
-    // }
+    // UNCOMMENT THIS - Enable login check
+    if (!req.session || !req.session.token) {
+      console.log("No session or token, redirecting to login");
+      return res.redirect("/");
+    }
+    
     const token = req.session.token;
 
     // Fetch users, roles, permissions, branches, and departments in parallel
@@ -68,11 +71,21 @@ exports.userManagement = async (req, res) => {
       console.error("Permissions:", permissionsResponse.status);
       console.error("Branches:", branchesResponse.status);
       
-      // If unauthorized, redirect to login
-      if (usersResponse.status === 401 || rolesResponse.status === 401) {
-        return res.redirect("/");
+      // CHECK FOR 401 - Token expired/invalid, redirect to login
+      if (
+        usersResponse.status === 401 || 
+        rolesResponse.status === 401 || 
+        permissionsResponse.status === 401 || 
+        branchesResponse.status === 401
+      ) {
+        console.log("Unauthorized (401), clearing session and redirecting to login");
+        // Destroy session and redirect
+        return req.session.destroy(() => {
+          res.redirect("/");
+        });
       }
       
+      // For other errors, throw to be caught below
       throw new Error("Failed to fetch data from API");
     }
 
@@ -86,7 +99,6 @@ exports.userManagement = async (req, res) => {
 
     // Safely access nested data with fallbacks
     const users = (usersData?.data?.data || []).map((user) => {
-      // ... rest of your mapping code stays the same
       let branchId = null;
       let branchName = null;
 
@@ -164,10 +176,12 @@ exports.userManagement = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching data:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to load user management data",
-      error: error.message,
+    
+    // If there's any error, redirect to login instead of showing error page
+    // This handles network errors, timeouts, etc.
+    console.log("Error occurred, redirecting to login");
+    return req.session.destroy(() => {
+      res.redirect("/");
     });
   }
 };
