@@ -7,9 +7,9 @@ const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 exports.userManagement = async (req, res) => {
   try {
     // Login check - UNCOMMENT THIS!
-    if (!req.session.token) {
-      return res.redirect("/");
-    }
+    // if (!req.session.token) {
+    //   return res.redirect("/");
+    // }
     const token = req.session.token;
 
     // Fetch users, roles, permissions, branches, and departments in parallel
