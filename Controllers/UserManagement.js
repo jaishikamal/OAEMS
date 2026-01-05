@@ -6,10 +6,10 @@ const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 // Main page render
 exports.userManagement = async (req, res) => {
   try {
-    // Login check
-    // if (!req.session.token) {
-    //   return res.redirect("/");
-    // }
+    // Login check - UNCOMMENT THIS!
+    if (!req.session.token) {
+      return res.redirect("/");
+    }
     const token = req.session.token;
 
     // Fetch users, roles, permissions, branches, and departments in parallel
@@ -60,6 +60,22 @@ exports.userManagement = async (req, res) => {
       }),
     ]);
 
+    // Check if any critical API call failed
+    if (!usersResponse.ok || !rolesResponse.ok || !permissionsResponse.ok || !branchesResponse.ok) {
+      console.error("One or more API calls failed");
+      console.error("Users:", usersResponse.status);
+      console.error("Roles:", rolesResponse.status);
+      console.error("Permissions:", permissionsResponse.status);
+      console.error("Branches:", branchesResponse.status);
+      
+      // If unauthorized, redirect to login
+      if (usersResponse.status === 401 || rolesResponse.status === 401) {
+        return res.redirect("/");
+      }
+      
+      throw new Error("Failed to fetch data from API");
+    }
+
     const usersData = await usersResponse.json();
     const rolesData = await rolesResponse.json();
     const permissionsData = await permissionsResponse.json();
@@ -68,19 +84,9 @@ exports.userManagement = async (req, res) => {
       ? await riskAreasResponse.json()
       : { data: { items: [] } };
 
-    // Debug: Log available departments
-    console.log("Risk Areas Data:", riskAreasData);
-    console.log(
-      "Available risk areas:",
-      riskAreasData?.data?.items?.map((d) => ({
-        id: d.id,
-        title: d.title,
-      }))
-    );
-
-    // Process users to normalize branch and department data
-    const users = (usersData.data.data || []).map((user) => {
-      // Normalize branch_id - handle both single branch_id and branches array
+    // Safely access nested data with fallbacks
+    const users = (usersData?.data?.data || []).map((user) => {
+      // ... rest of your mapping code stays the same
       let branchId = null;
       let branchName = null;
 
@@ -98,20 +104,11 @@ exports.userManagement = async (req, res) => {
         branchName = user.branch.name;
       }
 
-      // Resolve department/risk area information
       let departmentId = user.department_id
         ? parseInt(user.department_id, 10)
         : null;
       let departmentName = null;
 
-      console.log(`\n=== Processing user: ${user.name} ===`);
-      console.log(
-        "  user.department_id:",
-        user.department_id,
-        typeof user.department_id
-      );
-
-      // Priority 1: Check if department is an object with id and title
       if (
         user.department &&
         typeof user.department === "object" &&
@@ -119,37 +116,23 @@ exports.userManagement = async (req, res) => {
       ) {
         departmentId = parseInt(user.department.id, 10);
         departmentName = user.department.title || user.department.name;
-        console.log("  → Found from object:", departmentName);
       }
-      // Priority 2: Check if department is a string (direct name)
       else if (
         user.department &&
         typeof user.department === "string" &&
         user.department.trim() !== ""
       ) {
         departmentName = user.department.trim();
-        console.log("  → Found from string:", departmentName);
       }
-      // Priority 3: Look up by department_id in risk areas
       else if (departmentId && riskAreasData?.data?.items?.length > 0) {
-        console.log("  → Searching in riskAreasData for ID:", departmentId);
         const dept = riskAreasData.data.items.find((d) => {
           const deptId = parseInt(d.id, 10);
-          const match = deptId === departmentId;
-          console.log(
-            `    Comparing: ${deptId} === ${departmentId} = ${match}`
-          );
-          return match;
+          return deptId === departmentId;
         });
         if (dept) {
           departmentName = dept.title;
-          console.log("  ✅ Found dept:", departmentName);
-        } else {
-          console.log("  ❌ Department not found in riskAreasData");
         }
       }
-
-      console.log("  → Final department_name:", departmentName || "(empty)");
 
       return {
         ...user,
@@ -160,35 +143,21 @@ exports.userManagement = async (req, res) => {
       };
     });
 
-    console.log("\n=== Summary ===");
-    console.log("Total users processed:", users.length);
-    console.log(
-      "Users with departments:",
-      users.filter((u) => u.department_name).length
-    );
-
-    // Calculate statistics
     const activeUsers = users.filter((u) => u.is_active).length;
     const pendingUsers = users.filter((u) => u.status === "Pending").length;
     const adminUsers = users.filter(
       (u) => u.roles && u.roles.some((r) => r.name === "Administrator")
     ).length;
 
-    console.log("Users fetched:", users.length);
-    console.log("Roles fetched:", rolesData.data.data.length);
-    console.log("Permissions fetched:", permissionsData.data.data.length);
-    console.log("Branches fetched:", branchesData.data?.data?.length || 0);
-    console.log("Risk areas fetched:", riskAreasData?.data?.items?.length || 0);
-
     return res.render("pages/user_management", {
       pageTitle: "User Management",
       layout: "main",
       users: users,
-      roles: rolesData.data.data || [],
-      permissions: permissionsData.data.data || [],
-      branches: branchesData.data?.data || [],
+      roles: rolesData?.data?.data || [],
+      permissions: permissionsData?.data?.data || [],
+      branches: branchesData?.data?.data || [],
       departments: riskAreasData?.data?.items || [],
-      totalUsers: usersData.data.total || users.length,
+      totalUsers: usersData?.data?.total || users.length,
       activeUsers: activeUsers,
       pendingUsers: pendingUsers,
       adminUsers: adminUsers,
