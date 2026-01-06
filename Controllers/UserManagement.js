@@ -10,9 +10,9 @@ exports.userManagement = async (req, res) => {
       console.log("No session or token, redirecting to login");
       return res.redirect("/");
     }
-    
+
     const token = req.session.token;
-    
+
     console.log("Starting fetch for user management data...");
 
     // Fetch users, roles, permissions, branches, and departments in parallel
@@ -23,7 +23,7 @@ exports.userManagement = async (req, res) => {
       branchesResponse,
       riskAreasResponse,
     ] = await Promise.all([
-      fetch(`${BASE_URL}/admin/users`, {
+      fetch(`${BASE_URL}/admin/users?per_page=1000`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -78,7 +78,12 @@ exports.userManagement = async (req, res) => {
     console.log("Fetch completed, checking responses...");
 
     // Check if any critical API call failed
-    if (!usersResponse.ok || !rolesResponse.ok || !permissionsResponse.ok || !branchesResponse.ok) {
+    if (
+      !usersResponse.ok ||
+      !rolesResponse.ok ||
+      !permissionsResponse.ok ||
+      !branchesResponse.ok
+    ) {
       console.error("One or more API calls failed");
       console.error("Users:", usersResponse.status);
       console.error("Roles:", rolesResponse.status);
@@ -87,19 +92,21 @@ exports.userManagement = async (req, res) => {
 
       // CHECK FOR 401 - Token expired/invalid, redirect to login
       if (
-        usersResponse.status === 401 || 
-        rolesResponse.status === 401 || 
-        permissionsResponse.status === 401 || 
+        usersResponse.status === 401 ||
+        rolesResponse.status === 401 ||
+        permissionsResponse.status === 401 ||
         branchesResponse.status === 401
       ) {
-        console.log("Unauthorized (401), clearing session and redirecting to login");
+        console.log(
+          "Unauthorized (401), clearing session and redirecting to login"
+        );
         // Destroy session and redirect
         return req.session.destroy((err) => {
           if (err) console.error("Session destroy error:", err);
           res.redirect("/");
         });
       }
-      
+
       // For other errors, redirect to login (safe fallback)
       console.log("API error, redirecting to login");
       return req.session.destroy((err) => {
@@ -151,15 +158,13 @@ exports.userManagement = async (req, res) => {
       ) {
         departmentId = parseInt(user.department.id, 10);
         departmentName = user.department.title || user.department.name;
-      }
-      else if (
+      } else if (
         user.department &&
         typeof user.department === "string" &&
         user.department.trim() !== ""
       ) {
         departmentName = user.department.trim();
-      }
-      else if (departmentId && riskAreasData?.data?.items?.length > 0) {
+      } else if (departmentId && riskAreasData?.data?.items?.length > 0) {
         const dept = riskAreasData.data.items.find((d) => {
           const deptId = parseInt(d.id, 10);
           return deptId === departmentId;
@@ -202,7 +207,7 @@ exports.userManagement = async (req, res) => {
   } catch (error) {
     console.error("Error in userManagement:", error);
     console.error("Error stack:", error.stack);
-    
+
     // Redirect to login on any error
     return req.session.destroy((err) => {
       if (err) console.error("Session destroy error:", err);
@@ -211,8 +216,7 @@ exports.userManagement = async (req, res) => {
   }
 };
 
-
-// Create user
+// Create user - FIXED VERSION
 exports.createUser = async (req, res) => {
   try {
     if (!req.session || !req.session.token) {
@@ -275,7 +279,7 @@ exports.createUser = async (req, res) => {
           message: "Session expired - Please login again",
         });
       }
-      
+
       return res.status(response.status || 400).json({
         success: false,
         message: data.message || "Error creating user",
@@ -285,9 +289,13 @@ exports.createUser = async (req, res) => {
 
     // Assign role if user was created successfully and role is specified
     let roleAssigned = false;
+    let assignedRoleData = null;
+
     if (data.success && req.body.role && data.data?.id) {
-      console.log(`Attempting to assign role "${req.body.role}" to user ${data.data.id}`);
-      
+      console.log(
+        `Attempting to assign role "${req.body.role}" to user ${data.data.id}`
+      );
+
       try {
         // Fetch roles to get the role ID
         const rolesResponse = await fetch(`${BASE_URL}/admin/roles`, {
@@ -300,14 +308,16 @@ exports.createUser = async (req, res) => {
 
         if (rolesResponse.ok) {
           const rolesData = await rolesResponse.json();
-          
-          // Find role ID by name
+
+          // Find role by name
           const role = (rolesData?.data?.data || rolesData?.data || []).find(
-            r => r.name === req.body.role
+            (r) => r.name === req.body.role
           );
 
           if (!role) {
-            console.warn(`Role "${req.body.role}" not found. Skipping role assignment.`);
+            console.warn(
+              `Role "${req.body.role}" not found. Skipping role assignment.`
+            );
           } else {
             const roleId = role.id;
             console.log(`Found role ID: ${roleId} for role "${req.body.role}"`);
@@ -326,30 +336,85 @@ exports.createUser = async (req, res) => {
               }
             );
 
-            const roleData = await roleResponse.json();
+            const roleResponseData = await roleResponse.json();
+            console.log("Role assignment response:", roleResponseData);
 
-            if (roleData.success) {
+            if (roleResponseData.success) {
               console.log(`Role assigned successfully to user ${data.data.id}`);
               roleAssigned = true;
+              assignedRoleData = role; // Store the role data
             } else {
-              console.warn(`Role assignment failed for user ${data.data.id}:`, roleData.message || 'Unknown error');
+              console.warn(
+                `Role assignment failed for user ${data.data.id}:`,
+                roleResponseData.message || "Unknown error"
+              );
             }
           }
         } else {
           console.warn("Failed to fetch roles for role assignment");
         }
       } catch (roleError) {
-        console.error(`Error assigning role to user ${data.data.id}:`, roleError.message);
+        console.error(
+          `Error assigning role to user ${data.data.id}:`,
+          roleError.message
+        );
       }
     }
 
-    // Return success response with role assignment status
-    return res.json({
+    // Add a small delay to ensure database consistency
+    if (roleAssigned) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    // Fetch the complete user data with roles
+    let completeUserData = data.data;
+    
+    if (data.data?.id) {
+      try {
+        const userResponse = await fetch(
+          `${BASE_URL}/admin/users/${data.data.id}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          }
+        );
+
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.success && userData.data) {
+            completeUserData = userData.data;
+            console.log(
+              "Fetched complete user data:",
+              JSON.stringify(completeUserData, null, 2)
+            );
+          }
+        }
+      } catch (fetchError) {
+        console.error("Error fetching complete user data:", fetchError.message);
+      }
+    }
+
+    // FALLBACK: If roles array is still empty but we know we assigned a role,
+    // manually add the role to the response
+    if (roleAssigned && assignedRoleData) {
+      if (!completeUserData.roles || completeUserData.roles.length === 0) {
+        console.log("Roles array empty after fetch - manually adding role data");
+        completeUserData.roles = [assignedRoleData];
+      }
+    }
+
+    console.log("Final user data being returned:", JSON.stringify(completeUserData, null, 2));
+
+    // Return success response with complete user data including roles
+    return res.status(200).json({
       success: true,
-      message: roleAssigned 
-        ? "User created and role assigned successfully" 
+      message: roleAssigned
+        ? "User created and role assigned successfully"
         : "User created successfully",
-      data: data.data,
+      data: completeUserData,
       roleAssigned: roleAssigned,
     });
   } catch (error) {
@@ -361,7 +426,7 @@ exports.createUser = async (req, res) => {
     });
   }
 };
-// Update user
+// Update user - FIXED VERSION
 exports.updateUser = async (req, res) => {
   try {
     if (!req.session || !req.session.token) {
@@ -426,7 +491,7 @@ exports.updateUser = async (req, res) => {
           message: "Session expired - Please login again",
         });
       }
-      
+
       return res.status(response.status || 400).json({
         success: false,
         message: data.message || "Error updating user",
@@ -434,33 +499,121 @@ exports.updateUser = async (req, res) => {
       });
     }
 
+    // FIXED: Role assignment for updates
+    let roleAssigned = false;
+    let assignedRoleData = null;
+
     if (data.success && req.body.role) {
-      console.log("Updating role to:", req.body.role);
+      console.log(`Attempting to update role to "${req.body.role}" for user ${id}`);
+      
       try {
-        const roleResponse = await fetch(
-          `${BASE_URL}/admin/users/${id}/roles`,
+        // Fetch roles to get the role ID
+        const rolesResponse = await fetch(`${BASE_URL}/admin/roles`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (rolesResponse.ok) {
+          const rolesData = await rolesResponse.json();
+
+          // Find role by name
+          const role = (rolesData?.data?.data || rolesData?.data || []).find(
+            (r) => r.name === req.body.role
+          );
+
+          if (!role) {
+            console.warn(`Role "${req.body.role}" not found. Skipping role assignment.`);
+          } else {
+            const roleId = role.id;
+            console.log(`Found role ID: ${roleId} for role "${req.body.role}"`);
+
+            // Use assign-role endpoint (same as create)
+            const roleResponse = await fetch(
+              `${BASE_URL}/admin/users/${id}/assign-role`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ role_id: roleId }),
+              }
+            );
+
+            const roleResponseData = await roleResponse.json();
+            console.log("Role assignment response:", roleResponseData);
+
+            if (roleResponseData.success) {
+              console.log(`Role updated successfully for user ${id}`);
+              roleAssigned = true;
+              assignedRoleData = role;
+            } else {
+              console.warn(
+                `Role assignment failed for user ${id}:`,
+                roleResponseData.message || "Unknown error"
+              );
+            }
+          }
+        } else {
+          console.warn("Failed to fetch roles for role assignment");
+        }
+      } catch (roleError) {
+        console.error(`Error updating role for user ${id}:`, roleError.message);
+      }
+    }
+
+    // Add delay for database consistency
+    if (roleAssigned) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+
+    // Fetch complete user data with roles
+    let completeUserData = data.data;
+    
+    if (id) {
+      try {
+        const userResponse = await fetch(
+          `${BASE_URL}/admin/users/${id}`,
           {
-            method: "POST",
+            method: "GET",
             headers: {
               Authorization: `Bearer ${token}`,
               Accept: "application/json",
-              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ role: req.body.role }),
           }
         );
 
-        const roleData = await roleResponse.json();
-        console.log("Role update response:", roleData);
-      } catch (roleError) {
-        console.error("Error updating role (non-fatal):", roleError);
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          if (userData.success && userData.data) {
+            completeUserData = userData.data;
+            console.log("Fetched complete user data:", JSON.stringify(completeUserData, null, 2));
+          }
+        }
+      } catch (fetchError) {
+        console.error("Error fetching complete user data:", fetchError.message);
+      }
+    }
+
+    // Fallback: manually add role if not in response
+    if (roleAssigned && assignedRoleData) {
+      if (!completeUserData.roles || completeUserData.roles.length === 0) {
+        console.log("Roles array empty after fetch - manually adding role data");
+        completeUserData.roles = [assignedRoleData];
       }
     }
 
     return res.json({
       success: true,
-      message: data.message || "User updated successfully",
-      data: data.data,
+      message: roleAssigned 
+        ? "User and role updated successfully" 
+        : "User updated successfully",
+      data: completeUserData,
+      roleAssigned: roleAssigned,
     });
   } catch (error) {
     console.error("Error updating user:", error);

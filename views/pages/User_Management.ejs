@@ -354,14 +354,15 @@
             </div>
             <div class="col-md-6">
               <label class="form-label">Role</label>
-              <select class="form-select" name="role" id="userRole">
+              <select class="form-select" name="role[]" id="userRole" multiple>
                 <option value="">Select Role</option>
                 <% if (roles && roles.length > 0) { %> <% roles.forEach(role =>
                 { %>
-                <option value="<%= role.name %>"><%= role.name %></option>
+                <option value="<%= role.ids %>"><%= role.name %></option>
                 <% }) %> <% } %>
               </select>
             </div>
+
             <div class="col-md-6">
               <label class="form-label"
                 >Branch <span class="text-danger">*</span></label
@@ -443,7 +444,9 @@
           >
             Cancel
           </button>
-          <button type="submit" class="btn btn-primary" id="submitUserBtn">Save</button>
+          <button type="submit" class="btn btn-primary" id="submitUserBtn">
+            Save
+          </button>
         </div>
       </form>
     </div>
@@ -472,7 +475,7 @@
 </div>
 
 <script>
-  // User Management JavaScript
+  // User Management JavaScript - COMPLETE FIXED VERSION
   (function () {
     "use strict";
 
@@ -520,6 +523,164 @@
         }
         if (assignRoleBtn) {
           assignRoleBtn.disabled = count === 0;
+        }
+      }
+
+      // Update row numbers after adding/removing users
+      function updateRowNumbers() {
+        const rows = document.querySelectorAll("#usersTable tbody tr");
+        rows.forEach((row, index) => {
+          if (row.cells.length > 1) {
+            const indexCell = row.cells[1];
+            if (indexCell) {
+              const fwMedium = indexCell.querySelector(".fw-medium");
+              if (fwMedium) {
+                fwMedium.textContent = index + 1;
+              }
+            }
+          }
+        });
+      }
+
+      // Add user to table dynamically
+      function addUserToTable(user, isLatest = false) {
+        const tbody = document.querySelector("#usersTable tbody");
+        if (!tbody) return;
+
+        console.log("Adding user to table:", JSON.stringify(user, null, 2));
+
+        // Remove "No users found" row if exists
+        const noUsersRow = tbody.querySelector('td[colspan="9"]');
+        if (noUsersRow) {
+          noUsersRow.parentElement.remove();
+        }
+
+        // Get current row count for index
+        const currentRows = tbody.querySelectorAll("tr").length;
+        const rowIndex = currentRows + 1;
+
+        // Create new row
+        const row = document.createElement("tr");
+        row.setAttribute("data-user-id", user.id);
+        row.setAttribute("data-branch-id", user.branch_id || "");
+        row.setAttribute("data-department-id", user.department_id || "");
+        row.setAttribute("data-department-name", user.department_name || "");
+
+        // Highlight if it's the latest user
+        if (isLatest) {
+          row.classList.add("table-success");
+          setTimeout(() => {
+            row.classList.remove("table-success");
+          }, 3000);
+        }
+
+        // Get user initials for avatar
+        const initials = user.name
+          ? user.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+          : "U";
+
+        // Determine role badge
+        let roleBadge = '<span class="badge bg-label-secondary">No role</span>';
+
+        if (user.roles && Array.isArray(user.roles) && user.roles.length > 0) {
+          const roleName = user.roles[0].name;
+          roleBadge = `<span class="badge bg-label-primary">${roleName}</span>`;
+        } else if (
+          user.role &&
+          user.role.trim() !== "" &&
+          user.role !== "No role"
+        ) {
+          roleBadge = `<span class="badge bg-label-primary">${user.role}</span>`;
+        }
+
+        // Determine status badge
+        const statusBadge = user.is_active
+          ? '<span class="badge bg-label-success">Active</span>'
+          : '<span class="badge bg-label-danger">Inactive</span>';
+
+        // Build row HTML
+        row.innerHTML = `
+          <td>
+            <input type="checkbox" class="form-check-input user-checkbox" value="${
+              user.id
+            }" />
+          </td>
+          <td><span class="fw-medium">${rowIndex}</span></td>
+          <td>
+            <div class="d-flex align-items-center">
+              <div class="avatar avatar-sm me-2">
+                <span class="avatar-initial rounded-circle bg-label-primary">
+                  ${initials}
+                </span>
+              </div>
+              <div>
+                <span class="fw-medium" data-field="name">${user.name}</span>
+              </div>
+            </div>
+          </td>
+          <td data-field="email">${user.email}</td>
+          <td data-field="role">${roleBadge}</td>
+          <td data-field="department">${
+            user.department_name || '<span class="text-muted">Not set</span>'
+          }</td>
+          <td data-field="branch">${
+            user.branch_name || '<span class="text-muted">Not assigned</span>'
+          }</td>
+          <td data-field="status">${statusBadge}</td>
+          <td class="text-end">
+            <div class="dropdown">
+              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+                <i class="icon-base ti tabler-dots-vertical"></i>
+              </button>
+              <div class="dropdown-menu">
+                <a class="dropdown-item edit-user-btn" href="#" data-user-id="${
+                  user.id
+                }">
+                  <i class="icon-base ti tabler-edit me-1"></i>Edit
+                </a>
+                <a class="dropdown-item delete-user-btn text-danger" href="#" data-user-id="${
+                  user.id
+                }">
+                  <i class="icon-base ti tabler-trash me-1"></i>Delete
+                </a>
+              </div>
+            </div>
+          </td>
+        `;
+
+        // Insert at the top of the table (latest user first)
+        if (isLatest && tbody.firstChild) {
+          tbody.insertBefore(row, tbody.firstChild);
+        } else {
+          tbody.appendChild(row);
+        }
+
+        // Update row numbers
+        updateRowNumbers();
+      }
+
+      // Update stats after adding user
+      function updateStats(isActive) {
+        const totalUsersEl = document.querySelector(
+          ".col-sm-6.col-xl-3:first-child .card-body h4"
+        );
+        if (totalUsersEl) {
+          const currentTotal = parseInt(totalUsersEl.textContent) || 0;
+          totalUsersEl.textContent = currentTotal + 1;
+        }
+
+        if (isActive) {
+          const activeUsersEl = document.querySelector(
+            ".col-sm-6.col-xl-3:nth-child(2) .card-body h4"
+          );
+          if (activeUsersEl) {
+            const currentActive = parseInt(activeUsersEl.textContent) || 0;
+            activeUsersEl.textContent = currentActive + 1;
+          }
         }
       }
 
@@ -598,7 +759,6 @@
         updateSelectedCount();
       });
 
-      // Individual checkbox change
       document.addEventListener("change", function (e) {
         if (e.target.classList.contains("user-checkbox")) {
           if (e.target.checked) {
@@ -628,13 +788,13 @@
         currentEditingUserId = null;
         isSubmitting = false;
         userForm.reset();
-        
+
         const submitBtn = document.getElementById("submitUserBtn");
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.textContent = "Save";
         }
-        
+
         document.querySelector("#userModal .modal-title").innerHTML =
           '<i class="icon-base ti tabler-user-plus me-2"></i>Add New User';
         userModal.show();
@@ -717,6 +877,7 @@
                 if (data.success) {
                   showToast("User deleted successfully!");
                   row?.remove();
+                  updateRowNumbers();
                 } else {
                   showToast(data.message || "Error deleting user", "error");
                 }
@@ -730,39 +891,47 @@
       });
 
       // ============================================
-      // SUBMIT USER FORM - FIXED
+      // SUBMIT USER FORM - COMPLETE FIXED VERSION
       // ============================================
       userForm?.addEventListener("submit", function (e) {
         e.preventDefault();
         e.stopPropagation();
 
-        // Prevent double submission
         if (isSubmitting) {
           console.log("Form already submitting, ignoring duplicate submit");
           return;
         }
 
-        // Get form values
         const branchId = document.getElementById("userBranch").value;
         const departmentId = document.getElementById("userDepartment").value;
 
-        // Validate branch selection
         if (!branchId) {
           showToast("Please select a branch", "error");
           return;
         }
 
-        // Validate department
         if (!departmentId) {
           showToast("Please select a department", "error");
           return;
         }
 
-        // Build form data
+        // Get branch, department, and role names for display
+        const branchSelect = document.getElementById("userBranch");
+        const departmentSelect = document.getElementById("userDepartment");
+        const roleSelect = document.getElementById("userRole");
+
+        const branchName =
+          branchSelect.options[branchSelect.selectedIndex]?.text || "";
+        const departmentName =
+          departmentSelect.options[departmentSelect.selectedIndex]?.text || "";
+        const selectedRole = roleSelect.value;
+        const selectedRoleName =
+          roleSelect.options[roleSelect.selectedIndex]?.text || "";
+
         const formData = {
           name: document.getElementById("userFullName").value.trim(),
           email: document.getElementById("userEmail").value.trim(),
-          role: document.getElementById("userRole").value,
+          role: selectedRole,
           branch_id: branchId,
           department_id: departmentId,
           status: document.getElementById("userStatus").value,
@@ -777,11 +946,10 @@
           : "/api/users";
         const method = currentEditingUserId ? "PUT" : "POST";
 
-        // Disable submit button and set flag
         isSubmitting = true;
         const submitBtn = document.getElementById("submitUserBtn");
         const originalBtnText = submitBtn ? submitBtn.textContent : "Save";
-        
+
         if (submitBtn) {
           submitBtn.disabled = true;
           submitBtn.innerHTML =
@@ -803,16 +971,134 @@
           })
           .then((data) => {
             console.log("Server response:", data);
+
             if (data.success) {
-              showToast(
-                `User ${currentEditingUserId ? "updated" : "created"} successfully!`
-              );
-              userModal.hide();
-              
-              // Force page reload without cache to ensure fresh data
-              setTimeout(() => {
-                window.location.href = window.location.href.split('?')[0] + '?t=' + Date.now();
-              }, 2000);
+              if (currentEditingUserId) {
+                // UPDATE: Refresh the specific row in the table
+                console.log("Updating existing user row...");
+
+                const row = document.querySelector(
+                  `tr[data-user-id="${currentEditingUserId}"]`
+                );
+                if (row) {
+                  // Update row attributes
+                  row.setAttribute("data-branch-id", branchId);
+                  row.setAttribute("data-department-id", departmentId);
+                  row.setAttribute("data-department-name", departmentName);
+
+                  // Update name
+                  const nameCell = row.querySelector('[data-field="name"]');
+                  if (nameCell) nameCell.textContent = formData.name;
+
+                  // Update email
+                  const emailCell = row.querySelector('[data-field="email"]');
+                  if (emailCell) emailCell.textContent = formData.email;
+
+                  // Update role
+                  const roleCell = row.querySelector('[data-field="role"]');
+                  if (roleCell) {
+                    let roleBadge =
+                      '<span class="badge bg-label-secondary">No role</span>';
+
+                    if (
+                      data.data?.roles &&
+                      Array.isArray(data.data.roles) &&
+                      data.data.roles.length > 0
+                    ) {
+                      const roleName = data.data.roles[0].name;
+                      roleBadge = `<span class="badge bg-label-primary">${roleName}</span>`;
+                    } else if (selectedRole && selectedRoleName) {
+                      roleBadge = `<span class="badge bg-label-primary">${selectedRoleName}</span>`;
+                    }
+
+                    roleCell.innerHTML = roleBadge;
+                  }
+
+                  // Update department
+                  const deptCell = row.querySelector(
+                    '[data-field="department"]'
+                  );
+                  if (deptCell) {
+                    deptCell.innerHTML =
+                      departmentName ||
+                      '<span class="text-muted">Not set</span>';
+                  }
+
+                  // Update branch
+                  const branchCell = row.querySelector('[data-field="branch"]');
+                  if (branchCell) {
+                    branchCell.innerHTML =
+                      branchName ||
+                      '<span class="text-muted">Not assigned</span>';
+                  }
+
+                  // Update status
+                  const statusCell = row.querySelector('[data-field="status"]');
+                  if (statusCell) {
+                    const statusBadge =
+                      formData.status === "Active"
+                        ? '<span class="badge bg-label-success">Active</span>'
+                        : '<span class="badge bg-label-danger">Inactive</span>';
+                    statusCell.innerHTML = statusBadge;
+                  }
+
+                  // Highlight the updated row briefly
+                  row.classList.add("table-info");
+                  setTimeout(() => {
+                    row.classList.remove("table-info");
+                  }, 2000);
+                }
+
+                showToast(
+                  data.roleAssigned
+                    ? "User and role updated successfully!"
+                    : "User updated successfully!"
+                );
+                userModal.hide();
+                userForm.reset();
+              } else {
+                // CREATE: Add new user to table
+                console.log("Processing new user data...");
+
+                let userRoles = [];
+                let displayRole = selectedRoleName;
+
+                if (data.data.roles && data.data.roles.length > 0) {
+                  userRoles = data.data.roles;
+                  displayRole = data.data.roles[0].name;
+                } else if (selectedRole && selectedRoleName) {
+                  userRoles = [{ id: null, name: selectedRoleName }];
+                }
+
+                const newUser = {
+                  id: data.data.id,
+                  name: formData.name,
+                  email: formData.email,
+                  role: displayRole,
+                  roles: userRoles,
+                  branch_id: branchId,
+                  branch_name: branchName,
+                  department_id: departmentId,
+                  department_name: departmentName,
+                  is_active: formData.status === "Active",
+                };
+
+                addUserToTable(newUser, true);
+                updateStats(newUser.is_active);
+                showToast(
+                  data.roleAssigned
+                    ? "User created and role assigned successfully!"
+                    : "User created successfully!"
+                );
+                userModal.hide();
+                userForm.reset();
+              }
+
+              isSubmitting = false;
+              if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+              }
             } else {
               showToast(data.message || "Error saving user", "error");
               isSubmitting = false;
