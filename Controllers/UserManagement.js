@@ -84,7 +84,7 @@ exports.userManagement = async (req, res) => {
       console.error("Roles:", rolesResponse.status);
       console.error("Permissions:", permissionsResponse.status);
       console.error("Branches:", branchesResponse.status);
-      
+
       // CHECK FOR 401 - Token expired/invalid, redirect to login
       if (
         usersResponse.status === 401 || 
@@ -211,6 +211,7 @@ exports.userManagement = async (req, res) => {
   }
 };
 
+
 // Create user
 exports.createUser = async (req, res) => {
   try {
@@ -268,7 +269,6 @@ exports.createUser = async (req, res) => {
     console.log("API Response:", data);
 
     if (!response.ok || !data.success) {
-      // Check for 401
       if (response.status === 401) {
         return res.status(401).json({
           success: false,
@@ -283,34 +283,74 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    // If user created successfully and role specified, assign role
+    // Assign role if user was created successfully and role is specified
+    let roleAssigned = false;
     if (data.success && req.body.role && data.data?.id) {
-      console.log("Assigning role:", req.body.role);
+      console.log(`Attempting to assign role "${req.body.role}" to user ${data.data.id}`);
+      
       try {
-        const roleResponse = await fetch(
-          `${BASE_URL}/admin/users/${data.data.id}/roles`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ role: req.body.role }),
-          }
-        );
+        // Fetch roles to get the role ID
+        const rolesResponse = await fetch(`${BASE_URL}/admin/roles`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
 
-        const roleData = await roleResponse.json();
-        console.log("Role assignment response:", roleData);
+        if (rolesResponse.ok) {
+          const rolesData = await rolesResponse.json();
+          
+          // Find role ID by name
+          const role = (rolesData?.data?.data || rolesData?.data || []).find(
+            r => r.name === req.body.role
+          );
+
+          if (!role) {
+            console.warn(`Role "${req.body.role}" not found. Skipping role assignment.`);
+          } else {
+            const roleId = role.id;
+            console.log(`Found role ID: ${roleId} for role "${req.body.role}"`);
+
+            // Assign role using role_id
+            const roleResponse = await fetch(
+              `${BASE_URL}/admin/users/${data.data.id}/assign-role`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                  Accept: "application/json",
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ role_id: roleId }),
+              }
+            );
+
+            const roleData = await roleResponse.json();
+
+            if (roleData.success) {
+              console.log(`Role assigned successfully to user ${data.data.id}`);
+              roleAssigned = true;
+            } else {
+              console.warn(`Role assignment failed for user ${data.data.id}:`, roleData.message || 'Unknown error');
+            }
+          }
+        } else {
+          console.warn("Failed to fetch roles for role assignment");
+        }
       } catch (roleError) {
-        console.error("Error assigning role (non-fatal):", roleError);
+        console.error(`Error assigning role to user ${data.data.id}:`, roleError.message);
       }
     }
 
+    // Return success response with role assignment status
     return res.json({
       success: true,
-      message: data.message || "User created successfully",
+      message: roleAssigned 
+        ? "User created and role assigned successfully" 
+        : "User created successfully",
       data: data.data,
+      roleAssigned: roleAssigned,
     });
   } catch (error) {
     console.error("Error creating user:", error);
@@ -321,7 +361,6 @@ exports.createUser = async (req, res) => {
     });
   }
 };
-
 // Update user
 exports.updateUser = async (req, res) => {
   try {

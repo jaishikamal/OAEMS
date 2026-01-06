@@ -36,6 +36,7 @@ exports.postLogin = async (req, res) => {
           errorMessage: "Session error. Please try again.",
         });
       }
+      console.log("token session:", req.session.token);
       console.log("Session saved successfully");
       return res.redirect("/dashboard");
     });
