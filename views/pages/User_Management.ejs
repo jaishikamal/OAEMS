@@ -312,145 +312,155 @@
   </div>
 
   <!-- Add User Modal -->
-  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-scrollable">
-      <form class="modal-content" id="userForm">
-        <div class="modal-header">
-          <h5 class="modal-title">
-            <i class="icon-base ti tabler-user-plus me-2"></i>User
-          </h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="modal-body">
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label"
-                >Full Name <span class="text-danger">*</span></label
-              >
-              <input
-                type="text"
-                class="form-control"
-                name="fullName"
-                id="userFullName"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label"
-                >Email <span class="text-danger">*</span></label
-              >
-              <input
-                type="email"
-                class="form-control"
-                name="email"
-                id="userEmail"
-                required
-              />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Role</label>
-              <select class="form-select" name="role[]" id="userRole" multiple>
-                <option value="">Select Role</option>
-                <% if (roles && roles.length > 0) { %> <% roles.forEach(role =>
-                { %>
-                <option value="<%= role.ids %>"><%= role.name %></option>
-                <% }) %> <% } %>
-              </select>
-            </div>
+ <!-- Fixed User Modal - Replace your existing modal -->
+<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <form class="modal-content" id="userForm">
+      <div class="modal-header">
+        <h5 class="modal-title">
+          <i class="icon-base ti tabler-user-plus me-2"></i>User
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label"
+              >Full Name <span class="text-danger">*</span></label
+            >
+            <input
+              type="text"
+              class="form-control"
+              name="fullName"
+              id="userFullName"
+              required
+            />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label"
+              >Email <span class="text-danger">*</span></label
+            >
+            <input
+              type="email"
+              class="form-control"
+              name="email"
+              id="userEmail"
+              required
+            />
+          </div>
+          
+          <!-- FIXED: Single select for role, correct value attribute -->
+          <div class="col-md-6">
+            <label class="form-label">Role</label>
+            <select class="form-select" name="role" id="userRole">
+              <option value="">Select Role</option>
+              <% if (roles && roles.length > 0) { %>
+                <% roles.forEach(role => { %>
+                  <option value="<%= role.name %>"><%= role.name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
 
-            <div class="col-md-6">
-              <label class="form-label"
-                >Branch <span class="text-danger">*</span></label
-              >
-              <select
-                class="form-select"
-                name="branch"
-                id="userBranch"
-                required
-              >
-                <option value="">Select Branch</option>
-                <% if (branches && branches.length > 0) { %> <%
-                branches.forEach(branch => { %>
-                <option value="<%= branch.id %>"><%= branch.name %></option>
-                <% }) %> <% } %>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label"
-                >Department <span class="text-danger">*</span></label
-              >
-              <select
-                class="form-select"
-                name="department"
-                id="userDepartment"
-                required
-              >
-                <option value="">Select Department</option>
-                <% if (departments && departments.length > 0) { %> <%
-                departments.forEach(dept => { %>
-                <option value="<%= dept.id %>"><%= dept.title %></option>
-                <% }) %> <% } else { %>
+          <div class="col-md-6">
+            <label class="form-label"
+              >Branch <span class="text-danger">*</span></label
+            >
+            <select
+              class="form-select"
+              name="branch"
+              id="userBranch"
+              required
+            >
+              <option value="">Select Branch</option>
+              <% if (branches && branches.length > 0) { %>
+                <% branches.forEach(branch => { %>
+                  <option value="<%= branch.id %>"><%= branch.name %></option>
+                <% }) %>
+              <% } %>
+            </select>
+          </div>
+          
+          <div class="col-md-6">
+            <label class="form-label"
+              >Department <span class="text-danger">*</span></label
+            >
+            <select
+              class="form-select"
+              name="department"
+              id="userDepartment"
+              required
+            >
+              <option value="">Select Department</option>
+              <% if (departments && departments.length > 0) { %>
+                <% departments.forEach(dept => { %>
+                  <option value="<%= dept.id %>"><%= dept.title %></option>
+                <% }) %>
+              <% } else { %>
                 <option value="1">IT</option>
                 <option value="2">Finance</option>
                 <option value="3">Operations</option>
                 <option value="4">Marketing</option>
                 <option value="5">HR</option>
-                <% } %>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label class="form-label">Status</label>
-              <select class="form-select" name="status" id="userStatus">
-                <option value="Active">Active</option>
-                <option value="Inactive">Inactive</option>
-                <option value="Pending">Pending</option>
-              </select>
-            </div>
-            <div class="col-12">
-              <label class="form-label">Notes</label>
-              <textarea
-                class="form-control"
-                name="notes"
-                id="userNotes"
-                rows="2"
-                placeholder="Access scope, onboarding steps, etc."
-              ></textarea>
-            </div>
-            <div class="col-12">
-              <div class="form-check form-switch">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  name="twoFactor"
-                  id="twoFactorToggle"
-                />
-                <label class="form-check-label" for="twoFactorToggle"
-                  >Require 2FA</label
-                >
-              </div>
+              <% } %>
+            </select>
+          </div>
+          
+          <div class="col-md-6">
+            <label class="form-label">Status</label>
+            <select class="form-select" name="status" id="userStatus">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          
+          <div class="col-12">
+            <label class="form-label">Notes</label>
+            <textarea
+              class="form-control"
+              name="notes"
+              id="userNotes"
+              rows="2"
+              placeholder="Access scope, onboarding steps, etc."
+            ></textarea>
+          </div>
+          
+          <div class="col-12">
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="twoFactor"
+                id="twoFactorToggle"
+              />
+              <label class="form-check-label" for="twoFactorToggle"
+                >Require 2FA</label
+              >
             </div>
           </div>
         </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-secondary"
-            data-bs-dismiss="modal"
-          >
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary" id="submitUserBtn">
-            Save
-          </button>
-        </div>
-      </form>
-    </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          data-bs-dismiss="modal"
+        >
+          Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" id="submitUserBtn">
+          Save
+        </button>
+      </div>
+    </form>
   </div>
+</div>
 
   <!--  Action Feedback Toast -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">

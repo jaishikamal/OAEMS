@@ -216,7 +216,7 @@ exports.userManagement = async (req, res) => {
   }
 };
 
-// Create user - FIXED VERSION
+// Create user
 exports.createUser = async (req, res) => {
   try {
     if (!req.session || !req.session.token) {
@@ -249,7 +249,7 @@ exports.createUser = async (req, res) => {
     const userData = {
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password || "TempPass123!",
+      password: req.body.password || "password123!",
       department_id: departmentId,
       branch_ids: [parseInt(req.body.branch_id, 10)],
       is_active: req.body.status === "Active",
@@ -259,6 +259,7 @@ exports.createUser = async (req, res) => {
 
     console.log("Sending to API:", userData);
 
+    // Step 1: Create the user
     const response = await fetch(`${BASE_URL}/admin/users`, {
       method: "POST",
       headers: {
@@ -270,7 +271,7 @@ exports.createUser = async (req, res) => {
     });
 
     const data = await response.json();
-    console.log("API Response:", data);
+    console.log("User creation response:", data);
 
     if (!response.ok || !data.success) {
       if (response.status === 401) {
@@ -287,17 +288,15 @@ exports.createUser = async (req, res) => {
       });
     }
 
-    // Assign role if user was created successfully and role is specified
+    // Step 2: Assign role if specified
     let roleAssigned = false;
     let assignedRoleData = null;
 
     if (data.success && req.body.role && data.data?.id) {
-      console.log(
-        `Attempting to assign role "${req.body.role}" to user ${data.data.id}`
-      );
+      console.log(`Assigning role "${req.body.role}" to user ${data.data.id}`);
 
       try {
-        // Fetch roles to get the role ID
+        // Fetch all roles
         const rolesResponse = await fetch(`${BASE_URL}/admin/roles`, {
           method: "GET",
           headers: {
@@ -308,21 +307,19 @@ exports.createUser = async (req, res) => {
 
         if (rolesResponse.ok) {
           const rolesData = await rolesResponse.json();
+          const allRoles = rolesData?.data?.data || rolesData?.data || [];
 
-          // Find role by name
-          const role = (rolesData?.data?.data || rolesData?.data || []).find(
-            (r) => r.name === req.body.role
+          // Find role by name (case-insensitive)
+          const role = allRoles.find(
+            (r) => r.name.toLowerCase() === req.body.role.toLowerCase()
           );
 
           if (!role) {
-            console.warn(
-              `Role "${req.body.role}" not found. Skipping role assignment.`
-            );
+            console.warn(`Role "${req.body.role}" not found in system`);
           } else {
-            const roleId = role.id;
-            console.log(`Found role ID: ${roleId} for role "${req.body.role}"`);
+            console.log(`Found role: ${role.name} (ID: ${role.id})`);
 
-            // Assign role using role_id
+            // Assign the role
             const roleResponse = await fetch(
               `${BASE_URL}/admin/users/${data.data.id}/assign-role`,
               {
@@ -332,45 +329,40 @@ exports.createUser = async (req, res) => {
                   Accept: "application/json",
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ role_id: roleId }),
+                body: JSON.stringify({ role_id: role.id }),
               }
             );
 
             const roleResponseData = await roleResponse.json();
             console.log("Role assignment response:", roleResponseData);
 
-            if (roleResponseData.success) {
-              console.log(`Role assigned successfully to user ${data.data.id}`);
+            if (roleResponseData.success || roleResponse.ok) {
+              console.log(`✓ Role "${role.name}" assigned successfully`);
               roleAssigned = true;
-              assignedRoleData = role; // Store the role data
+              assignedRoleData = {
+                id: role.id,
+                name: role.name,
+                display_name: role.display_name || role.name,
+              };
             } else {
-              console.warn(
-                `Role assignment failed for user ${data.data.id}:`,
-                roleResponseData.message || "Unknown error"
-              );
+              console.warn("Role assignment failed:", roleResponseData.message);
             }
           }
-        } else {
-          console.warn("Failed to fetch roles for role assignment");
         }
       } catch (roleError) {
-        console.error(
-          `Error assigning role to user ${data.data.id}:`,
-          roleError.message
-        );
+        console.error("Error during role assignment:", roleError.message);
       }
     }
 
-    // Add a small delay to ensure database consistency
-    if (roleAssigned) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-
-    // Fetch the complete user data with roles
+    // Step 3: Fetch complete user data with roles (with retry)
     let completeUserData = data.data;
+    let retries = 3;
     
-    if (data.data?.id) {
+    while (retries > 0 && data.data?.id) {
       try {
+        // Wait a bit for database consistency
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const userResponse = await fetch(
           `${BASE_URL}/admin/users/${data.data.id}`,
           {
@@ -386,29 +378,37 @@ exports.createUser = async (req, res) => {
           const userData = await userResponse.json();
           if (userData.success && userData.data) {
             completeUserData = userData.data;
-            console.log(
-              "Fetched complete user data:",
-              JSON.stringify(completeUserData, null, 2)
-            );
+            console.log("Fetched user data, roles:", completeUserData.roles);
+            
+            // If roles exist in response, we're done
+            if (completeUserData.roles && completeUserData.roles.length > 0) {
+              console.log("✓ Roles found in user data");
+              break;
+            }
           }
         }
+        
+        retries--;
+        if (retries > 0) {
+          console.log(`Retrying fetch... (${retries} attempts left)`);
+        }
       } catch (fetchError) {
-        console.error("Error fetching complete user data:", fetchError.message);
+        console.error("Error fetching user data:", fetchError.message);
+        retries--;
       }
     }
 
-    // FALLBACK: If roles array is still empty but we know we assigned a role,
-    // manually add the role to the response
+    // Step 4: Fallback - manually add role if still missing
     if (roleAssigned && assignedRoleData) {
       if (!completeUserData.roles || completeUserData.roles.length === 0) {
-        console.log("Roles array empty after fetch - manually adding role data");
+        console.log("⚠ Roles still empty, adding manually");
         completeUserData.roles = [assignedRoleData];
       }
     }
 
-    console.log("Final user data being returned:", JSON.stringify(completeUserData, null, 2));
+    console.log("Final response data:", JSON.stringify(completeUserData, null, 2));
 
-    // Return success response with complete user data including roles
+    // Step 5: Return success response
     return res.status(200).json({
       success: true,
       message: roleAssigned
@@ -426,7 +426,8 @@ exports.createUser = async (req, res) => {
     });
   }
 };
-// Update user - FIXED VERSION
+
+// Update user - CONSOLIDATED AND FIXED
 exports.updateUser = async (req, res) => {
   try {
     if (!req.session || !req.session.token) {
@@ -446,6 +447,7 @@ exports.updateUser = async (req, res) => {
       });
     }
 
+    // Build update payload
     const userData = {
       name: req.body.name,
       email: req.body.email,
@@ -469,8 +471,9 @@ exports.updateUser = async (req, res) => {
       userData.branch_ids = [parseInt(req.body.branch_id, 10)];
     }
 
-    console.log("Updating user", id, "with data:", userData);
+    console.log(`Updating user ${id} with data:`, userData);
 
+    // Step 1: Update user basic info
     const response = await fetch(`${BASE_URL}/admin/users/${id}`, {
       method: "PUT",
       headers: {
@@ -499,15 +502,15 @@ exports.updateUser = async (req, res) => {
       });
     }
 
-    // FIXED: Role assignment for updates
+    // Step 2: Update role if specified
     let roleAssigned = false;
     let assignedRoleData = null;
 
     if (data.success && req.body.role) {
-      console.log(`Attempting to update role to "${req.body.role}" for user ${id}`);
-      
+      console.log(`Updating role to "${req.body.role}" for user ${id}`);
+
       try {
-        // Fetch roles to get the role ID
+        // Fetch all roles
         const rolesResponse = await fetch(`${BASE_URL}/admin/roles`, {
           method: "GET",
           headers: {
@@ -518,64 +521,62 @@ exports.updateUser = async (req, res) => {
 
         if (rolesResponse.ok) {
           const rolesData = await rolesResponse.json();
+          const allRoles = rolesData?.data?.data || rolesData?.data || [];
 
-          // Find role by name
-          const role = (rolesData?.data?.data || rolesData?.data || []).find(
-            (r) => r.name === req.body.role
+          // Find role by name (case-insensitive)
+          const role = allRoles.find(
+            (r) => r.name.toLowerCase() === req.body.role.toLowerCase()
           );
 
           if (!role) {
-            console.warn(`Role "${req.body.role}" not found. Skipping role assignment.`);
+            console.warn(`Role "${req.body.role}" not found in system`);
           } else {
-            const roleId = role.id;
-            console.log(`Found role ID: ${roleId} for role "${req.body.role}"`);
+            console.log(`Found role: ${role.name} (ID: ${role.id})`);
 
-            // Use assign-role endpoint (same as create)
+            // Assign the role (this replaces existing role)
             const roleResponse = await fetch(
               `${BASE_URL}/admin/users/${id}/assign-role`,
               {
                 method: "POST",
                 headers: {
                   Authorization: `Bearer ${token}`,
-                  Accept: "application/json",
+                  Accept: "application/json", 
                   "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ role_id: roleId }),
+                body: JSON.stringify({ role_id: role.id }),
               }
             );
 
             const roleResponseData = await roleResponse.json();
-            console.log("Role assignment response:", roleResponseData);
+            console.log("Role update response:", roleResponseData);
 
-            if (roleResponseData.success) {
-              console.log(`Role updated successfully for user ${id}`);
+            if (roleResponseData.success || roleResponse.ok) {
+              console.log(`✓ Role "${role.name}" updated successfully`);
               roleAssigned = true;
-              assignedRoleData = role;
+              assignedRoleData = {
+                id: role.id,
+                name: role.name,
+                display_name: role.display_name || role.name,
+              };
             } else {
-              console.warn(
-                `Role assignment failed for user ${id}:`,
-                roleResponseData.message || "Unknown error"
-              );
+              console.warn("Role update failed:", roleResponseData.message);
             }
           }
-        } else {
-          console.warn("Failed to fetch roles for role assignment");
         }
       } catch (roleError) {
-        console.error(`Error updating role for user ${id}:`, roleError.message);
+        console.error("Error updating role:", roleError.message);
       }
     }
 
-    // Add delay for database consistency
-    if (roleAssigned) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-    }
-
-    // Fetch complete user data with roles
+    // Step 3: Fetch complete user data with roles (with retry)
     let completeUserData = data.data;
+    let retries = 3;
     
-    if (id) {
+    while (retries > 0) {
       try {
+        // Wait for database consistency
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
         const userResponse = await fetch(
           `${BASE_URL}/admin/users/${id}`,
           {
@@ -591,26 +592,41 @@ exports.updateUser = async (req, res) => {
           const userData = await userResponse.json();
           if (userData.success && userData.data) {
             completeUserData = userData.data;
-            console.log("Fetched complete user data:", JSON.stringify(completeUserData, null, 2));
+            console.log("Fetched updated user data, roles:", completeUserData.roles);
+            
+            // If roles exist, we're done
+            if (completeUserData.roles && completeUserData.roles.length > 0) {
+              console.log("✓ Roles found in updated user data");
+              break;
+            }
           }
         }
+        
+        retries--;
+        if (retries > 0) {
+          console.log(`Retrying fetch... (${retries} attempts left)`);
+        }
       } catch (fetchError) {
-        console.error("Error fetching complete user data:", fetchError.message);
+        console.error("Error fetching updated user data:", fetchError.message);
+        retries--;
       }
     }
 
-    // Fallback: manually add role if not in response
+    // Step 4: Fallback - manually add role if still missing
     if (roleAssigned && assignedRoleData) {
       if (!completeUserData.roles || completeUserData.roles.length === 0) {
-        console.log("Roles array empty after fetch - manually adding role data");
+        console.log("⚠ Roles still empty after update, adding manually");
         completeUserData.roles = [assignedRoleData];
       }
     }
 
+    console.log("Final update response:", JSON.stringify(completeUserData, null, 2));
+
+    // Step 5: Return success response
     return res.json({
       success: true,
-      message: roleAssigned 
-        ? "User and role updated successfully" 
+      message: roleAssigned
+        ? "User and role updated successfully"
         : "User updated successfully",
       data: completeUserData,
       roleAssigned: roleAssigned,
