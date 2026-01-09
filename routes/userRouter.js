@@ -15,7 +15,7 @@ const User_Management = require("../Controllers/UserManagement");
 const Setting = require("../Controllers/Setting");
 const Branches = require("../Controllers/Branches");
 const Approve_Type = require("../Controllers/Approve_Type");
-const RolesController = require("../Controllers/RolesController"); 
+const RolesController = require("../Controllers/RolesController");
 
 // ============================================
 // Page Routes
@@ -53,7 +53,20 @@ userRouter.delete("/api/users/:id", User_Management.deleteUser);
 userRouter.post("/api/users/:userId/assign-role", User_Management.assignRole);
 userRouter.post("/api/users/bulk/assign-role", User_Management.bulkAssignRole);
 
-// Role permissions
-userRouter.get("/api/roles/:roleId/permissions", User_Management.getRolePermissions);
+// ============================================
+// Roles Management CRUD Operations
+// ============================================
+
+// Create a new role
+userRouter.post("/admin/roles/create", RolesController.createRole);
+
+// Get a single role by ID (for editing)
+userRouter.get("/admin/roles/:id", RolesController.getRoleById);
+
+// Update a role
+userRouter.post("/admin/roles/update/:id", RolesController.updateRole);
+
+// Delete a role
+userRouter.post("/admin/roles/delete/:id", RolesController.deleteRole);
 
 module.exports = userRouter;

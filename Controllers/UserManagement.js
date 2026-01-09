@@ -357,12 +357,12 @@ exports.createUser = async (req, res) => {
     // Step 3: Fetch complete user data with roles (with retry)
     let completeUserData = data.data;
     let retries = 3;
-    
+
     while (retries > 0 && data.data?.id) {
       try {
         // Wait a bit for database consistency
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         const userResponse = await fetch(
           `${BASE_URL}/admin/users/${data.data.id}`,
           {
@@ -379,7 +379,7 @@ exports.createUser = async (req, res) => {
           if (userData.success && userData.data) {
             completeUserData = userData.data;
             console.log("Fetched user data, roles:", completeUserData.roles);
-            
+
             // If roles exist in response, we're done
             if (completeUserData.roles && completeUserData.roles.length > 0) {
               console.log("✓ Roles found in user data");
@@ -387,7 +387,7 @@ exports.createUser = async (req, res) => {
             }
           }
         }
-        
+
         retries--;
         if (retries > 0) {
           console.log(`Retrying fetch... (${retries} attempts left)`);
@@ -406,7 +406,10 @@ exports.createUser = async (req, res) => {
       }
     }
 
-    console.log("Final response data:", JSON.stringify(completeUserData, null, 2));
+    console.log(
+      "Final response data:",
+      JSON.stringify(completeUserData, null, 2)
+    );
 
     // Step 5: Return success response
     return res.status(200).json({
@@ -540,7 +543,7 @@ exports.updateUser = async (req, res) => {
                 method: "POST",
                 headers: {
                   Authorization: `Bearer ${token}`,
-                  Accept: "application/json", 
+                  Accept: "application/json",
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({ role_id: role.id }),
@@ -571,29 +574,29 @@ exports.updateUser = async (req, res) => {
     // Step 3: Fetch complete user data with roles (with retry)
     let completeUserData = data.data;
     let retries = 3;
-    
+
     while (retries > 0) {
       try {
         // Wait for database consistency
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        const userResponse = await fetch(
-          `${BASE_URL}/admin/users/${id}`,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          }
-        );
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        const userResponse = await fetch(`${BASE_URL}/admin/users/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
 
         if (userResponse.ok) {
           const userData = await userResponse.json();
           if (userData.success && userData.data) {
             completeUserData = userData.data;
-            console.log("Fetched updated user data, roles:", completeUserData.roles);
-            
+            console.log(
+              "Fetched updated user data, roles:",
+              completeUserData.roles
+            );
+
             // If roles exist, we're done
             if (completeUserData.roles && completeUserData.roles.length > 0) {
               console.log("✓ Roles found in updated user data");
@@ -601,7 +604,7 @@ exports.updateUser = async (req, res) => {
             }
           }
         }
-        
+
         retries--;
         if (retries > 0) {
           console.log(`Retrying fetch... (${retries} attempts left)`);
@@ -620,7 +623,10 @@ exports.updateUser = async (req, res) => {
       }
     }
 
-    console.log("Final update response:", JSON.stringify(completeUserData, null, 2));
+    console.log(
+      "Final update response:",
+      JSON.stringify(completeUserData, null, 2)
+    );
 
     // Step 5: Return success response
     return res.json({
@@ -722,51 +728,6 @@ exports.assignRole = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Server error while assigning role",
-    });
-  }
-};
-
-// Get role permissions
-exports.getRolePermissions = async (req, res) => {
-  try {
-    if (!req.session || !req.session.token) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
-
-    const { roleId } = req.params;
-    const response = await fetch(
-      `${BASE_URL}/admin/roles/${roleId}/permissions`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${req.session.token}`,
-          Accept: "application/json",
-        },
-      }
-    );
-
-    const data = await response.json();
-
-    if (response.status === 401) {
-      return res.status(401).json({
-        success: false,
-        message: "Session expired - Please login again",
-      });
-    }
-
-    return res.json({
-      success: data.success || response.ok,
-      data: data.data || data,
-      permissions: data.data?.permissions || [],
-    });
-  } catch (error) {
-    console.error("Error fetching role permissions:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error while fetching permissions",
     });
   }
 };

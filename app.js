@@ -27,7 +27,7 @@ app.use(
 );
 app.use("/", userRouter);
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 // Export for Vercel
 module.exports = app;
