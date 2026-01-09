@@ -173,7 +173,7 @@ exports.getRoleById = async (req, res) => {
   }
 };
 
-// Update a role
+// Update a role - FIXED: Now handles POST from frontend but sends PUT to API
 exports.updateRole = async (req, res) => {
   try {
     console.log("Update role request body:", req.body);
@@ -207,6 +207,7 @@ exports.updateRole = async (req, res) => {
 
     const token = req.session.token;
     
+    // Send PUT request to external API (this is correct)
     const updateRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
       method: "PUT",
       headers: {
