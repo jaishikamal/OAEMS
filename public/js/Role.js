@@ -1,18 +1,15 @@
 $(document).ready(function() {
   
+  // Get Bootstrap modal instance
+  const addRoleModalEl = document.getElementById('addRoleModal');
+  const addRoleModal = new bootstrap.Modal(addRoleModalEl);
+  
   // Handle Add Role Button Click - Show Modal
   $('#addRoleBtn').on('click', function (e) {
     e.preventDefault();
-    
     // Reset modal to "Add" mode
-    $('.role-title').text('Add New Role');
-    $('#addRoleForm').removeAttr('data-role-id');
-    $('#addRoleForm').removeAttr('data-mode');
-    $('#addRoleForm')[0].reset();
-    $('.permission-checkbox').prop('checked', false);
-    $('#selectAll').prop('checked', false);
-    
-    $('#addRoleModal').modal('show');
+    resetModalToAddMode();
+    addRoleModal.show();
   });
 
   // Handle Select All Permissions
@@ -33,8 +30,6 @@ $(document).ready(function() {
     e.preventDefault();
     const roleId = $(this).data('role-id');
     
-    console.log('Editing role ID:', roleId);
-    
     // Show loading
     Swal.fire({
       title: 'Loading...',
@@ -49,11 +44,10 @@ $(document).ready(function() {
       url: `/admin/roles/${roleId}`,
       method: 'GET',
       success: function(response) {
-        console.log('Role data loaded:', response);
         Swal.close();
         
         // Populate modal with role data
-        $('#modalRoleName').val(response.data.name || '');
+        $('#modalRoleName').val(response.data.name);
         $('#modalRoleDescription').val(response.data.description || '');
         
         // Clear all checkboxes first
@@ -66,25 +60,41 @@ $(document).ready(function() {
             $(`.permission-checkbox[value="${permission}"]`).prop('checked', true);
           });
           
-          // Update "Select All" checkbox if all are checked
+          // Update select all checkbox if all permissions are selected
           const totalCheckboxes = $('.permission-checkbox').length;
           const checkedCheckboxes = $('.permission-checkbox:checked').length;
           $('#selectAll').prop('checked', totalCheckboxes === checkedCheckboxes);
         }
         
-        // Change modal title and set form to edit mode
+        // Change modal to edit mode
         $('.role-title').text('Edit Role');
+        $('.submit-btn-text').text('Update Role');
         $('#addRoleForm').attr('data-role-id', roleId);
         $('#addRoleForm').attr('data-mode', 'edit');
         
         // Show modal
-        $('#addRoleModal').modal('show');
+        addRoleModal.show();
       },
       error: function(xhr) {
-        console.error('Error loading role:', xhr);
         let errorMessage = 'Failed to load role data.';
         if (xhr.responseJSON && xhr.responseJSON.message) {
           errorMessage = xhr.responseJSON.message;
+        }
+        
+        // Handle session expiration
+        if (xhr.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Session Expired',
+            text: 'Please login again.',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+          }).then(() => {
+            window.location.href = '/';
+          });
+          return;
         }
         
         Swal.fire({
@@ -134,7 +144,6 @@ $(document).ready(function() {
           method: 'POST',
           contentType: 'application/json',
           success: function(response) {
-            console.log('Role deleted:', response);
             Swal.fire({
               icon: 'success',
               title: 'Deleted!',
@@ -144,16 +153,30 @@ $(document).ready(function() {
               },
               buttonsStyling: false
             }).then(() => {
-              // Reload the page
               location.reload();
             });
           },
-          error: function(xhr, status, error) {
-            console.error('Error deleting role:', xhr);
+          error: function(xhr) {
             let errorMessage = 'Failed to delete role. Please try again.';
             
             if (xhr.responseJSON && xhr.responseJSON.message) {
               errorMessage = xhr.responseJSON.message;
+            }
+            
+            // Handle session expiration
+            if (xhr.status === 401) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Session Expired',
+                text: 'Please login again.',
+                customClass: {
+                  confirmButton: 'btn btn-primary'
+                },
+                buttonsStyling: false
+              }).then(() => {
+                window.location.href = '/';
+              });
+              return;
             }
             
             Swal.fire({
@@ -171,24 +194,12 @@ $(document).ready(function() {
     });
   });
 
-  // Reset modal when it's closed
-  $('#addRoleModal').on('hidden.bs.modal', function () {
-    $('#addRoleForm')[0].reset();
-    $('.permission-checkbox').prop('checked', false);
-    $('#selectAll').prop('checked', false);
-    $('.role-title').text('Add New Role');
-    $('#addRoleForm').removeAttr('data-role-id');
-    $('#addRoleForm').removeAttr('data-mode');
-  });
-
-  // Unified Form Submission Handler (Create & Edit)
+  // SINGLE Form Submission Handler - Handles both Create and Edit
   $('#addRoleForm').on('submit', function(e) {
     e.preventDefault();
 
-    const mode = $(this).attr('data-mode');
+    const mode = $(this).attr('data-mode') || 'create';
     const roleId = $(this).attr('data-role-id');
-    
-    console.log('Form submission - Mode:', mode, 'Role ID:', roleId);
     
     // Get form values
     const roleName = $('#modalRoleName').val().trim();
@@ -199,8 +210,6 @@ $(document).ready(function() {
     $('.permission-checkbox:checked').each(function() {
       permissions.push($(this).val());
     });
-
-    console.log('Form data - Name:', roleName, 'Permissions:', permissions);
 
     // Validation
     if (!roleName) {
@@ -236,18 +245,16 @@ $(document).ready(function() {
       permissions: permissions
     };
 
-    // Determine URL and messages based on mode
+    // Determine URL and text based on mode
     let url = '/admin/roles/create';
     let loadingText = 'Creating Role...';
     let successText = 'Role created successfully';
     
-    if (mode === 'edit' && roleId) {
+    if (mode === 'edit') {
       url = `/admin/roles/update/${roleId}`;
       loadingText = 'Updating Role...';
       successText = 'Role updated successfully';
     }
-
-    console.log('Sending request to:', url, 'Data:', roleData);
 
     // Show loading
     Swal.fire({
@@ -265,7 +272,6 @@ $(document).ready(function() {
       contentType: 'application/json',
       data: JSON.stringify(roleData),
       success: function(response) {
-        console.log('Success response:', response);
         Swal.fire({
           icon: 'success',
           title: 'Success!',
@@ -276,30 +282,33 @@ $(document).ready(function() {
           buttonsStyling: false
         }).then(() => {
           // Close modal
-          $('#addRoleModal').modal('hide');
-          
-          // Reset form
-          $('#addRoleForm')[0].reset();
-          $('.permission-checkbox').prop('checked', false);
-          $('#selectAll').prop('checked', false);
+          addRoleModal.hide();
           
           // Reload the page
           location.reload();
         });
       },
-      error: function(xhr, status, error) {
-        console.error('Error response:', xhr, status, error);
+      error: function(xhr) {
         let errorMessage = 'Failed to save role. Please try again.';
         
         if (xhr.responseJSON && xhr.responseJSON.message) {
           errorMessage = xhr.responseJSON.message;
-        } else if (xhr.responseText) {
-          try {
-            const errorData = JSON.parse(xhr.responseText);
-            errorMessage = errorData.message || errorMessage;
-          } catch (e) {
-            console.error('Could not parse error response');
-          }
+        }
+        
+        // Handle session expiration
+        if (xhr.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Session Expired',
+            text: 'Please login again.',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+          }).then(() => {
+            window.location.href = '/';
+          });
+          return;
         }
         
         Swal.fire({
@@ -316,5 +325,21 @@ $(document).ready(function() {
 
     return false;
   });
+
+  // Reset modal when it's closed (Bootstrap 5 event)
+  addRoleModalEl.addEventListener('hidden.bs.modal', function () {
+    resetModalToAddMode();
+  });
+
+  // Helper function to reset modal to Add mode
+  function resetModalToAddMode() {
+    $('#addRoleForm')[0].reset();
+    $('.permission-checkbox').prop('checked', false);
+    $('#selectAll').prop('checked', false);
+    $('.role-title').text('Add New Role');
+    $('.submit-btn-text').text('Add Role');
+    $('#addRoleForm').removeAttr('data-role-id');
+    $('#addRoleForm').removeAttr('data-mode');
+  }
 
 });

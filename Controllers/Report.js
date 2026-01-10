@@ -1,3 +1,10 @@
 exports.report = (req, res) => {
-  res.render("pages/Reports");
+  if (!req.session || !req.session.token) {
+    return res.redirect("/");
+  }
+  
+  res.render("pages/Reports", {
+    pageTitle: "Reports",
+    layout: "main",
+  });
 };

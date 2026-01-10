@@ -1294,3 +1294,7 @@
     applyFilters();
   });
 </script>
+<!-- Page-specific scripts based on pageTitle -->
+<% if (typeof pageTitle !== 'undefined' && pageTitle === 'Roles') { %>
+  <script src="/js/Role.js"></script>
+<% } %>

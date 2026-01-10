@@ -9,33 +9,41 @@ exports.getRoles = async (req, res) => {
       console.log("No session or token, redirecting to login");
       return res.redirect("/");
     }
-    
+
     const token = req.session.token;
-    
+
     // Fetch roles from external API
-    const getListresponse = await fetch(`${BASE_URL}/admin/roles?per_page=100`, {
+    const getListResponse = await fetch(`${BASE_URL}/admin/roles?per_page=100`, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
       },
     });
-    
-    console.log("Fetch roles response status:", getListresponse.status);
-    
+
+    console.log("Fetch roles response status:", getListResponse.status);
+
     // Check if the response is successful
-    if (!getListresponse.ok) {
-      throw new Error(`API responded with status: ${getListresponse.status}`);
+    if (!getListResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (getListResponse.status === 401) {
+        console.log("Unauthorized (401), clearing session and redirecting to login");
+        req.session.destroy((err) => {
+          if (err) console.error("Session destroy error:", err);
+        });
+        return res.redirect("/");
+      }
+      throw new Error(`API responded with status: ${getListResponse.status}`);
     }
- 
-    const rolesData = await getListresponse.json();
+
+    const rolesData = await getListResponse.json();
     console.log("Fetched roles data:", rolesData);
-    
+
     // Render the roles page
-    res.render("pages/RoleManagement", {  
-       pageTitle: "Roles",
-       layout: "main",
-       roles: rolesData.data.data || [],                                                          
+    res.render("pages/RoleManagement", {
+      pageTitle: "Roles",
+      layout: "main",
+      roles: rolesData.data.data || [],
     });
   } catch (error) {
     console.error("Error in getRoles:", error);
@@ -52,7 +60,7 @@ exports.getRoles = async (req, res) => {
 exports.createRole = async (req, res) => {
   try {
     console.log("Create role request body:", req.body);
-    
+
     // Validate session
     if (!req.session || !req.session.token) {
       return res.status(401).json({
@@ -62,7 +70,7 @@ exports.createRole = async (req, res) => {
     }
 
     const { name, description, permissions } = req.body;
-    
+
     // Validation
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -79,7 +87,7 @@ exports.createRole = async (req, res) => {
     }
 
     const token = req.session.token;
-    
+
     const createRoleResponse = await fetch(`${BASE_URL}/admin/roles`, {
       method: "POST",
       headers: {
@@ -87,26 +95,33 @@ exports.createRole = async (req, res) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        name: name.trim(), 
-        description: description ? description.trim() : "", 
-        permissions 
+      body: JSON.stringify({
+        name: name.trim(),
+        description: description ? description.trim() : "",
+        permissions
       }),
     });
-    
+
     console.log("Create role response status:", createRoleResponse.status);
-    
+
     const roleData = await createRoleResponse.json();
     console.log("Created role data:", roleData);
-    
+
     if (!createRoleResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (createRoleResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
       return res.status(createRoleResponse.status).json({
         success: false,
         message: roleData.message || "Failed to create role",
         error: roleData,
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       message: "Role created successfully",
@@ -135,9 +150,9 @@ exports.getRoleById = async (req, res) => {
 
     const roleId = req.params.id;
     const token = req.session.token;
-    
+
     console.log(`Fetching role with ID: ${roleId}`);
-    
+
     const getRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
       method: "GET",
       headers: {
@@ -145,20 +160,27 @@ exports.getRoleById = async (req, res) => {
         Accept: "application/json",
       },
     });
-    
+
     console.log("Get role response status:", getRoleResponse.status);
-    
+
     const roleData = await getRoleResponse.json();
     console.log("Fetched role data:", roleData);
-    
+
     if (!getRoleResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (getRoleResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
       return res.status(getRoleResponse.status).json({
         success: false,
         message: roleData.message || "Failed to fetch role",
         error: roleData,
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       data: roleData.data || roleData,
@@ -178,7 +200,7 @@ exports.updateRole = async (req, res) => {
   try {
     console.log("Update role request body:", req.body);
     console.log("Update role ID:", req.params.id);
-    
+
     // Validate session
     if (!req.session || !req.session.token) {
       return res.status(401).json({
@@ -189,7 +211,7 @@ exports.updateRole = async (req, res) => {
 
     const roleId = req.params.id;
     const { name, description, permissions } = req.body;
-    
+
     // Validation
     if (!name || !name.trim()) {
       return res.status(400).json({
@@ -206,7 +228,7 @@ exports.updateRole = async (req, res) => {
     }
 
     const token = req.session.token;
-    
+
     // Send PUT request to external API (this is correct)
     const updateRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
       method: "PUT",
@@ -215,26 +237,33 @@ exports.updateRole = async (req, res) => {
         Accept: "application/json",
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ 
-        name: name.trim(), 
-        description: description ? description.trim() : "", 
-        permissions 
+      body: JSON.stringify({
+        name: name.trim(),
+        description: description ? description.trim() : "",
+        permissions
       }),
     });
-    
+
     console.log("Update role response status:", updateRoleResponse.status);
-    
+
     const roleData = await updateRoleResponse.json();
     console.log("Updated role data:", roleData);
-    
+
     if (!updateRoleResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (updateRoleResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
       return res.status(updateRoleResponse.status).json({
         success: false,
         message: roleData.message || "Failed to update role",
         error: roleData,
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       message: "Role updated successfully",
@@ -254,7 +283,7 @@ exports.updateRole = async (req, res) => {
 exports.deleteRole = async (req, res) => {
   try {
     console.log("Delete role ID:", req.params.id);
-    
+
     // Validate session
     if (!req.session || !req.session.token) {
       return res.status(401).json({
@@ -265,7 +294,7 @@ exports.deleteRole = async (req, res) => {
 
     const roleId = req.params.id;
     const token = req.session.token;
-    
+
     const deleteRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
       method: "DELETE",
       headers: {
@@ -273,9 +302,9 @@ exports.deleteRole = async (req, res) => {
         Accept: "application/json",
       },
     });
-    
+
     console.log("Delete role response status:", deleteRoleResponse.status);
-    
+
     // Some APIs return 204 No Content on successful delete
     if (deleteRoleResponse.status === 204) {
       return res.status(200).json({
@@ -283,18 +312,25 @@ exports.deleteRole = async (req, res) => {
         message: "Role deleted successfully",
       });
     }
-    
+
     const responseData = await deleteRoleResponse.json();
     console.log("Delete role response data:", responseData);
-    
+
     if (!deleteRoleResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (deleteRoleResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
       return res.status(deleteRoleResponse.status).json({
         success: false,
         message: responseData.message || "Failed to delete role",
         error: responseData,
       });
     }
-    
+
     return res.status(200).json({
       success: true,
       message: "Role deleted successfully",

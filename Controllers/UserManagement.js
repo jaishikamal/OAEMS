@@ -191,7 +191,7 @@ exports.userManagement = async (req, res) => {
 
     console.log("Rendering page with", users.length, "users");
 
-    return res.render("pages/user_management", {
+    return res.render("pages/User_Management", {
       pageTitle: "User Management",
       layout: "main",
       users: users,

@@ -484,8 +484,8 @@
               <!-- Permission table -->
             </div>
             <div class="col-12 text-center mt-4">
-              <button type="submit" class="btn btn-primary me-3">
-                Submit
+              <button type="submit" class="btn btn-primary me-3" id="submitRoleBtn">
+                <span class="submit-btn-text">Add Role</span>
               </button>
               <button
                 type="reset"
@@ -506,4 +506,7 @@
 </div>
 <!-- / Content -->
 
-<script src="/js/Role.js"></script>
+<%
+  // Page-specific scripts loaded after core libraries
+  pageScripts = '<script src="/js/Role.js"></script>';
+%>

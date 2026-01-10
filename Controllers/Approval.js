@@ -1,3 +1,10 @@
 exports.approval = (req, res) => {
-  res.render("pages/Approval");
+  if (!req.session || !req.session.token) {
+    return res.redirect("/");
+  }
+  
+  res.render("pages/Approval", {
+    pageTitle: "Approval",
+    layout: "main",
+  });
 };

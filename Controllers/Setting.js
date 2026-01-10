@@ -1,3 +1,10 @@
 exports.setting = (req, res) => {
-  res.render("pages/Setting");
+  if (!req.session || !req.session.token) {
+    return res.redirect("/");
+  }
+  
+  res.render("pages/Setting", {
+    pageTitle: "Settings",
+    layout: "main",
+  });
 };

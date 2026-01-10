@@ -1,3 +1,10 @@
 exports.fromBuilder = (req, res) => {
-  res.render("pages/fromBuilder");
+  if (!req.session || !req.session.token) {
+    return res.redirect("/");
+  }
+  
+  res.render("pages/fromBuilder", {
+    pageTitle: "Form Builder",
+    layout: "main",
+  });
 };
