@@ -312,155 +312,142 @@
   </div>
 
   <!-- Add User Modal -->
- <!-- Fixed User Modal - Replace your existing modal -->
-<div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-lg modal-dialog-scrollable">
-    <form class="modal-content" id="userForm">
-      <div class="modal-header">
-        <h5 class="modal-title">
-          <i class="icon-base ti tabler-user-plus me-2"></i>User
-        </h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-      <div class="modal-body">
-        <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label"
-              >Full Name <span class="text-danger">*</span></label
-            >
-            <input
-              type="text"
-              class="form-control"
-              name="fullName"
-              id="userFullName"
-              required
-            />
-          </div>
-          <div class="col-md-6">
-            <label class="form-label"
-              >Email <span class="text-danger">*</span></label
-            >
-            <input
-              type="email"
-              class="form-control"
-              name="email"
-              id="userEmail"
-              required
-            />
-          </div>
-          
-          <!-- FIXED: Single select for role, correct value attribute -->
-          <div class="col-md-6">
-            <label class="form-label">Role</label>
-            <select class="form-select" name="role" id="userRole">
-              <option value="">Select Role</option>
-              <% if (roles && roles.length > 0) { %>
-                <% roles.forEach(role => { %>
-                  <option value="<%= role.name %>"><%= role.name %></option>
-                <% }) %>
-              <% } %>
-            </select>
-          </div>
+  <!-- Fixed User Modal - Replace your existing modal -->
+  <div class="modal fade" id="userModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <form class="modal-content" id="userForm">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="icon-base ti tabler-user-plus me-2"></i>User
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label"
+                >Full Name <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                name="fullName"
+                id="userFullName"
+                required
+              />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label"
+                >Email <span class="text-danger">*</span></label
+              >
+              <input
+                type="email"
+                class="form-control"
+                name="email"
+                id="userEmail"
+                required
+              />
+            </div>
 
-          <div class="col-md-6">
-            <label class="form-label"
-              >Branch <span class="text-danger">*</span></label
-            >
-            <select
-              class="form-select"
-              name="branch"
-              id="userBranch"
-              required
-            >
-              <option value="">Select Branch</option>
-              <% if (branches && branches.length > 0) { %>
-                <% branches.forEach(branch => { %>
-                  <option value="<%= branch.id %>"><%= branch.name %></option>
-                <% }) %>
-              <% } %>
-            </select>
-          </div>
-          
-          <div class="col-md-6">
-            <label class="form-label"
-              >Department <span class="text-danger">*</span></label
-            >
-            <select
-              class="form-select"
-              name="department"
-              id="userDepartment"
-              required
-            >
-              <option value="">Select Department</option>
-              <% if (departments && departments.length > 0) { %>
-                <% departments.forEach(dept => { %>
-                  <option value="<%= dept.id %>"><%= dept.title %></option>
-                <% }) %>
-              <% } else { %>
+            <!-- FIXED: Single select for role, correct value attribute -->
+            <div class="col-md-6">
+              <label class="form-label">Role</label>
+              <select class="form-select" name="role" id="userRole">
+                <option value="">Select Role</option>
+                <% if (roles && roles.length > 0) { %> <% roles.forEach(role =>
+                { %>
+                <option value="<%= role.name %>"><%= role.name %></option>
+                <% }) %> <% } %>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label"
+                >Branch <span class="text-danger">*</span></label
+              >
+              <select
+                class="form-select"
+                name="branch"
+                id="userBranch"
+                required
+              >
+                <option value="">Select Branch</option>
+                <% if (branches && branches.length > 0) { %> <%
+                branches.forEach(branch => { %>
+                <option value="<%= branch.id %>"><%= branch.name %></option>
+                <% }) %> <% } %>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label"
+                >Department <span class="text-danger">*</span></label
+              >
+              <select
+                class="form-select"
+                name="department"
+                id="userDepartment"
+                required
+              >
+                <option value="">Select Department</option>
+                <% if (departments && departments.length > 0) { %> <%
+                departments.forEach(dept => { %>
+                <option value="<%= dept.id %>"><%= dept.title %></option>
+                <% }) %> <% } else { %>
                 <option value="1">IT</option>
                 <option value="2">Finance</option>
                 <option value="3">Operations</option>
                 <option value="4">Marketing</option>
                 <option value="5">HR</option>
-              <% } %>
-            </select>
-          </div>
-          
-          <div class="col-md-6">
-            <label class="form-label">Status</label>
-            <select class="form-select" name="status" id="userStatus">
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
-              <option value="Pending">Pending</option>
-            </select>
-          </div>
-          
-          <div class="col-12">
-            <label class="form-label">Notes</label>
-            <textarea
-              class="form-control"
-              name="notes"
-              id="userNotes"
-              rows="2"
-              placeholder="Access scope, onboarding steps, etc."
-            ></textarea>
-          </div>
-          
-          <div class="col-12">
-            <div class="form-check form-switch">
-              <input
-                class="form-check-input"
-                type="checkbox"
-                name="twoFactor"
-                id="twoFactorToggle"
-              />
-              <label class="form-check-label" for="twoFactorToggle"
-                >Require 2FA</label
+                <% } %>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status" id="userStatus">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+                <option value="Pending">Pending</option>
+              </select>
+            </div>
+
+            <div class="col-md-6" id="passwordFieldContainer">
+              <label class="form-label"
+                >Password <span class="text-danger">*</span></label
               >
+              <input
+                type="password"
+                class="form-control"
+                id="userPassword"
+                name="password"
+                required
+              />
+            </div>
+
             </div>
           </div>
         </div>
-      </div>
-      <div class="modal-footer">
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          data-bs-dismiss="modal"
-        >
-          Cancel
-        </button>
-        <button type="submit" class="btn btn-primary" id="submitUserBtn">
-          Save
-        </button>
-      </div>
-    </form>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" id="submitUserBtn">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
 
   <!--  Action Feedback Toast -->
   <div class="toast-container position-fixed bottom-0 end-0 p-3">
@@ -485,15 +472,12 @@
 </div>
 
 <script>
-  // User Management JavaScript - COMPLETE FIXED VERSION
   (function () {
     "use strict";
 
-    // Wait for DOM to be ready
     document.addEventListener("DOMContentLoaded", function () {
       console.log("User Management initialized");
 
-      // Initialize Bootstrap components
       const userModalEl = document.getElementById("userModal");
       const feedbackToastEl = document.getElementById("feedbackToast");
 
@@ -505,7 +489,6 @@
       const userModal = new bootstrap.Modal(userModalEl);
       const feedbackToast = new bootstrap.Toast(feedbackToastEl);
 
-      // State management
       let selectedUsers = new Set();
       let currentEditingUserId = null;
       let isSubmitting = false;
@@ -536,7 +519,6 @@
         }
       }
 
-      // Update row numbers after adding/removing users
       function updateRowNumbers() {
         const rows = document.querySelectorAll("#usersTable tbody tr");
         rows.forEach((row, index) => {
@@ -552,31 +534,32 @@
         });
       }
 
-      // Add user to table dynamically
       function addUserToTable(user, isLatest = false) {
         const tbody = document.querySelector("#usersTable tbody");
         if (!tbody) return;
-       
+
         console.log("Adding user to table:", JSON.stringify(user, null, 2));
 
-        // Remove "No users found" row if exists
         const noUsersRow = tbody.querySelector('td[colspan="9"]');
         if (noUsersRow) {
           noUsersRow.parentElement.remove();
         }
 
-        // Get current row count for index
         const currentRows = tbody.querySelectorAll("tr").length;
         const rowIndex = currentRows + 1;
 
-        // Create new row
         const row = document.createElement("tr");
         row.setAttribute("data-user-id", user.id);
         row.setAttribute("data-branch-id", user.branch_id || "");
         row.setAttribute("data-department-id", user.department_id || "");
         row.setAttribute("data-department-name", user.department_name || "");
 
-        // Highlight if it's the latest user
+        // Store role IDs as a data attribute
+        if (user.roles && Array.isArray(user.roles)) {
+          const roleIds = user.roles.map((r) => r.id).join(",");
+          row.setAttribute("data-role-ids", roleIds);
+        }
+
         if (isLatest) {
           row.classList.add("table-success");
           setTimeout(() => {
@@ -584,7 +567,6 @@
           }, 3000);
         }
 
-        // Get user initials for avatar
         const initials = user.name
           ? user.name
               .split(" ")
@@ -593,7 +575,6 @@
               .toUpperCase()
           : "U";
 
-        // Determine role badge
         let roleBadge = '<span class="badge bg-label-secondary">No role</span>';
 
         if (user.roles && Array.isArray(user.roles) && user.roles.length > 0) {
@@ -607,73 +588,68 @@
           roleBadge = `<span class="badge bg-label-primary">${user.role}</span>`;
         }
 
-        // Determine status badge
         const statusBadge = user.is_active
           ? '<span class="badge bg-label-success">Active</span>'
           : '<span class="badge bg-label-danger">Inactive</span>';
 
-        // Build row HTML
         row.innerHTML = `
-          <td>
-            <input type="checkbox" class="form-check-input user-checkbox" value="${
-              user.id
-            }" />
-          </td>
-          <td><span class="fw-medium">${rowIndex}</span></td>
-          <td>
-            <div class="d-flex align-items-center">
-              <div class="avatar avatar-sm me-2">
-                <span class="avatar-initial rounded-circle bg-label-primary">
-                  ${initials}
-                </span>
-              </div>
-              <div>
-                <span class="fw-medium" data-field="name">${user.name}</span>
-              </div>
+        <td>
+          <input type="checkbox" class="form-check-input user-checkbox" value="${
+            user.id
+          }" />
+        </td>
+        <td><span class="fw-medium">${rowIndex}</span></td>
+        <td>
+          <div class="d-flex align-items-center">
+            <div class="avatar avatar-sm me-2">
+              <span class="avatar-initial rounded-circle bg-label-primary">
+                ${initials}
+              </span>
             </div>
-          </td>
-          <td data-field="email">${user.email}</td>
-          <td data-field="role">${}</td>
-          <td data-field="department">${
-            user.department_name || '<span class="text-muted">Not set</span>'
-          }</td>
-          <td data-field="branch">${
-            user.branch_name || '<span class="text-muted">Not assigned</span>'
-          }</td>
-          <td data-field="status">${statusBadge}</td>
-          <td class="text-end">
-            <div class="dropdown">
-              <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                <i class="icon-base ti tabler-dots-vertical"></i>
-              </button>
-              <div class="dropdown-menu">
-                <a class="dropdown-item edit-user-btn" href="#" data-user-id="${
-                  user.id
-                }">
-                  <i class="icon-base ti tabler-edit me-1"></i>Edit
-                </a>
-                <a class="dropdown-item delete-user-btn text-danger" href="#" data-user-id="${
-                  user.id
-                }">
-                  <i class="icon-base ti tabler-trash me-1"></i>Delete
-                </a>
-              </div>
+            <div>
+              <span class="fw-medium" data-field="name">${user.name}</span>
             </div>
-          </td>
-        `;
+          </div>
+        </td>
+        <td data-field="email">${user.email}</td>
+        <td data-field="role">${roleBadge}</td>
+        <td data-field="department">${
+          user.department_name || '<span class="text-muted">Not set</span>'
+        }</td>
+        <td data-field="branch">${
+          user.branch_name || '<span class="text-muted">Not assigned</span>'
+        }</td>
+        <td data-field="status">${statusBadge}</td>
+        <td class="text-end">
+          <div class="dropdown">
+            <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
+              <i class="icon-base ti tabler-dots-vertical"></i>
+            </button>
+            <div class="dropdown-menu">
+              <a class="dropdown-item edit-user-btn" href="#" data-user-id="${
+                user.id
+              }">
+                <i class="icon-base ti tabler-edit me-1"></i>Edit
+              </a>
+              <a class="dropdown-item delete-user-btn text-danger" href="#" data-user-id="${
+                user.id
+              }">
+                <i class="icon-base ti tabler-trash me-1"></i>Delete
+              </a>
+            </div>
+          </div>
+        </td>
+      `;
 
-        // Insert at the top of the table (latest user first)
         if (isLatest && tbody.firstChild) {
           tbody.insertBefore(row, tbody.firstChild);
         } else {
           tbody.appendChild(row);
         }
 
-        // Update row numbers
         updateRowNumbers();
       }
 
-      // Update stats after adding user
       function updateStats(isActive) {
         const totalUsersEl = document.querySelector(
           ".col-sm-6.col-xl-3:first-child .card-body h4"
@@ -731,7 +707,6 @@
         });
       }
 
-      // Attach filter listeners
       const searchInput = document.getElementById("searchUserInput");
       const roleFilter = document.getElementById("roleFilter");
       const statusFilter = document.getElementById("statusFilter");
@@ -805,6 +780,13 @@
           submitBtn.textContent = "Save";
         }
 
+        const passwordContainer = document.getElementById(
+          "passwordFieldContainer"
+        );
+        const passwordField = document.getElementById("userPassword");
+        if (passwordContainer) passwordContainer.style.display = "block";
+        if (passwordField) passwordField.required = true;
+
         document.querySelector("#userModal .modal-title").innerHTML =
           '<i class="icon-base ti tabler-user-plus me-2"></i>Add New User';
         userModal.show();
@@ -830,10 +812,6 @@
             const email =
               row.querySelector('[data-field="email"]')?.textContent.trim() ||
               "";
-            const roleBadge =
-              row
-                .querySelector('[data-field="role"] .badge')
-                ?.textContent.trim() || "";
             const departmentId = row.dataset.departmentId || "";
             const statusBadge =
               row
@@ -841,13 +819,27 @@
                 ?.textContent.trim() || "";
             const branchId = row.dataset.branchId || "";
 
+            // Get role IDs from data attribute
+            const roleIdsStr = row.dataset.roleIds || "";
+            const roleIds = roleIdsStr ? roleIdsStr.split(",")[0] : ""; // Get first role ID
+
             document.getElementById("userFullName").value = name;
             document.getElementById("userEmail").value = email;
-            document.getElementById("userRole").value =
-              roleBadge === "No role" ? "" : roleBadge;
+            document.getElementById("userRole").value = roleIds; // Set role ID, not name
             document.getElementById("userStatus").value = statusBadge;
             document.getElementById("userBranch").value = branchId;
             document.getElementById("userDepartment").value = departmentId;
+
+            // Hide password field when editing
+            const passwordContainer = document.getElementById(
+              "passwordFieldContainer"
+            );
+            const passwordField = document.getElementById("userPassword");
+            if (passwordContainer) passwordContainer.style.display = "none";
+            if (passwordField) {
+              passwordField.required = false;
+              passwordField.value = "";
+            }
 
             const submitBtn = document.getElementById("submitUserBtn");
             if (submitBtn) {
@@ -901,7 +893,7 @@
       });
 
       // ============================================
-      // SUBMIT USER FORM - COMPLETE FIXED VERSION
+      // SUBMIT USER FORM - WITH ROLE_IDS ARRAY FIX
       // ============================================
       userForm?.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -914,6 +906,7 @@
 
         const branchId = document.getElementById("userBranch").value;
         const departmentId = document.getElementById("userDepartment").value;
+        const selectedRoleId = document.getElementById("userRole").value;
 
         if (!branchId) {
           showToast("Please select a branch", "error");
@@ -925,7 +918,7 @@
           return;
         }
 
-        // Get branch, department, and role names for display
+        // Get display names
         const branchSelect = document.getElementById("userBranch");
         const departmentSelect = document.getElementById("userDepartment");
         const roleSelect = document.getElementById("userRole");
@@ -934,22 +927,38 @@
           branchSelect.options[branchSelect.selectedIndex]?.text || "";
         const departmentName =
           departmentSelect.options[departmentSelect.selectedIndex]?.text || "";
-        const selectedRole = roleSelect.value;
         const selectedRoleName =
           roleSelect.options[roleSelect.selectedIndex]?.text || "";
 
+        // ===== FIXED: Build formData with role_ids as array =====
         const formData = {
           name: document.getElementById("userFullName").value.trim(),
           email: document.getElementById("userEmail").value.trim(),
-          role: selectedRole,
-          branch_id: branchId,
-          department_id: departmentId,
-          status: document.getElementById("userStatus").value,
+          is_active: document.getElementById("userStatus").value === "Active",
+          department_id: parseInt(departmentId),
+          branch_ids: [parseInt(branchId)], // Array format
           notes: document.getElementById("userNotes").value.trim(),
           two_factor: document.getElementById("twoFactorToggle").checked,
         };
 
-        console.log("Submitting form data:", formData);
+        // Add role_ids as array if role is selected
+        if (selectedRoleId && selectedRoleId !== "") {
+          formData.role_ids = [parseInt(selectedRoleId)]; // ARRAY OF INTEGERS
+        }
+
+        // Add password only for new users
+        if (!currentEditingUserId) {
+          const password = document
+            .getElementById("userPassword")
+            ?.value.trim();
+          if (!password) {
+            showToast("Password is required for new users", "error");
+            return;
+          }
+          formData.password = password;
+        }
+
+        console.log("Submitting form data:", JSON.stringify(formData, null, 2));
 
         const url = currentEditingUserId
           ? `/api/users/${currentEditingUserId}`
@@ -984,27 +993,31 @@
 
             if (data.success) {
               if (currentEditingUserId) {
-                // UPDATE: Refresh the specific row in the table
+                // UPDATE existing user
                 console.log("Updating existing user row...");
 
                 const row = document.querySelector(
                   `tr[data-user-id="${currentEditingUserId}"]`
                 );
                 if (row) {
-                  // Update row attributes
                   row.setAttribute("data-branch-id", branchId);
                   row.setAttribute("data-department-id", departmentId);
                   row.setAttribute("data-department-name", departmentName);
 
-                  // Update name
+                  // Update role IDs data attribute
+                  if (data.data?.roles && Array.isArray(data.data.roles)) {
+                    const roleIds = data.data.roles.map((r) => r.id).join(",");
+                    row.setAttribute("data-role-ids", roleIds);
+                  } else if (selectedRoleId) {
+                    row.setAttribute("data-role-ids", selectedRoleId);
+                  }
+
                   const nameCell = row.querySelector('[data-field="name"]');
                   if (nameCell) nameCell.textContent = formData.name;
 
-                  // Update email
                   const emailCell = row.querySelector('[data-field="email"]');
                   if (emailCell) emailCell.textContent = formData.email;
 
-                  // Update role
                   const roleCell = row.querySelector('[data-field="role"]');
                   if (roleCell) {
                     let roleBadge =
@@ -1017,14 +1030,13 @@
                     ) {
                       const roleName = data.data.roles[0].name;
                       roleBadge = `<span class="badge bg-label-primary">${roleName}</span>`;
-                    } else if (selectedRole && selectedRoleName) {
+                    } else if (selectedRoleId && selectedRoleName) {
                       roleBadge = `<span class="badge bg-label-primary">${selectedRoleName}</span>`;
                     }
 
                     roleCell.innerHTML = roleBadge;
                   }
 
-                  // Update department
                   const deptCell = row.querySelector(
                     '[data-field="department"]'
                   );
@@ -1034,7 +1046,6 @@
                       '<span class="text-muted">Not set</span>';
                   }
 
-                  // Update branch
                   const branchCell = row.querySelector('[data-field="branch"]');
                   if (branchCell) {
                     branchCell.innerHTML =
@@ -1042,32 +1053,25 @@
                       '<span class="text-muted">Not assigned</span>';
                   }
 
-                  // Update status
                   const statusCell = row.querySelector('[data-field="status"]');
                   if (statusCell) {
-                    const statusBadge =
-                      formData.status === "Active"
-                        ? '<span class="badge bg-label-success">Active</span>'
-                        : '<span class="badge bg-label-danger">Inactive</span>';
+                    const statusBadge = formData.is_active
+                      ? '<span class="badge bg-label-success">Active</span>'
+                      : '<span class="badge bg-label-danger">Inactive</span>';
                     statusCell.innerHTML = statusBadge;
                   }
 
-                  // Highlight the updated row briefly
                   row.classList.add("table-info");
                   setTimeout(() => {
                     row.classList.remove("table-info");
                   }, 2000);
                 }
 
-                showToast(
-                  data.roleAssigned
-                    ? "User and role updated successfully!"
-                    : "User updated successfully!"
-                );
+                showToast("User updated successfully!");
                 userModal.hide();
                 userForm.reset();
               } else {
-                // CREATE: Add new user to table
+                // CREATE new user
                 console.log("Processing new user data...");
 
                 let userRoles = [];
@@ -1076,8 +1080,10 @@
                 if (data.data.roles && data.data.roles.length > 0) {
                   userRoles = data.data.roles;
                   displayRole = data.data.roles[0].name;
-                } else if (selectedRole && selectedRoleName) {
-                  userRoles = [{ id: null, name: selectedRoleName }];
+                } else if (selectedRoleId && selectedRoleName) {
+                  userRoles = [
+                    { id: parseInt(selectedRoleId), name: selectedRoleName },
+                  ];
                 }
 
                 const newUser = {
@@ -1090,16 +1096,12 @@
                   branch_name: branchName,
                   department_id: departmentId,
                   department_name: departmentName,
-                  is_active: formData.status === "Active",
+                  is_active: formData.is_active,
                 };
 
                 addUserToTable(newUser, true);
                 updateStats(newUser.is_active);
-                showToast(
-                  data.roleAssigned
-                    ? "User created and role assigned successfully!"
-                    : "User created successfully!"
-                );
+                showToast("User created successfully!");
                 userModal.hide();
                 userForm.reset();
               }
