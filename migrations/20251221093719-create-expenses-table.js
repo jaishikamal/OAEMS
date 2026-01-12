@@ -1,37 +1,31 @@
 "use strict";
-// user table migration
+
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("users", {
+    await queryInterface.createTable("expenses", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true,
       },
-      name: {
+      code: {
         type: Sequelize.STRING,
         allowNull: false,
-      },
-      email: {
-        type: Sequelize.STRING,
         unique: true,
       },
-      password: {
+      title: {
         type: Sequelize.STRING,
-      },
-      createdAt: {
-        type: Sequelize.DATE,
         allowNull: false,
       },
-      updatedAt: {
-        type: Sequelize.DATE,
+      status: {
+        type: Sequelize.BOOLEAN,
         allowNull: false,
+        defaultValue: true,
       },
     });
   },
-
+ 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("users");
+    await queryInterface.dropTable("expenses");
   },
 };
-

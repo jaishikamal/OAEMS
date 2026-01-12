@@ -128,6 +128,7 @@ exports.userManagement = async (req, res) => {
     console.log("Data parsed successfully");
 
     // Safely access nested data with fallbacks
+    // users  list their users
     const users = (usersData?.data?.data || []).map((user) => {
       let branchId = null;
       let branchName = null;
@@ -172,7 +173,9 @@ exports.userManagement = async (req, res) => {
         if (dept) {
           departmentName = dept.title;
         }
+
       }
+      
 
       return {
         ...user,
@@ -185,11 +188,13 @@ exports.userManagement = async (req, res) => {
 
     const activeUsers = users.filter((u) => u.is_active).length;
     const pendingUsers = users.filter((u) => u.status === "Pending").length;
-    const adminUsers = users.filter(
-      (u) => u.roles && u.roles.some((r) => r.name === "Administrator")
+    const adminCount = users.filter((user) =>
+      (user.roles || []).some(
+        (role) => (role?.name || "").toLowerCase() === "admin"
+      )
     ).length;
 
-    console.log("Rendering page with", users.length, "users");
+    console.log("Total users with Admin role:", adminCount);
 
     return res.render("pages/User_Management", {
       pageTitle: "User Management",
@@ -202,7 +207,7 @@ exports.userManagement = async (req, res) => {
       totalUsers: usersData?.data?.total || users.length,
       activeUsers: activeUsers,
       pendingUsers: pendingUsers,
-      adminUsers: adminUsers,
+      adminUsers: adminCount,
     });
   } catch (error) {
     console.error("Error in userManagement:", error);

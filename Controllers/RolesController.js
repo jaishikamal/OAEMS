@@ -47,12 +47,7 @@ exports.getRoles = async (req, res) => {
     });
   } catch (error) {
     console.error("Error in getRoles:", error);
-    return res.status(500).render("pages/error", {
-      pageTitle: "Error",
-      layout: "main",
-      message: "An error occurred while fetching roles",
-      error: error.message,
-    });
+    res.status(500).send("An error occurred while fetching roles.");
   }
 };
 

@@ -556,7 +556,7 @@
       function addUserToTable(user, isLatest = false) {
         const tbody = document.querySelector("#usersTable tbody");
         if (!tbody) return;
-
+       
         console.log("Adding user to table:", JSON.stringify(user, null, 2));
 
         // Remove "No users found" row if exists
@@ -633,7 +633,7 @@
             </div>
           </td>
           <td data-field="email">${user.email}</td>
-          <td data-field="role">${roleBadge}</td>
+          <td data-field="role">${}</td>
           <td data-field="department">${
             user.department_name || '<span class="text-muted">Not set</span>'
           }</td>
