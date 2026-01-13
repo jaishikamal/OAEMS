@@ -5,6 +5,8 @@
     <!-- Menu -->
     <%- include('partials/sidebar') %>
 
+ 
+
     <div class="menu-mobile-toggler d-xl-none rounded-1">
       <a
         href="javascript:void(0);"
@@ -15,6 +17,7 @@
       </a>
     </div>
     <!-- / Menu -->
+     
 
     <!-- Layout container -->
     <div class="layout-page">
@@ -52,8 +55,13 @@
 
 <%- include('partials/javascript') %>
 
-<!-- Page-specific scripts -->
-<%- typeof pageScripts !== 'undefined' ? pageScripts : '' %>
+   <!-- Page JS -->
+  <% if (pageScripts.length > 0) { %>
+    <% pageScripts.forEach(script => { %>
+      <script src="<%= script %>"></script>
+    <% }) %>
+  <% } %>
+  
 
  </body>
 </html>

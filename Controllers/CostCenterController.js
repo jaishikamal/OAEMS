@@ -1,4 +1,20 @@
+const { data } = require("autoprefixer");
 const { CostCenter } = require("../models");
+
+exports.CostCenterManagement = async (req, res) => {
+  try {
+    const costdata = await CostCenter.findAll({raw: true});
+
+    res.render("pages/CostCenter", {
+      pageTitle: "Cost Center Management",
+      layout: "main",
+      costdata: costdata,
+    });
+    console.log("Cost Centers:", costdata);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 // create cost center
 exports.createCostCenter = async (req, res) => {

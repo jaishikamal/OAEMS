@@ -1,5 +1,3 @@
-// No fetch import needed - it's built-in
-
 const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 
 // Main page render
@@ -173,9 +171,7 @@ exports.userManagement = async (req, res) => {
         if (dept) {
           departmentName = dept.title;
         }
-
       }
-      
 
       return {
         ...user,
@@ -196,7 +192,7 @@ exports.userManagement = async (req, res) => {
 
     console.log("Total users with Admin role:", adminCount);
 
-    return res.render("pages/User_Management", {
+    res.render("pages/User_Management", {
       pageTitle: "User Management",
       layout: "main",
       users: users,
@@ -316,7 +312,7 @@ exports.createUser = async (req, res) => {
 
     // Fetch complete user data with roles
     let completeUserData = data.data;
-    
+
     if (data.data?.id) {
       try {
         await new Promise((resolve) => setTimeout(resolve, 500));
@@ -336,7 +332,10 @@ exports.createUser = async (req, res) => {
           const userData = await userResponse.json();
           if (userData.success && userData.data) {
             completeUserData = userData.data;
-            console.log("Fetched user data with roles:", completeUserData.roles);
+            console.log(
+              "Fetched user data with roles:",
+              completeUserData.roles
+            );
           }
         }
       } catch (fetchError) {
@@ -344,7 +343,10 @@ exports.createUser = async (req, res) => {
       }
     }
 
-    console.log("Final response data:", JSON.stringify(completeUserData, null, 2));
+    console.log(
+      "Final response data:",
+      JSON.stringify(completeUserData, null, 2)
+    );
 
     return res.status(200).json({
       success: true,
@@ -589,52 +591,4 @@ exports.assignRole = async (req, res) => {
   }
 };
 
-// Bulk assign role to multiple users
-exports.bulkAssignRole = async (req, res) => {
-  try {
-    if (!req.session || !req.session.token) {
-      return res.status(401).json({
-        success: false,
-        message: "Unauthorized",
-      });
-    }
 
-    const { userIds, role } = req.body;
-
-    if (!userIds || !Array.isArray(userIds) || userIds.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "User IDs array is required",
-      });
-    }
-
-    const results = await Promise.allSettled(
-      userIds.map((userId) =>
-        fetch(`${BASE_URL}/admin/users/${userId}/roles`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${req.session.token}`,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ role }),
-        }).then((r) => r.json())
-      )
-    );
-
-    const successful = results.filter((r) => r.status === "fulfilled").length;
-    const failed = results.filter((r) => r.status === "rejected").length;
-
-    return res.json({
-      success: true,
-      message: `Role assigned to ${successful} user(s). ${failed} failed.`,
-      details: { successful, failed, total: userIds.length },
-    });
-  } catch (error) {
-    console.error("Error in bulk assign role:", error);
-    return res.status(500).json({
-      success: false,
-      message: "Server error during bulk operation",
-    });
-  }
-};

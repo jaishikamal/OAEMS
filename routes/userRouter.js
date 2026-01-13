@@ -51,7 +51,7 @@ userRouter.delete("/api/users/:id", User_Management.deleteUser);
 
 // Role management
 userRouter.post("/api/users/:userId/assign-role", User_Management.assignRole);
-userRouter.post("/api/users/bulk/assign-role", User_Management.bulkAssignRole);
+
 
 // ============================================
 // Roles Management CRUD Operations

@@ -26,8 +26,13 @@ app.use(
     saveUninitialized: true,
   })
 );
+// Middleware to set pageScripts for each request
+app.use((req, res, next) => {
+  res.locals.pageScripts = [];
+  next();
+});
 app.use("/", userRouter);
-app.use("/api", costRouter);
+app.use("/", costRouter);
 
 const PORT = process.env.PORT || 3000;
 
