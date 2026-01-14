@@ -1,0 +1,487 @@
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Header section-->
+  <div class="row gy-3 align-items-center mb-4">
+    <div class="col-lg-6">
+      <div class="d-flex align-items-start gap-2">
+        <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
+          <span class="avatar-initial rounded">
+            <i class="icon-base ti tabler-category"></i>
+          </span>
+        </div>
+        <div>
+          <h4 class="mb-1">Account Code Group Management</h4>
+          <p class="text-muted mb-0">
+            Manage account code groups within the application.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="icon-base ti tabler-cloud-upload me-1"></i>Import
+      </button>
+      <button type="button" class="btn btn-outline-secondary">
+        <i class="icon-base ti tabler-download me-1"></i>Export CSV
+      </button>
+      <button type="button" class="btn btn-label-primary" id="addAccountCodeGroupBtn">
+        <i class="icon-base ti tabler-plus me-1"></i>Add Account Code Group
+      </button>
+    </div>
+  </div>  
+
+  <!--Header section---->
+  
+  <div class="col-12">
+    <!-- Account Code Group Table -->
+    <div class="card">
+      <div class="card-datatable">
+        <table class="datatables-users table border-top">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (accountGroupData && accountGroupData.length > 0) { %>
+              <% accountGroupData.forEach(function(group) { %>
+              <tr>
+                <td><%= group.id %></td>
+                <td><strong><%= group.code %></strong></td>
+                <td><%= group.description || 'No description' %></td>
+                <td data-field="status">
+                  <% if (group.status) { %>
+                  <span class="badge bg-label-success">Active</span>
+                  <% } else { %>
+                  <span class="badge bg-label-danger">Inactive</span>
+                  <% } %>
+                </td>
+                <td class="text-end">
+                  <div class="d-inline-flex gap-2">
+                    <a href="#" class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit" 
+                       data-group-id="<%= group.id %>" 
+                       title="Edit Account Code Group">
+                      <i class="icon-base ti tabler-edit"></i>
+                    </a>
+                    <a href="#" class="btn btn-sm btn-icon btn-text-danger rounded-pill btn-delete" 
+                       data-group-id="<%= group.id %>" 
+                       title="Delete Account Code Group">
+                      <i class="icon-base ti tabler-trash"></i>
+                    </a>
+                  </div>
+                </td>
+              </tr>
+              <% }); %>
+            <% } else { %>
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  <div class="text-muted">
+                    <i class="icon-base ti tabler-alert-circle fs-3 mb-2"></i>
+                    <p>No account code groups found. Click "Add Account Code Group" to create your first group.</p>
+                  </div>
+                </td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Account Code Group Table -->
+  </div>
+
+  <!-- Add/Edit Account Code Group Modal -->
+  <div class="modal fade" id="addAccountCodeGroupModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-add-new-account-group">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="account-group-title mb-2">Add New Account Code Group</h4>
+            <p class="text-body-secondary">Enter account code group details</p>
+          </div>
+          <!-- Add account code group form -->
+          <form id="addAccountCodeGroupForm" class="row g-3">
+            <div class="col-12 mb-3">
+              <label class="form-label" for="modalGroupCode">
+                Code <span class="text-danger">*</span>
+              </label>
+              <input
+                type="text"
+                id="modalGroupCode"
+                name="modalGroupCode"
+                class="form-control"
+                placeholder="Enter code (e.g., ACC001)"
+                required
+              />
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="modalGroupDescription">
+                Description <span class="text-danger">*</span>
+              </label>
+              <textarea
+                id="modalGroupDescription"
+                name="modalGroupDescription"
+                class="form-control"
+                placeholder="Enter description"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="modalGroupStatus">Status</label>
+              <select
+                id="modalGroupStatus"
+                name="modalGroupStatus"
+                class="form-select"
+              >
+                <option value="true" selected>Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-3" id="submitAccountGroupBtn">
+                <span class="submit-btn-text">Add Account Code Group</span>
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Add account code group form -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Add Account Code Group Modal -->
+</div>
+<!-- / Content -->
+ 
+<script>
+  $(document).ready(function() {
+  
+  // Get Bootstrap modal instance
+  const addAccountCodeGroupModalEl = document.getElementById('addAccountCodeGroupModal');
+  const addAccountCodeGroupModal = new bootstrap.Modal(addAccountCodeGroupModalEl);
+  
+  // Handle Add Account Code Group Button Click - Show Modal
+  $('#addAccountCodeGroupBtn').on('click', function (e) {
+    e.preventDefault();
+    // Reset modal to "Add" mode
+    resetModalToAddMode();
+    addAccountCodeGroupModal.show();
+  });
+
+  // Handle Edit Account Code Group Button Click
+  $(document).on('click', '.btn-edit', function(e) {
+    e.preventDefault();
+    const groupId = $(this).data('group-id');
+    
+    // Show loading
+    Swal.fire({
+      title: 'Loading...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Fetch account code group data
+    $.ajax({
+      url: `/account-code-groups/${groupId}`,
+      method: 'GET',
+      success: function(response) {
+        Swal.close();
+        
+        // Populate modal with account code group data
+        $('#modalGroupCode').val(response.data.code);
+        $('#modalGroupDescription').val(response.data.description || '');
+        $('#modalGroupStatus').val(response.data.status ? 'true' : 'false');
+        
+        // Change modal to edit mode
+        $('.account-group-title').text('Edit Account Code Group');
+        $('.submit-btn-text').text('Update Account Code Group');
+        $('#addAccountCodeGroupForm').attr('data-group-id', groupId);
+        $('#addAccountCodeGroupForm').attr('data-mode', 'edit');
+        
+        // Show modal
+        addAccountCodeGroupModal.show();
+      },
+      error: function(xhr) {
+        let errorMessage = 'Failed to load account code group data.';
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        
+        // Handle session expiration
+        if (xhr.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Session Expired',
+            text: 'Please login again.',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+          }).then(() => {
+            window.location.href = '/';
+          });
+          return;
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMessage,
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+      }
+    });
+  });
+
+  // Handle Delete Account Code Group Button Click
+  $(document).on('click', '.btn-delete', function(e) {
+    e.preventDefault();
+    const groupId = $(this).data('group-id');
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      customClass: {
+        confirmButton: 'btn btn-primary me-3',
+        cancelButton: 'btn btn-label-secondary'
+      },
+      buttonsStyling: false
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Show loading
+        Swal.fire({
+          title: 'Deleting...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        // Send delete request
+        $.ajax({
+          url: `/account-code-groups/${groupId}`,
+          method: 'DELETE',
+          contentType: 'application/json',
+          success: function(response) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Deleted!',
+              text: 'Account code group has been deleted.',
+              customClass: {
+                confirmButton: 'btn btn-primary'
+              },
+              buttonsStyling: false
+            }).then(() => {
+              location.reload();
+            });
+          },
+          error: function(xhr) {
+            let errorMessage = 'Failed to delete account code group. Please try again.';
+            
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+              errorMessage = xhr.responseJSON.message;
+            }
+            
+            // Handle session expiration
+            if (xhr.status === 401) {
+              Swal.fire({
+                icon: 'error',
+                title: 'Session Expired',
+                text: 'Please login again.',
+                customClass: {
+                  confirmButton: 'btn btn-primary'
+                },
+                buttonsStyling: false
+              }).then(() => {
+                window.location.href = '/';
+              });
+              return;
+            }
+            
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: errorMessage,
+              customClass: {
+                confirmButton: 'btn btn-primary'
+              },
+              buttonsStyling: false
+            });
+          }
+        });
+      }
+    });
+  });
+
+  // SINGLE Form Submission Handler - Handles both Create and Edit
+  $('#addAccountCodeGroupForm').on('submit', function(e) {
+    e.preventDefault();
+
+    const mode = $(this).attr('data-mode') || 'create';
+    const groupId = $(this).attr('data-group-id');
+    
+    // Get form values
+    const groupCode = $('#modalGroupCode').val().trim();
+    const groupDescription = $('#modalGroupDescription').val().trim();
+    const groupStatus = $('#modalGroupStatus').val() === 'true';
+
+    // Validation
+    if (!groupCode) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please enter a code',
+        customClass: {
+          confirmButton: 'btn btn-primary'
+        },
+        buttonsStyling: false
+      });
+      return false;
+    }
+
+    if (!groupDescription) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Validation Error',
+        text: 'Please enter a description',
+        customClass: {
+          confirmButton: 'btn btn-primary'
+        },
+        buttonsStyling: false
+      });
+      return false;
+    }
+
+    // Prepare data to send
+    const accountGroupData = {
+      code: groupCode,
+      description: groupDescription,
+      status: groupStatus
+    };
+
+    // Determine URL and text based on mode
+    let url = '/account-code-groups';
+    let method = 'POST';
+    let loadingText = 'Creating Account Code Group...';
+    let successText = 'Account code group created successfully';
+    
+    if (mode === 'edit') {
+      url = `/account-code-groups/${groupId}`;
+      method = 'PUT';
+      loadingText = 'Updating Account Code Group...';
+      successText = 'Account code group updated successfully';
+    }
+
+    // Show loading
+    Swal.fire({
+      title: loadingText,
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
+    // Send AJAX request
+    $.ajax({
+      url: url,
+      method: method,
+      contentType: 'application/json',
+      data: JSON.stringify(accountGroupData),
+      success: function(response) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: successText,
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        }).then(() => {
+          // Close modal
+          addAccountCodeGroupModal.hide();
+          
+          // Reload the page
+          location.reload();
+        });
+      },
+      error: function(xhr) {
+        let errorMessage = 'Failed to save account code group. Please try again.';
+        
+        if (xhr.responseJSON && xhr.responseJSON.message) {
+          errorMessage = xhr.responseJSON.message;
+        }
+        
+        // Handle session expiration
+        if (xhr.status === 401) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Session Expired',
+            text: 'Please login again.',
+            customClass: {
+              confirmButton: 'btn btn-primary'
+            },
+            buttonsStyling: false
+          }).then(() => {
+            window.location.href = '/';
+          });
+          return;
+        }
+        
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: errorMessage,
+          customClass: {
+            confirmButton: 'btn btn-primary'
+          },
+          buttonsStyling: false
+        });
+      }
+    });
+
+    return false;
+  });
+
+  // Reset modal when it's closed (Bootstrap 5 event)
+  addAccountCodeGroupModalEl.addEventListener('hidden.bs.modal', function () {
+    resetModalToAddMode();
+  });
+
+  // Helper function to reset modal to Add mode
+  function resetModalToAddMode() {
+    $('#addAccountCodeGroupForm')[0].reset();
+    $('.account-group-title').text('Add New Account Code Group');
+    $('.submit-btn-text').text('Add Account Code Group');
+    $('#addAccountCodeGroupForm').removeAttr('data-group-id');
+    $('#addAccountCodeGroupForm').removeAttr('data-mode');
+    $('#modalGroupStatus').val('true');
+  }
+
+});
+</script>

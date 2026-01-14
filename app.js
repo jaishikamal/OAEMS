@@ -4,6 +4,7 @@ const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const userRouter = require("./routes/userRouter");
 const costRouter = require("./routes/CostRouter");
+const AccountRouter = require("./routes/AccoutRouter");
 const session = require("express-session");
 
 // Initialize the app
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 });
 app.use("/", userRouter);
 app.use("/", costRouter);
+app.use("/", AccountRouter);
 
 const PORT = process.env.PORT || 3000;
 

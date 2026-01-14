@@ -34,19 +34,6 @@ exports.createCostCenter = async (req, res) => {
   }
 };
 
-//Read all cost centers
-exports.getAllCostCenters = async (req, res) => {
-  try {
-    const costCenters = await CostCenter.findAll();
-    res.status(200).json({
-      success: true,
-      data: costCenters,
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
 // read cost center by id
 exports.getCostCenterById = async (req, res) => {
   try {
