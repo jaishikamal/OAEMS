@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const Account_Code_Group = require("../Controllers/Account_groupController");
 
-//page route
+// Page route
 router.get("/AccountCodeGroup", Account_Code_Group.AccountCodeGroupManagement);
 
-//  account code group crud routes
+// Account code group CRUD routes
 router.post("/account-code-groups", Account_Code_Group.createAccountCodeGroup);
 router.get("/account-code-groups/:id", Account_Code_Group.getAccountCodeGroupById);
-router.put("/account-code-groups/:id", Account_Code_Group.updateAccountCodeGroup);
-router.delete("/account-code-groups/:id", Account_Code_Group.deleteAccountCodeGroup);
+router.post("/account-code-groups/:id", Account_Code_Group.updateAccountCodeGroup); // Changed to POST
+router.post("/account-code-groups/:id/delete", Account_Code_Group.deleteAccountCodeGroup); // Changed to POST with /delete
 
 module.exports = router;
