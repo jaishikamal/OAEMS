@@ -15,6 +15,7 @@ exports.AccountCodeGroupManagement = async (req, res) => {
       success: req.query.success,
       error: req.query.error,
     });
+    console.log(accountGroupData);
   } catch (error) {
     console.error("Error fetching account code groups:", error);
     res.status(500).render("pages/AccountCodeGroup", {
@@ -25,6 +26,7 @@ exports.AccountCodeGroupManagement = async (req, res) => {
     });
   }
 };
+
 // Helper function to generate unique 5-digit code
 const generateUniqueCode = async () => {
   let code;
@@ -35,7 +37,7 @@ const generateUniqueCode = async () => {
     code = Math.floor(10000 + Math.random() * 90000).toString();
 
     // Check if code already exists
-    const existing = await CostCenter.findOne({ where: { code } });
+    const existing = await AccountCodeGroup.findOne({ where: { code } });
     if (!existing) {
       isUnique = true;
     }
@@ -43,34 +45,29 @@ const generateUniqueCode = async () => {
 
   return code;
 };
+
 // Create account code group
 exports.createAccountCodeGroup = async (req, res) => {
   try {
     const { description, status } = req.body;
 
+    // Validate required fields
     if (!description) {
-      return res.redirect("/AccountCodeGroup?error=Description is required");
+      return res.redirect("/account-code-groups?error=Description is required");
     }
 
-    // Generate unique code
+    // Generate unique code automatically
     const code = await generateUniqueCode();
-
-    // Check if code already exists
-    const existingGroup = await AccountCodeGroup.findOne({ where: { code } });
-    if (existingGroup) {
-      return res.redirect(
-        "/AccountCodeGroup?error=Code already exists. Please use a unique code."
-      );
-    }
 
     await AccountCodeGroup.create({
       code: code,
       description: description.trim(),
-      status: status === "true" || status === "1" ? 1 : 0,
+      status: status === "true" || status === "1" ? true : false,
     });
 
     res.redirect(
-      "/AccountCodeGroup?success=Account code group created successfully"
+      "/AccountCodeGroup?success=Account code group created successfully with code: " +
+        code
     );
   } catch (error) {
     console.error("Error creating account code group:", error);
@@ -110,11 +107,10 @@ exports.updateAccountCodeGroup = async (req, res) => {
     const { id } = req.params;
     const { description, status } = req.body;
 
+    // Validate required fields
     if (!description) {
       return res.redirect("/AccountCodeGroup?error=Description is required");
     }
-
-    const code = await generateUniqueCode();
 
     const accountCodeGroup = await AccountCodeGroup.findByPk(id);
 
@@ -124,22 +120,10 @@ exports.updateAccountCodeGroup = async (req, res) => {
       );
     }
 
-    // Check if code already exists (excluding current record)
-    const existingGroup = await AccountCodeGroup.findOne({
-      where: { code },
-    });
-
-    if (existingGroup && existingGroup.id !== parseInt(id)) {
-      return res.redirect(
-        "/AccountCodeGroup?error=Code already exists. Please use a unique code."
-      );
-    }
-
-    // Update the record
+    // Code cannot be changed, only description and status
     await accountCodeGroup.update({
-      code: code,
       description: description.trim(),
-      status: status === "true" || status === "1" ? 1 : 0,
+      status: status === "1" || status === 1 ? true : false,
     });
 
     res.redirect(
@@ -163,11 +147,27 @@ exports.deleteAccountCodeGroup = async (req, res) => {
       );
     }
 
+    // check if the account code group is used in other records
+    // const usedCount = await ExpenseHead.count({
+    //   where: { account_code_groups_id: id },
+    // });
+
+    // if (usedCount > 0) {
+    //   return res.redirect(
+    //     "/AccountCodeGroup?error=Cannot delete: Already used in expense heads"
+    //   );
+    // }
     await accountCodeGroup.destroy();
     res.redirect(
       "/AccountCodeGroup?success=Account code group deleted successfully"
     );
   } catch (error) {
+    // Handle foreign key constraint violation
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      return res.redirect(
+        "/AccountCodeGroup?error=Cannot delete: Group is used in other records"
+      );
+    }
     console.error("Error deleting account code group:", error);
     res.redirect("/AccountCodeGroup?error=Failed to delete account code group");
   }

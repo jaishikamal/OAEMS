@@ -23,9 +23,9 @@
           </span>
         </div>
         <div>
-          <h4 class="mb-1">Account Code Group Management</h4>
+          <h4 class="mb-1">Expenses_table management</h4>
           <p class="text-muted mb-0">
-            Manage account code groups within the application.
+            Manage your Expenses_table account code groups here.
           </p>
         </div>
       </div>
@@ -37,14 +37,14 @@
         data-bs-toggle="modal"
         data-bs-target="#addModal"
       >
-        <i class="icon-base ti tabler-plus me-1"></i>Add Account Code Group
+        <i class="icon-base ti tabler-plus me-1"></i>Add Expenses_table code group
       </button>
     </div>
   </div>
   <!--Header section---->
 
   <div class="col-12">
-    <!-- Account Code Group Table -->
+    <!-- Expenses_table Group Table -->
     <div class="card">
       <div class="card-datatable">
         <table class="datatables-users table border-top">
@@ -52,20 +52,20 @@
             <tr>
               <th>ID</th>
               <th>Code</th>
-              <th>Description</th>
+              <th>title</th>
               <th>Status</th>
               <th class="text-end">Actions</th>
             </tr>
           </thead>
           <tbody>
-            <% if (accountGroupData && accountGroupData.length > 0) { %> <%
-            accountGroupData.forEach(function(group) { %>
+            <% if (expenses_tableData && expenses_tableData.length > 0) { %> <%
+            expenses_tableData.forEach(function(expenses) { %>
             <tr>
-              <td><%= group.id %></td>
-              <td><strong><%= group.code %></strong></td>
-              <td><%= group.description || 'No description' %></td>
+              <td><%= expenses.id %></td>
+              <td><strong><%= expenses.code %></strong></td>
+              <td><%= expenses.title || 'No title' %></td>
               <td data-field="status">
-                <% if (group.status) { %>
+                <% if (expenses.status) { %>
                 <span class="badge bg-label-success">Active</span>
                 <% } else { %>
                 <span class="badge bg-label-danger">Inactive</span>
@@ -75,23 +75,23 @@
                 <div class="d-inline-flex gap-2">
                   <button
                     class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit"
-                    data-id="<%= group.id %>"
-                    data-code="<%= group.code %>"
-                    data-description="<%= group.description || '' %>"
-                    data-status="<%= group.status ? '1' : '0' %>"
-                    title="Edit Account Code Group"
+                    data-id="<%= expenses.id %>"
+                    data-code="<%= expenses.code %>"
+                    data-description="<%= expenses.title || '' %>"
+                    data-status="<%= expenses.status ? '1' : '0' %>"
+                    title="Edit Expenses_table Code Group"
                   >
                     <i class="icon-base ti tabler-edit"></i>
                   </button>
                   <form
-                    action="/AccountCodeGroup/<%= group.id %>/delete"
+                    action="/Expenses_table/<%= expenses.id %>/delete"
                     method="POST"
                     class="d-inline delete-form"
                   >
                     <button
                       class="btn btn-sm btn-icon btn-text-danger rounded-pill"
                       type="submit"
-                      title="Delete Account Code Group"
+                      title="Delete Expenses_table Code Group"
                     >
                       <i class="icon-base ti tabler-trash"></i>
                     </button>
@@ -105,8 +105,8 @@
                 <div class="text-muted">
                   <i class="icon-base ti tabler-alert-circle fs-3 mb-2"></i>
                   <p>
-                    No account code groups found. Click "Add Account Code Group"
-                    to create your first group.
+                    No Expenses_table account code groups found. Please add new
+                    groups.
                   </p>
                 </div>
               </td>
@@ -131,11 +131,11 @@
             aria-label="Close"
           ></button>
           <div class="text-center mb-6">
-            <h4 class="mb-2">Add New Account Code Group</h4>
-            <p class="text-body-secondary">Enter account code group details</p>
+            <h4 class="mb-2">Add New Expenses_table Code Group</h4>
+            <p class="text-body-secondary">Enter Expenses_table code group details</p>
           </div>
           <!-- Add account code group form -->
-          <form action="/AccountCodeGroup" method="POST">
+          <form action="/Expenses_table" method="POST">
             <div class="col-12 mb-3">
               <label class="form-label" for="code">Code</label>
               <input
@@ -146,11 +146,13 @@
                 value="Auto-generated"
                 disabled
               />
-              <small class="text-muted">Code will be automatically generated</small>
+              <small class="text-muted"
+                >Code will be automatically generated</small
+              >
             </div>
             <div class="col-12 mb-3">
               <label class="form-label" for="description">
-                Description <span class="text-danger">*</span>
+                title <span class="text-danger">*</span>
               </label>
               <textarea
                 id="description"
@@ -182,7 +184,7 @@
               </button>
             </div>
           </form>
-          <!--/ Add account code group form -->
+          <!--/ Add Expenses_table code group form  -->
         </div>
       </div>
     </div>
@@ -201,10 +203,10 @@
             aria-label="Close"
           ></button>
           <div class="text-center mb-6">
-            <h4 class="mb-2">Edit Account Code Group</h4>
-            <p class="text-body-secondary">Update account code group details</p>
+            <h4 class="mb-2">Edit Expenses_table Code Group</h4>
+            <p class="text-body-secondary">Update expenses table code group details</p>
           </div>
-          <!-- Edit account code group form -->
+          <!-- Edit expenses table code group form -->
           <form id="editForm" method="POST">
             <input type="hidden" id="edit_id" name="id" />
             <div class="col-12 mb-3">
@@ -220,7 +222,7 @@
             </div>
             <div class="col-12 mb-3">
               <label class="form-label" for="edit_description">
-                Description <span class="text-danger">*</span>
+                Title <span class="text-danger">*</span>
               </label>
               <textarea
                 id="edit_description"
@@ -240,7 +242,7 @@
             </div>
             <div class="col-12 text-center mt-4">
               <button type="submit" class="btn btn-warning me-3">
-                Update Account Code Group
+                Update Expenses_table Code Group
               </button>
               <button
                 type="reset"
@@ -252,7 +254,7 @@
               </button>
             </div>
           </form>
-          <!--/ Edit account code group form -->
+          <!--/ Edit Expenses_table code group form -->
         </div>
       </div>
     </div>
@@ -276,7 +278,7 @@
         const status = this.getAttribute("data-status");
 
         // Set form action
-        editForm.action = "/AccountCodeGroup/" + id;
+        editForm.action = "/Expenses_table/" + id;
 
         // Populate form fields
         document.getElementById("edit_id").value = id;

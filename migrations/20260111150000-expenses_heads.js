@@ -18,8 +18,9 @@ module.exports = {
             model: "account_code_groups",
             key: "id",
           },
-          onUpdate: "CASCADE",
+         
           onDelete: "RESTRICT",
+          onUpdate: "CASCADE",
         },
         code: {
           type: Sequelize.STRING(10),

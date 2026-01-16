@@ -32,7 +32,7 @@ userRouter.get("/userManagement", User_Management.userManagement);
 userRouter.get("/setting", Setting.setting);
 userRouter.get("/branches", Branches.branches);
 userRouter.get("/approve_type", Approve_Type.approve_type);
-userRouter.get("/roles", RolesController.getRoles);
+
 
 // ============================================
 // Auth Routes
@@ -52,11 +52,10 @@ userRouter.delete("/api/users/:id", User_Management.deleteUser);
 // Role management
 userRouter.post("/api/users/:userId/assign-role", User_Management.assignRole);
 
-
 // ============================================
 // Roles Management CRUD Operations
 // ============================================
-
+userRouter.get("/roles", RolesController.getRoles);
 // Create a new role
 userRouter.post("/admin/roles/create", RolesController.createRole);
 
@@ -68,5 +67,11 @@ userRouter.post("/admin/roles/update/:id", RolesController.updateRole);
 
 // Delete a role
 userRouter.post("/admin/roles/delete/:id", RolesController.deleteRole);
+
+// Get all permissions
+ userRouter.get("/admin/permissions", RolesController.getAllPermissions)
+
+//   assign permissions to role 
+userRouter.post("/admin/roles/:id/assign-permissions", RolesController.assignPermission)
 
 module.exports = userRouter;

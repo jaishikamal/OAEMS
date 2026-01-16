@@ -4,22 +4,20 @@ const BASE_URL = "https://oprsk.bizengineconsulting.com/api";
 // Get all roles and render the page
 exports.getRoles = async (req, res) => {
   try {
-    // Enable login check
-    if (!req.session || !req.session.token) {
-      console.log("No session or token, redirecting to login");
-      return res.redirect("/");
-    }
-
+    // validate session
     const token = req.session.token;
 
     // Fetch roles from external API
-    const getListResponse = await fetch(`${BASE_URL}/admin/roles?per_page=100`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    });
+    const getListResponse = await fetch(
+      `${BASE_URL}/admin/roles?per_page=100`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
 
     console.log("Fetch roles response status:", getListResponse.status);
 
@@ -27,7 +25,9 @@ exports.getRoles = async (req, res) => {
     if (!getListResponse.ok) {
       // Handle 401 - Unauthorized
       if (getListResponse.status === 401) {
-        console.log("Unauthorized (401), clearing session and redirecting to login");
+        console.log(
+          "Unauthorized (401), clearing session and redirecting to login"
+        );
         req.session.destroy((err) => {
           if (err) console.error("Session destroy error:", err);
         });
@@ -74,7 +74,11 @@ exports.createRole = async (req, res) => {
       });
     }
 
-    if (!permissions || !Array.isArray(permissions) || permissions.length === 0) {
+    if (
+      !permissions ||
+      !Array.isArray(permissions) ||
+      permissions.length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "At least one permission is required",
@@ -93,7 +97,7 @@ exports.createRole = async (req, res) => {
       body: JSON.stringify({
         name: name.trim(),
         description: description ? description.trim() : "",
-        permissions
+        permissions,
       }),
     });
 
@@ -190,7 +194,7 @@ exports.getRoleById = async (req, res) => {
   }
 };
 
-// Update a role - FIXED: Now handles POST from frontend but sends PUT to API
+// update a role
 exports.updateRole = async (req, res) => {
   try {
     console.log("Update role request body:", req.body);
@@ -215,7 +219,11 @@ exports.updateRole = async (req, res) => {
       });
     }
 
-    if (!permissions || !Array.isArray(permissions) || permissions.length === 0) {
+    if (
+      !permissions ||
+      !Array.isArray(permissions) ||
+      permissions.length === 0
+    ) {
       return res.status(400).json({
         success: false,
         message: "At least one permission is required",
@@ -225,19 +233,22 @@ exports.updateRole = async (req, res) => {
     const token = req.session.token;
 
     // Send PUT request to external API (this is correct)
-    const updateRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: name.trim(),
-        description: description ? description.trim() : "",
-        permissions
-      }),
-    });
+    const updateRoleResponse = await fetch(
+      `${BASE_URL}/admin/roles/${roleId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: name.trim(),
+          description: description ? description.trim() : "",
+          permissions,
+        }),
+      }
+    );
 
     console.log("Update role response status:", updateRoleResponse.status);
 
@@ -290,13 +301,16 @@ exports.deleteRole = async (req, res) => {
     const roleId = req.params.id;
     const token = req.session.token;
 
-    const deleteRoleResponse = await fetch(`${BASE_URL}/admin/roles/${roleId}`, {
-      method: "DELETE",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-      },
-    });
+    const deleteRoleResponse = await fetch(
+      `${BASE_URL}/admin/roles/${roleId}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
 
     console.log("Delete role response status:", deleteRoleResponse.status);
 
@@ -340,3 +354,151 @@ exports.deleteRole = async (req, res) => {
     });
   }
 };
+
+// Get all permissions
+exports.getAllPermissions = async (req, res) => {
+  try {
+    // Validate session
+    if (!req.session || !req.session.token) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized. Please login again.",
+      });
+    }
+
+    const token = req.session.token;
+
+    const getAllPermissionsResponse = await fetch(
+      `${BASE_URL}/admin/permissions`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      }
+    );
+
+    console.log(
+      "Get all permissions response status:",
+      getAllPermissionsResponse.status
+    );
+
+    const permissionsData = await getAllPermissionsResponse.json();
+    console.log("All permissions data:", permissionsData);
+
+    if (!getAllPermissionsResponse.ok) {
+      // Handle 401 - Unauthorized
+      if (getAllPermissionsResponse.status === 401) {
+        return res.status(401).json({
+          success: false,
+          message: "Session expired - Please login again",
+        });
+      }
+      return res.status(getAllPermissionsResponse.status).json({
+        success: false,
+        message: permissionsData.message || "Failed to fetch permissions",
+        error: permissionsData,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Permissions fetched successfully",
+      data: permissionsData,
+    });
+  } catch (error) {
+    console.error("Error in getAllPermissions:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching permissions",
+      error: error.message,
+    });
+  }
+};
+
+  // Assign permissions to a role
+  exports.assignPermission = async (req, res) => {
+    try {
+      console.log("Assign permission request body:", req.body);
+      console.log("Role ID:", req.params.id);
+
+      // Validate session
+      if (!req.session || !req.session.token) {
+        return res.status(401).json({
+          success: false,
+          message: "Unauthorized. Please login again.",
+        });
+      }
+
+      const roleId = req.params.id;
+      const { permissions } = req.body;
+
+      // Validation
+      if (
+        !permissions ||
+        !Array.isArray(permissions) ||
+        permissions.length === 0
+      ) {
+        return res.status(400).json({
+          success: false,
+          message: "At least one permission is required",
+        });
+      }
+
+      const token = req.session.token;
+
+      const assignPermissionResponse = await fetch(
+        `${BASE_URL}/admin/roles/${roleId}/assign-permission`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            permissions,
+          }),
+        }
+      );
+
+      console.log(
+        "Assign permission response status:",
+        assignPermissionResponse.status
+      );
+
+      const responseData = await assignPermissionResponse.json();
+      console.log("Assign permission response data:", responseData);
+
+      if (!assignPermissionResponse.ok) {
+        // Handle 401 - Unauthorized
+        if (assignPermissionResponse.status === 401) {
+          return res.status(401).json({
+            success: false,
+            message: "Session expired - Please login again",
+          });
+        }
+        return res.status(assignPermissionResponse.status).json({
+          success: false,
+          message: responseData.message || "Failed to assign permissions",
+          error: responseData,
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Permissions assigned successfully",
+        data: responseData,
+      });
+    } catch (error) {
+      console.error("Error in assignPermission:", error);
+      return res.status(500).json({
+        success: false,
+        message: "An error occurred while assigning permissions",
+        error: error.message,
+      });
+    }
+  };
+
+
+ 
