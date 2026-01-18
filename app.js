@@ -6,6 +6,7 @@ const userRouter = require("./routes/userRouter");
 const costRouter = require("./routes/CostRouter");
 const AccountRouter = require("./routes/AccoutRouter");
 const ExpensesTableRouter = require("./routes/Expenses_table");
+const ExpensesHead =require("./routes/Expenses_head");
 const session = require("express-session");
 
 // Initialize the app
@@ -29,8 +30,6 @@ app.use(
   })
 );
 
-// app.use(methodOverride("_method"));
-
 // Middleware to set pageScripts for each request
 app.use((req, res, next) => {
   res.locals.pageScripts = [];
@@ -40,8 +39,10 @@ app.use("/", userRouter);
 app.use("/", costRouter);
 app.use("/", AccountRouter);
 app.use("/", ExpensesTableRouter);
+app.use("/", ExpensesHead);
 
-const PORT = process.env.PORT || 3000;
+
+const PORT = process.env.PORT || 3005;
 
 // Export for Vercel
 module.exports = app;

@@ -70,8 +70,8 @@ exports.createExpenses = async (req, res) => {
         code
     );
   } catch (error) {
-    console.error("Error creating account code group:", error);
-    res.redirect("/Expenses_table?error=Failed to create account code group");
+    console.error("Error creating expenses head:", error);
+    res.redirect("/Expenses_table?error=Failed to create expenses head");
   }
 };
 
@@ -90,10 +90,10 @@ exports.getExpensesById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: accountCodeGroup,
+      data: expenses,
     });
   } catch (error) {
-    console.error("Error fetching account code group:", error);
+    console.error("Error fetching expenses head:", error);
     res.status(500).json({
       success: false,
       error: error.message,
@@ -102,7 +102,7 @@ exports.getExpensesById = async (req, res) => {
 };
 
 // Update expenses 
-exports.updateExpenses= async (req, res) => {
+exports.updateExpenses = async (req, res) => {
   try {
     const { id } = req.params;
     const { title, status } = req.body;
@@ -119,7 +119,7 @@ exports.updateExpenses= async (req, res) => {
     }
 
     // Code cannot be changed, only title and status
-    await Expenses_table.update({
+    await expenses.update({
       title: title.trim(),
       status: status === "1" || status === 1 ? true : false,
     });
@@ -138,21 +138,21 @@ exports.deleteExpenses = async (req, res) => {
     const expenses = await Expenses_table.findByPk(id);
 
     if (!expenses) {
-      return res.redirect("/Expenses_table?error=Account code group not found");
+      return res.redirect("/Expenses_table?error=Expenses head not found");
     }
 
     await expenses.destroy();
     res.redirect(
-      "/Expenses_table?success=Account code group deleted successfully"
+      "/Expenses_table?success=Expenses head deleted successfully"
     );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/Expenses_table?error=Cannot delete: Group is used in other records"
+        "/Expenses_table?error=Cannot delete: Expenses head is used in other records"
       );
     }
-    console.error("Error deleting account code group:", error);
-    res.redirect("/Expenses_table?error=Failed to delete account code group");
+    console.error("Error deleting expenses head:", error);
+    res.redirect("/Expenses_table?error=Failed to delete expenses head");
   }
 };
