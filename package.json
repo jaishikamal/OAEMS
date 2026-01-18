@@ -4,8 +4,10 @@
   "main": "app.js",
   "scripts": {
     "tailwind": "npx tailwindcss -i ./views/input.css -o ./public/output.css --watch",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "concurrently \"nodemon app.js\" \"npm run tailwind\""
+    "test": "concurrently \"nodemon app.js\" \"npm run tailwind\"",
+    "start": "node app.js",
+    "build": "npm run build"
+
   },
   "keywords": [],
   "author": "",
