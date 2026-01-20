@@ -66,7 +66,7 @@
               <td>
                 <% if (expenses.accountCodeGroup) { %>
                 <span class="badge bg-label-info">
-                  <%= expenses.accountCodeGroup.description %>
+                  <%= expenses.accountCodeGroup.code %>
                 </span>
                 <% } else { %>
                 <span class="text-muted">N/A</span>
@@ -249,7 +249,7 @@
                 <% if (typeof accountCodeGroups !== 'undefined' &&
                 accountCodeGroups.length > 0) { %> <%
                 accountCodeGroups.forEach(function(group) { %>
-                <option value="<%= group.id %>"><%= group.title %></option>
+                <option value="<%= group.id %>"><%= group.code %></option>
                 <% }); %> <% } %>
               </select>
             </div>

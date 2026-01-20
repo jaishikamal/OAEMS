@@ -7,6 +7,7 @@ const costRouter = require("./routes/CostRouter");
 const AccountRouter = require("./routes/AccoutRouter");
 const ExpensesTableRouter = require("./routes/Expenses_table");
 const ExpensesHead =require("./routes/Expenses_head");
+const ExpensesGovernance = require("./routes/Expenses_Governance")
 const session = require("express-session");
 
 // Initialize the app
@@ -40,8 +41,9 @@ app.use("/", costRouter);
 app.use("/", AccountRouter);
 app.use("/", ExpensesTableRouter);
 app.use("/", ExpensesHead);
+app.use("/", ExpensesGovernance);
 
-
+// Define the PORT
 const PORT = process.env.PORT || 3005;
 
 // Export for Vercel

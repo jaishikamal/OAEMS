@@ -1,0 +1,551 @@
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Success/Error Messages -->
+  <% if (typeof success !== 'undefined' && success) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> <% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <!-- Header section-->
+  <div class="row gy-3 align-items-center mb-4">
+    <div class="col-lg-6">
+      <div class="d-flex align-items-start gap-2">
+        <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
+          <span class="avatar-initial rounded">
+            <i class="icon-base ti tabler-settings"></i>
+          </span>
+        </div>
+        <div>
+          <h4 class="mb-1">Expenses Governance Management</h4>
+          <p class="text-muted mb-0">
+            Manage your expenses governance with cost centers and expense heads here.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
+      <button
+        type="button"
+        class="btn btn-label-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#addModal"
+      >
+        <i class="icon-base ti tabler-plus me-1"></i>Add Expenses Governance
+      </button>
+    </div>
+  </div>
+  <!--Header section---->
+
+  <div class="col-12">
+    <!-- Expenses Governance Table -->
+    <div class="card">
+      <div class="card-datatable">
+        <table class="datatables-users table border-top">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Code</th>
+              <th>Cost Center</th>
+              <th>Expense Head</th>
+              <th>Title</th>
+              <th>HCO</th>
+              <th>Province</th>
+              <th>Branch</th>
+              <th>Extension</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (expensesGovernances && expensesGovernances.length > 0) { %> <%
+            expensesGovernances.forEach(function(governance) { %>
+            <tr>
+              <td><%= governance.id %></td>
+              <td><strong><%= governance.code %></strong></td>
+              <td>
+                <% if (governance.costCenter) { %>
+                <span class="badge bg-label-info">
+                  <%= governance.costCenter.name %>
+                </span>
+                <% } else { %>
+                <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (governance.expenseHead) { %>
+                <span class="badge bg-label-secondary">
+                  <%= governance.expenseHead.code %> - <%= governance.expenseHead.title %>
+                </span>
+                <% } else { %>
+                <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+              <td><%= governance.title || 'No title' %></td>
+              <td>
+                <% if (governance.head_corporate_office) { %>
+                <i class="icon-base ti tabler-check text-success"></i>
+                <% } else { %>
+                <i class="icon-base ti tabler-x text-danger"></i>
+                <% } %>
+              </td>
+              <td>
+                <% if (governance.province_office) { %>
+                <i class="icon-base ti tabler-check text-success"></i>
+                <% } else { %>
+                <i class="icon-base ti tabler-x text-danger"></i>
+                <% } %>
+              </td>
+              <td>
+                <% if (governance.branch) { %>
+                <i class="icon-base ti tabler-check text-success"></i>
+                <% } else { %>
+                <i class="icon-base ti tabler-x text-danger"></i>
+                <% } %>
+              </td>
+              <td>
+                <% if (governance.extension_counter) { %>
+                <i class="icon-base ti tabler-check text-success"></i>
+                <% } else { %>
+                <i class="icon-base ti tabler-x text-danger"></i>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit"
+                    data-id="<%= governance.id %>"
+                    data-cost-center-id="<%= governance.cost_center_id %>"
+                    data-expense-head-id="<%= governance.expense_head_id %>"
+                    data-code="<%= governance.code %>"
+                    data-title="<%= governance.title || '' %>"
+                    data-head-corporate-office="<%= governance.head_corporate_office ? '1' : '0' %>"
+                    data-province-office="<%= governance.province_office ? '1' : '0' %>"
+                    data-branch="<%= governance.branch ? '1' : '0' %>"
+                    data-extension-counter="<%= governance.extension_counter ? '1' : '0' %>"
+                    title="Edit Expenses Governance"
+                  >
+                    <i class="icon-base ti tabler-edit"></i>
+                  </button>
+                  <form
+                    action="/Expenses_governance/<%= governance.id %>/delete"
+                    method="POST"
+                    class="d-inline delete-form"
+                  >
+                    <button
+                      class="btn btn-sm btn-icon btn-text-danger rounded-pill"
+                      type="submit"
+                      title="Delete Expenses Governance"
+                    >
+                      <i class="icon-base ti tabler-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }); %> <% } else { %>
+            <tr>
+              <td colspan="10" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="icon-base ti tabler-alert-circle fs-3 mb-2"></i>
+                  <p>No expenses governance found. Please add new expenses governance.</p>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Expenses Governance Table -->
+  </div>
+
+  <!-- Add Modal -->
+  <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Add New Expenses Governance</h4>
+            <p class="text-body-secondary">Enter expenses governance details</p>
+          </div>
+          <!-- Add expenses governance form -->
+          <form action="/Expenses_governance" method="POST">
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="cost_center_id">
+                  Cost Center <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="cost_center_id"
+                  name="cost_center_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Cost Center</option>
+                  <% if (typeof costCenters !== 'undefined' &&
+                  costCenters.length > 0) { %> <%
+                  costCenters.forEach(function(center) { %>
+                  <option value="<%= center.id %>"><%= center.name %></option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="expense_head_id">
+                  Expense Head <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="expense_head_id"
+                  name="expense_head_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Expense Head</option>
+                  <% if (typeof expensesHeads !== 'undefined' &&
+                  expensesHeads.length > 0) { %> <%
+                  expensesHeads.forEach(function(head) { %>
+                  <option value="<%= head.id %>">
+                    <%= head.code %> - <%= head.title %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12 mb-3">
+                <label class="form-label" for="code">Code (3 digits)</label>
+                <input
+                  type="number"
+                  id="code"
+                  name="code"
+                  class="form-control"
+                  placeholder="Leave empty for auto-increment"
+                  min="100"
+                  max="999"
+                />
+                <small class="text-muted"
+                  >Enter a 3-digit code (100-999) or leave empty for auto-increment</small
+                >
+              </div>
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="title">
+                Title <span class="text-danger">*</span>
+              </label>
+              <textarea
+                id="title"
+                name="title"
+                class="form-control"
+                placeholder="Enter title"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="head_corporate_office"
+                    name="head_corporate_office"
+                    value="true"
+                  />
+                  <label class="form-check-label" for="head_corporate_office">
+                    Head Corporate Office
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="province_office"
+                    name="province_office"
+                    value="true"
+                  />
+                  <label class="form-check-label" for="province_office">
+                    Province Office
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="branch"
+                    name="branch"
+                    value="true"
+                  />
+                  <label class="form-check-label" for="branch">
+                    Branch
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="extension_counter"
+                    name="extension_counter"
+                    value="true"
+                  />
+                  <label class="form-check-label" for="extension_counter">
+                    Extension Counter
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-3">
+                Add Expenses Governance
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Add expenses governance form  -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Add Modal -->
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Edit Expenses Governance</h4>
+            <p class="text-body-secondary">Update expenses governance details</p>
+          </div>
+          <!-- Edit expenses governance form -->
+          <form id="editForm" method="POST">
+            <input type="hidden" id="edit_id" name="id" />
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_cost_center_id">
+                  Cost Center <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_cost_center_id"
+                  name="cost_center_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Cost Center</option>
+                  <% if (typeof costCenters !== 'undefined' &&
+                  costCenters.length > 0) { %> <%
+                  costCenters.forEach(function(center) { %>
+                  <option value="<%= center.id %>"><%= center.name %></option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_expense_head_id">
+                  Expense Head <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_expense_head_id"
+                  name="expense_head_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Expense Head</option>
+                  <% if (typeof expensesHeads !== 'undefined' &&
+                  expensesHeads.length > 0) { %> <%
+                  expensesHeads.forEach(function(head) { %>
+                  <option value="<%= head.id %>">
+                    <%= head.code %> - <%= head.title %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="edit_code">Code</label>
+              <input
+                type="text"
+                id="edit_code"
+                name="code"
+                class="form-control bg-light"
+                disabled
+              />
+              <small class="text-muted">Code cannot be changed</small>
+            </div>
+            <div class="col-12 mb-3">
+              <label class="form-label" for="edit_title">
+                Title <span class="text-danger">*</span>
+              </label>
+              <textarea
+                id="edit_title"
+                name="title"
+                class="form-control"
+                placeholder="Enter title"
+                rows="3"
+                required
+              ></textarea>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_head_corporate_office"
+                    name="head_corporate_office"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_head_corporate_office">
+                    Head Corporate Office
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_province_office"
+                    name="province_office"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_province_office">
+                    Province Office
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_branch"
+                    name="branch"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_branch">
+                    Branch
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_extension_counter"
+                    name="extension_counter"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_extension_counter">
+                    Extension Counter
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-warning me-3">
+                Update Expenses Governance
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Edit expenses governance form -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Edit Modal -->
+</div>
+<!-- / Content -->
+
+<script>
+  // Handle edit button clicks
+  document.addEventListener("DOMContentLoaded", function () {
+    const editButtons = document.querySelectorAll(".btn-edit");
+    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    const editForm = document.getElementById("editForm");
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        const costCenterId = this.getAttribute("data-cost-center-id");
+        const expenseHeadId = this.getAttribute("data-expense-head-id");
+        const code = this.getAttribute("data-code");
+        const title = this.getAttribute("data-title");
+        const headCorporateOffice = this.getAttribute("data-head-corporate-office");
+        const provinceOffice = this.getAttribute("data-province-office");
+        const branch = this.getAttribute("data-branch");
+        const extensionCounter = this.getAttribute("data-extension-counter");
+
+        // Set form action
+        editForm.action = "/Expenses_governance/" + id;
+
+        // Populate form fields
+        document.getElementById("edit_id").value = id;
+        document.getElementById("edit_cost_center_id").value = costCenterId;
+        document.getElementById("edit_expense_head_id").value = expenseHeadId;
+        document.getElementById("edit_code").value = code;
+        document.getElementById("edit_title").value = title;
+
+        // Set checkboxes
+        document.getElementById("edit_head_corporate_office").checked = headCorporateOffice === "1";
+        document.getElementById("edit_province_office").checked = provinceOffice === "1";
+        document.getElementById("edit_branch").checked = branch === "1";
+        document.getElementById("edit_extension_counter").checked = extensionCounter === "1";
+
+        // Show modal
+        editModal.show();
+      });
+    });
+
+    // Confirm delete
+    const deleteForms = document.querySelectorAll(".delete-form");
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        if (!confirm("Are you sure you want to delete this expenses governance?")) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+</script>
