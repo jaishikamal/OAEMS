@@ -9,6 +9,7 @@ router.get("/Expenses_head", Expenses_head.Expenses_headManagement);
 router.post("/Expenses_head", Expenses_head.createExpenses_head);
 router.get("/Expenses_head/:id", Expenses_head.getExpenses_headById);
 router.post("/Expenses_head/:id", Expenses_head.updateExpenses_head); // Changed to POST
-router.post("/Expenses_head/:id/delete", Expenses_head.deleteExpenses_head); // Changed to POST with /delete
-
+router.post("/Expenses_head/:id/delete", Expenses_head.deleteExpenses_head); 
+// Changed to POST with /delete
+router.get('/Expenses_head/check-code', Expenses_head.checkAccountGroupCode);
 module.exports = router;

@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
           fields: ["account_code_groups_id"],
         },
       ],
-    }
+    },
   );
 
   // Define associations

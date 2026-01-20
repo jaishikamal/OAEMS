@@ -5,13 +5,13 @@ exports.CostCenterManagement = async (req, res) => {
   try {
     const costdata = await CostCenter.findAll({
       raw: true,
-      order: [["createdAt", "DESC"]], 
+      order: [["createdAt", "DESC"]],
     });
 
     res.render("pages/CostCenter", {
       pageTitle: "Cost Center Management",
       layout: "main",
-      costdata: costdata, 
+      costdata: costdata,
       success: req.query.success,
       error: req.query.error,
     });
@@ -26,46 +26,35 @@ exports.CostCenterManagement = async (req, res) => {
   }
 };
 
-// Helper function to generate unique 5-digit code
-const generateUniqueCode = async () => {
-  let code;
-  let isUnique = false;
-
-  while (!isUnique) {
-    // Generate random 5-digit number (10000 to 99999)
-    code = Math.floor(10000 + Math.random() * 90000).toString();
-
-    // Check if code already exists
-    const existing = await CostCenter.findOne({ where: { code } });
-    if (!existing) {
-      isUnique = true;
-    }
-  }
-
-  return code;
-};
-
 // Create cost center
 exports.createCostCenter = async (req, res) => {
   try {
-    const { title, status } = req.body;
+    const { code, title, status } = req.body;
 
     // Validate required fields
-    if (!title) {
-      return res.redirect("/CostCenter?error=Title is required");
+    if (!code || !title) {
+      return res.redirect("/CostCenter?error=Code and Title are required");
     }
 
-    // Generate unique code automatically
-    const code = await generateUniqueCode();
+    // Validate code format (must be 3 digits)
+    if (!/^\d{3}$/.test(code)) {
+      return res.redirect("/CostCenter?error=Code must be exactly 3 digits");
+    }
+
+    // Check if code already exists
+    const existing = await CostCenter.findOne({ where: { code: code.trim() } });
+    if (existing) {
+      return res.redirect("/CostCenter?error=Code already exists");
+    }
 
     await CostCenter.create({
-      code: code,
+      code: code.trim(),
       title: title.trim(),
-      status: status || 1,
+      status: status === "1" || status === 1 || status === true ? 1 : 0,
     });
 
     res.redirect(
-      "/CostCenter?success=Cost center created successfully with code: " + code
+      "/CostCenter?success=Cost center created successfully with code: " + code,
     );
   } catch (error) {
     console.error("Error creating cost center:", error);
@@ -110,16 +99,34 @@ exports.updateCostCenter = async (req, res) => {
       return res.redirect("/CostCenter?error=Code and Title are required");
     }
 
+    // Validate code format (must be 3 digits)
+    if (!/^\d{3}$/.test(code)) {
+      return res.redirect("/CostCenter?error=Code must be exactly 3 digits");
+    }
+
     const costCenter = await CostCenter.findByPk(id);
 
     if (!costCenter) {
       return res.redirect("/CostCenter?error=Cost center not found");
     }
 
+    // Check if code is already used by another cost center
+    const { Op } = require("sequelize");
+    const existing = await CostCenter.findOne({
+      where: {
+        code: code.trim(),
+        id: { [Op.ne]: id }
+      }
+    });
+
+    if (existing) {
+      return res.redirect("/CostCenter?error=Code already exists");
+    }
+
     await costCenter.update({
       code: code.trim(),
       title: title.trim(),
-      status: status || 0,
+      status: status === "1" || status === 1 || status === true ? 1 : 0,
     });
 
     res.redirect("/CostCenter?success=Cost center updated successfully");

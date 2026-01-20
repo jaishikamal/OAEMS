@@ -1,0 +1,560 @@
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Success/Error Messages -->
+  <% if (typeof success !== 'undefined' && success) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> <% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <!-- Header section-->
+  <div class="row gy-3 align-items-center mb-4">
+    <div class="col-lg-6">
+      <div class="d-flex align-items-start gap-2">
+        <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
+          <span class="avatar-initial rounded">
+            <i class="icon-base ti tabler-list-details"></i>
+          </span>
+        </div>
+        <div>
+          <h4 class="mb-1">Chart of Accounts Management</h4>
+          <p class="text-muted mb-0">
+            Manage your chart of accounts with auto-generated 9-digit codes.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
+      <button
+        type="button"
+        class="btn btn-label-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#addModal"
+      >
+        <i class="icon-base ti tabler-plus me-1"></i>Add Chart of Accounts
+      </button>
+    </div>
+  </div>
+  <!--Header section---->
+
+  <div class="col-12">
+    <!-- Chart of Accounts Table -->
+    <div class="card">
+      <div class="card-datatable">
+        <table class="datatables-users table border-top">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>COA Code</th>
+              <th>Account Group</th>
+              <th>Expense Head</th>
+              <th>Cost Center</th>
+              <th>Status</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (chartOfAccounts && chartOfAccounts.length > 0) { %> <%
+            chartOfAccounts.forEach(function(coa) { %>
+            <tr>
+              <td><%= coa.id %></td>
+              <td>
+                <strong class="text-primary"><%= coa.coa_code %></strong>
+                <br />
+                <small class="text-muted">
+                  <% if (coa.accountCodeGroup && coa.expenseHead && coa.costCenter) { %>
+                  <%= coa.accountCodeGroup.code %> _ <%= coa.expenseHead.code %> _ <%= coa.costCenter.code %>
+                  <% } %>
+                </small>
+              </td>
+              <td>
+                <% if (coa.accountCodeGroup) { %>
+                <span class="badge bg-label-info">
+                  <%= coa.accountCodeGroup.code %>
+                </span>
+                <br />
+                <small><%= coa.accountCodeGroup.description %></small>
+                <% } else { %>
+                <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (coa.expenseHead) { %>
+                <span class="badge bg-label-warning">
+                  <%= coa.expenseHead.code %>
+                </span>
+                <br />
+                <small><%= coa.expenseHead.title %></small>
+                <% } else { %>
+                <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+              <td>
+                <% if (coa.costCenter) { %>
+                <span class="badge bg-label-success">
+                  <%= coa.costCenter.code %>
+                </span>
+                <br />
+                <small><%= coa.costCenter.title %></small>
+                <% } else { %>
+                <span class="text-muted">N/A</span>
+                <% } %>
+              </td>
+              <td data-field="status">
+                <% if (coa.status) { %>
+                <span class="badge bg-label-success">Active</span>
+                <% } else { %>
+                <span class="badge bg-label-danger">Inactive</span>
+                <% } %>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit"
+                    data-id="<%= coa.id %>"
+                    data-account-group-id="<%= coa.account_group_id %>"
+                    data-expense-head-id="<%= coa.expense_head_id %>"
+                    data-cost-center-id="<%= coa.cost_center_id %>"
+                    data-coa-code="<%= coa.coa_code %>"
+                    data-status="<%= coa.status ? '1' : '0' %>"
+                    title="Edit Chart of Accounts"
+                  >
+                    <i class="icon-base ti tabler-edit"></i>
+                  </button>
+                  <form
+                    action="/ChartOfAccounts/<%= coa.id %>/delete"
+                    method="POST"
+                    class="d-inline delete-form"
+                  >
+                    <button
+                      class="btn btn-sm btn-icon btn-text-danger rounded-pill"
+                      type="submit"
+                      title="Delete Chart of Accounts"
+                    >
+                      <i class="icon-base ti tabler-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }); %> <% } else { %>
+            <tr>
+              <td colspan="7" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="icon-base ti tabler-alert-circle fs-3 mb-2"></i>
+                  <p>No chart of accounts found. Please add new entries.</p>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Chart of Accounts Table -->
+  </div>
+
+  <!-- Add Modal -->
+  <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Add New Chart of Accounts</h4>
+            <p class="text-body-secondary">
+              Select combination - COA code will be auto-generated
+            </p>
+          </div>
+          <!-- Add COA form -->
+          <form action="/ChartOfAccounts" method="POST" id="addForm">
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="account_group_id">
+                  Account Group <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="account_group_id"
+                  name="account_group_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Account Group</option>
+                  <% if (typeof accountCodeGroups !== 'undefined' &&
+                  accountCodeGroups.length > 0) { %> <%
+                  accountCodeGroups.forEach(function(group) { %>
+                  <option value="<%= group.id %>">
+                    <%= group.code %> - <%= group.description %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="expense_head_id">
+                  Expense Head <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="expense_head_id"
+                  name="expense_head_id"
+                  class="form-select"
+                  required
+                  disabled
+                >
+                  <option value="">Select Account Group first</option>
+                </select>
+                <small class="text-muted" id="expense_head_help"
+                  >Select Account Group to load Expense Heads</small
+                >
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="cost_center_id">
+                  Cost Center <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="cost_center_id"
+                  name="cost_center_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Cost Center</option>
+                  <% if (typeof costCenters !== 'undefined' && costCenters.length
+                  > 0) { %> <% costCenters.forEach(function(center) { %>
+                  <option value="<%= center.id %>">
+                    <%= center.code %> - <%= center.title %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+            </div>
+
+            <!-- COA Code Preview -->
+            <div class="alert alert-info mb-3" id="coa_preview_container" style="display: none;">
+              <div class="d-flex align-items-center">
+                <i class="ti ti-info-circle me-2 fs-4"></i>
+                <div>
+                  <strong>Generated COA Code:</strong>
+                  <span id="coa_code_preview" class="fs-5 ms-2 text-primary fw-bold"></span>
+                  <br />
+                  <small id="coa_combination_preview" class="text-muted"></small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-3">
+              <label class="form-label" for="status">Status</label>
+              <select id="status" name="status" class="form-select">
+                <option value="true" selected>Active</option>
+                <option value="false">Inactive</option>
+              </select>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-3" id="submit_btn">
+                Add Chart of Accounts
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Add COA form  -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Add Modal -->
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Edit Chart of Accounts</h4>
+            <p class="text-body-secondary">
+              Update combination - COA code will be regenerated
+            </p>
+          </div>
+          <!-- Edit COA form -->
+          <form id="editForm" method="POST">
+            <input type="hidden" id="edit_id" name="id" />
+            
+            <!-- Current COA Code Display -->
+            <div class="alert alert-secondary mb-3">
+              <strong>Current COA Code:</strong>
+              <span id="edit_current_coa_code" class="fs-5 ms-2 text-dark fw-bold"></span>
+            </div>
+
+            <div class="row">
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="edit_account_group_id">
+                  Account Group <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_account_group_id"
+                  name="account_group_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Account Group</option>
+                  <% if (typeof accountCodeGroups !== 'undefined' &&
+                  accountCodeGroups.length > 0) { %> <%
+                  accountCodeGroups.forEach(function(group) { %>
+                  <option value="<%= group.id %>">
+                    <%= group.code %> - <%= group.description %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="edit_expense_head_id">
+                  Expense Head <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_expense_head_id"
+                  name="expense_head_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Expense Head</option>
+                </select>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label class="form-label" for="edit_cost_center_id">
+                  Cost Center <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_cost_center_id"
+                  name="cost_center_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Cost Center</option>
+                  <% if (typeof costCenters !== 'undefined' && costCenters.length
+                  > 0) { %> <% costCenters.forEach(function(center) { %>
+                  <option value="<%= center.id %>">
+                    <%= center.code %> - <%= center.title %>
+                  </option>
+                  <% }); %> <% } %>
+                </select>
+              </div>
+            </div>
+
+            <!-- New COA Code Preview -->
+            <div class="alert alert-warning mb-3" id="edit_coa_preview_container" style="display: none;">
+              <div class="d-flex align-items-center">
+                <i class="ti ti-arrows-exchange me-2 fs-4"></i>
+                <div>
+                  <strong>New COA Code:</strong>
+                  <span id="edit_coa_code_preview" class="fs-5 ms-2 text-primary fw-bold"></span>
+                  <br />
+                  <small id="edit_coa_combination_preview" class="text-muted"></small>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 mb-3">
+              <label class="form-label" for="edit_status">Status</label>
+              <select id="edit_status" name="status" class="form-select">
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-warning me-3">
+                Update Chart of Accounts
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Edit COA form -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Edit Modal -->
+</div>
+<!-- / Content -->
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const accountGroupSelect = document.getElementById("account_group_id");
+    const expenseHeadSelect = document.getElementById("expense_head_id");
+    const costCenterSelect = document.getElementById("cost_center_id");
+    const coaPreviewContainer = document.getElementById("coa_preview_container");
+    const coaCodePreview = document.getElementById("coa_code_preview");
+    const coaCombinationPreview = document.getElementById("coa_combination_preview");
+    const submitBtn = document.getElementById("submit_btn");
+
+    // Load expense heads when account group changes
+    accountGroupSelect.addEventListener("change", async function () {
+      const groupId = this.value;
+      expenseHeadSelect.innerHTML = '<option value="">Loading...</option>';
+      expenseHeadSelect.disabled = true;
+
+      if (!groupId) {
+        expenseHeadSelect.innerHTML = '<option value="">Select Account Group first</option>';
+        coaPreviewContainer.style.display = "none";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/ChartOfAccounts/expense-heads?account_group_id=${groupId}`
+        );
+        const data = await response.json();
+
+        if (data.success && data.data.length > 0) {
+          expenseHeadSelect.innerHTML = '<option value="">Select Expense Head</option>';
+          data.data.forEach((head) => {
+            const option = document.createElement("option");
+            option.value = head.id;
+            option.textContent = `${head.code} - ${head.title}`;
+            expenseHeadSelect.appendChild(option);
+          });
+          expenseHeadSelect.disabled = false;
+        } else {
+          expenseHeadSelect.innerHTML = '<option value="">No expense heads available</option>';
+        }
+      } catch (error) {
+        console.error("Error loading expense heads:", error);
+        expenseHeadSelect.innerHTML = '<option value="">Error loading data</option>';
+      }
+    });
+
+    // Check combination and preview COA code
+    async function checkCombination() {
+      const accountGroupId = accountGroupSelect.value;
+      const expenseHeadId = expenseHeadSelect.value;
+      const costCenterId = costCenterSelect.value;
+
+      if (!accountGroupId || !expenseHeadId || !costCenterId) {
+        coaPreviewContainer.style.display = "none";
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/ChartOfAccounts/check-combination?account_group_id=${accountGroupId}&expense_head_id=${expenseHeadId}&cost_center_id=${costCenterId}`
+        );
+        const data = await response.json();
+
+        if (data.exists) {
+          coaPreviewContainer.className = "alert alert-danger mb-3";
+          coaCodePreview.textContent = data.existingCode;
+          coaCombinationPreview.textContent = "⚠️ This combination already exists!";
+          submitBtn.disabled = true;
+        } else {
+          coaPreviewContainer.className = "alert alert-info mb-3";
+          coaCodePreview.textContent = data.previewCode;
+          const parts = data.previewCode.match(/.{1,3}/g);
+          coaCombinationPreview.textContent = `Combination: ${parts[0]} + ${parts[1]} + ${parts[2]}`;
+          submitBtn.disabled = false;
+        }
+        coaPreviewContainer.style.display = "block";
+      } catch (error) {
+        console.error("Error checking combination:", error);
+        submitBtn.disabled = false;
+      }
+    }
+
+    expenseHeadSelect.addEventListener("change", checkCombination);
+    costCenterSelect.addEventListener("change", checkCombination);
+
+    // Handle edit button clicks
+    const editButtons = document.querySelectorAll(".btn-edit");
+    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    const editForm = document.getElementById("editForm");
+    const editAccountGroupSelect = document.getElementById("edit_account_group_id");
+    const editExpenseHeadSelect = document.getElementById("edit_expense_head_id");
+    const editCostCenterSelect = document.getElementById("edit_cost_center_id");
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", async function () {
+        const id = this.getAttribute("data-id");
+        const accountGroupId = this.getAttribute("data-account-group-id");
+        const expenseHeadId = this.getAttribute("data-expense-head-id");
+        const costCenterId = this.getAttribute("data-cost-center-id");
+        const coaCode = this.getAttribute("data-coa-code");
+        const status = this.getAttribute("data-status");
+
+        editForm.action = "/ChartOfAccounts/" + id;
+        document.getElementById("edit_id").value = id;
+        document.getElementById("edit_current_coa_code").textContent = coaCode;
+        document.getElementById("edit_status").value = status;
+
+        // Set account group
+        editAccountGroupSelect.value = accountGroupId;
+
+        // Load expense heads for this account group
+        try {
+          const response = await fetch(
+            `/ChartOfAccounts/expense-heads?account_group_id=${accountGroupId}`
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            editExpenseHeadSelect.innerHTML = '<option value="">Select Expense Head</option>';
+            data.data.forEach((head) => {
+              const option = document.createElement("option");
+              option.value = head.id;
+              option.textContent = `${head.code} - ${head.title}`;
+              if (head.id == expenseHeadId) option.selected = true;
+              editExpenseHeadSelect.appendChild(option);
+            });
+          }
+        } catch (error) {
+          console.error("Error loading expense heads:", error);
+        }
+
+        editCostCenterSelect.value = costCenterId;
+        editModal.show();
+      });
+    });
+
+    // Confirm delete
+    const deleteForms = document.querySelectorAll(".delete-form");
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        if (
+          !confirm(
+            "Are you sure you want to delete this Chart of Accounts? This action cannot be undone if it's used in transactions."
+          )
+        ) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+</script>

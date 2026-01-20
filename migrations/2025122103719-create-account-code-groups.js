@@ -15,6 +15,10 @@ module.exports = {
           type: Sequelize.STRING,
           allowNull: false,
           unique: true,
+          validate: {
+            len: [3, 3],
+            isNumeric: true,
+          },
         },
         status: {
           type: Sequelize.BOOLEAN,
@@ -38,7 +42,7 @@ module.exports = {
       },
       {
         engine: "InnoDB",
-      }
+      },
     );
   },
 

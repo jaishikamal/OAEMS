@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true,
+        validate: {
+          len: [3, 3],
+          isNumeric: true,
+        },
       },
       status: {
         type: DataTypes.BOOLEAN,
@@ -28,7 +32,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       tableName: "account_code_groups", // DB table name
       timestamps: true,
-    }
+    },
   );
 
   // ✅ Associations must be OUTSIDE define()

@@ -124,17 +124,18 @@
       <form action="/cost-centers" method="POST">
         <div class="modal-body">
           <div class="mb-3">
-            <label for="code" class="form-label">Code</label>
+            <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
             <input
               type="text"
               class="form-control"
               id="code"
-              value="code"
-              disabled
+              name="code"
+              placeholder="Enter 3-digit code (e.g., 001, 123)"
+              maxlength="3"
+              pattern="\d{3}"
+              required
             />
-            <small class="text-muted"
-              >Code will be automatically generated</small
-            >
+            <small class="text-muted">Enter exactly 3 digits (001-999)</small>
           </div>
           <div class="mb-3">
             <label for="title" class="form-label"
@@ -145,6 +146,7 @@
               class="form-control"
               id="title"
               name="title"
+              placeholder="Enter cost center title"
               required
             />
           </div>
@@ -187,15 +189,17 @@
         <div class="modal-body">
           <input type="hidden" id="edit_id" name="id" />
           <div class="mb-3">
-            <label for="edit_code" class="form-label">Code</label>
+            <label for="edit_code" class="form-label">Code <span class="text-danger">*</span></label>
             <input
               type="text"
               class="form-control"
               id="edit_code"
               name="code"
-              disabled
+              maxlength="3"
+              pattern="\d{3}"
+              required
             />
-            <small class="text-muted">Code cannot be changed</small>
+            <small class="text-muted">Enter exactly 3 digits (001-999)</small>
           </div>
           <div class="mb-3">
             <label for="edit_title" class="form-label"
@@ -268,6 +272,24 @@
           e.preventDefault();
         }
       });
+    });
+
+    // Auto-pad code input to 3 digits
+    const codeInputs = [document.getElementById("code"), document.getElementById("edit_code")];
+    codeInputs.forEach((input) => {
+      if (input) {
+        input.addEventListener("input", function (e) {
+          // Only allow numbers
+          this.value = this.value.replace(/\D/g, "");
+        });
+        
+        input.addEventListener("blur", function (e) {
+          // Pad with leading zeros on blur
+          if (this.value.length > 0 && this.value.length < 3) {
+            this.value = this.value.padStart(3, "0");
+          }
+        });
+      }
     });
   });
 </script>

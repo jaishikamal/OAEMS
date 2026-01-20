@@ -135,19 +135,45 @@
             <p class="text-body-secondary">Enter account code group details</p>
           </div>
           <!-- Add account code group form -->
-          <form action="/AccountCodeGroup" method="POST">
+          <form action="/AccountCodeGroup" method="POST" id="addForm">
+            <% if (typeof isFirstEntry !== 'undefined' && isFirstEntry) { %>
+            <!-- First Entry - User provides code -->
             <div class="col-12 mb-3">
-              <label class="form-label" for="code">Code</label>
+              <label class="form-label" for="code">
+                Code <span class="text-danger">*</span>
+              </label>
               <input
                 type="text"
                 id="code"
                 name="code"
                 class="form-control"
-                value="Auto-generated"
+                placeholder="Enter 3-digit code (100-999)"
+                pattern="\d{3}"
+                minlength="3"
+                maxlength="3"
+                required
+              />
+              <small class="text-primary">
+                <i class="ti ti-info-circle"></i> First entry: You must provide a 3-digit starting code (100-999)
+              </small>
+            </div>
+            <% } else { %>
+            <!-- Subsequent Entries - System generates code -->
+            <div class="col-12 mb-3">
+              <label class="form-label" for="code_display">Code</label>
+              <input
+                type="text"
+                id="code_display"
+                class="form-control bg-light"
+                value="Auto-generated (next sequential)"
                 disabled
               />
-              <small class="text-muted">Code will be automatically generated</small>
+              <small class="text-muted">
+                <i class="ti ti-lock"></i> Code will be automatically generated as the next sequential number
+              </small>
             </div>
+            <% } %>
+            
             <div class="col-12 mb-3">
               <label class="form-label" for="description">
                 Description <span class="text-danger">*</span>
@@ -208,15 +234,23 @@
           <form id="editForm" method="POST">
             <input type="hidden" id="edit_id" name="id" />
             <div class="col-12 mb-3">
-              <label class="form-label" for="edit_code">Code</label>
+              <label class="form-label" for="edit_code">
+                Code <span class="text-danger">*</span>
+              </label>
               <input
                 type="text"
                 id="edit_code"
                 name="code"
-                class="form-control bg-light"
-                disabled
+                class="form-control"
+                placeholder="Enter 3-digit code (100-999)"
+                pattern="\d{3}"
+                minlength="3"
+                maxlength="3"
+                required
               />
-              <small class="text-muted">Code cannot be changed</small>
+              <small class="text-warning">
+                <i class="ti ti-alert-triangle"></i> If this code exists, system will assign the next available code
+              </small>
             </div>
             <div class="col-12 mb-3">
               <label class="form-label" for="edit_description">
@@ -300,5 +334,70 @@
         }
       });
     });
+
+    // Validate code input (first entry only)
+    const codeInput = document.getElementById("code");
+    if (codeInput) {
+      codeInput.addEventListener("input", function (e) {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, "");
+        
+        // Limit to 3 digits
+        if (this.value.length > 3) {
+          this.value = this.value.slice(0, 3);
+        }
+      });
+
+      // Validate on form submit
+      const addForm = document.getElementById("addForm");
+      addForm.addEventListener("submit", function (e) {
+        const code = codeInput.value;
+        const codeNum = parseInt(code);
+        
+        if (code.length !== 3) {
+          e.preventDefault();
+          alert("Code must be exactly 3 digits");
+          return false;
+        }
+        
+        if (codeNum < 100 || codeNum > 999) {
+          e.preventDefault();
+          alert("Code must be between 100 and 999");
+          return false;
+        }
+      });
+    }
+
+    // Validate edit code input
+    const editCodeInput = document.getElementById("edit_code");
+    if (editCodeInput) {
+      editCodeInput.addEventListener("input", function (e) {
+        // Only allow digits
+        this.value = this.value.replace(/\D/g, "");
+        
+        // Limit to 3 digits
+        if (this.value.length > 3) {
+          this.value = this.value.slice(0, 3);
+        }
+      });
+
+      // Validate on form submit
+      editForm.addEventListener("submit", function (e) {
+        const code = editCodeInput.value;
+        const codeNum = parseInt(code);
+        
+        if (code.length !== 3) {
+          e.preventDefault();
+          alert("Code must be exactly 3 digits");
+          return false;
+        }
+        
+        if (codeNum < 100 || codeNum > 999) {
+          e.preventDefault();
+          alert("Code must be between 100 and 999");
+          return false;
+        }
+      });
+    }
   });
 </script>

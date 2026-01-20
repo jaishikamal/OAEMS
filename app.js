@@ -5,9 +5,9 @@ const expressLayouts = require("express-ejs-layouts");
 const userRouter = require("./routes/userRouter");
 const costRouter = require("./routes/CostRouter");
 const AccountRouter = require("./routes/AccoutRouter");
-const ExpensesTableRouter = require("./routes/Expenses_table");
-const ExpensesHead =require("./routes/Expenses_head");
-const ExpensesGovernance = require("./routes/Expenses_Governance")
+const ExpensesHead = require("./routes/Expenses_head");
+const chartofAccount = require("./routes/COARouter");
+const ExpensesGovernance = require("./routes/Expenses_Governance");
 const session = require("express-session");
 
 // Initialize the app
@@ -28,7 +28,7 @@ app.use(
     secret: process.env.SESSION_SECRET || "secret-key",
     resave: false,
     saveUninitialized: true,
-  })
+  }),
 );
 
 // Middleware to set pageScripts for each request
@@ -39,8 +39,8 @@ app.use((req, res, next) => {
 app.use("/", userRouter);
 app.use("/", costRouter);
 app.use("/", AccountRouter);
-app.use("/", ExpensesTableRouter);
 app.use("/", ExpensesHead);
+app.use("/", chartofAccount);
 app.use("/", ExpensesGovernance);
 
 // Define the PORT

@@ -154,7 +154,7 @@
                 class="form-select"
                 required
               >
-                <option  value="">Select Account Code Group</option>
+                <option value="">Select Account Code Group</option>
                 <% if (typeof accountCodeGroups !== 'undefined' &&
                 accountCodeGroups.length > 0) { %> <%
                 accountCodeGroups.forEach(function(group) { %>
@@ -162,19 +162,22 @@
                 <% }); %> <% } %>
               </select>
             </div>
-            <div class="col-12 mb-3">
-              <label class="form-label" for="code">Code</label>
+            <div class="col-12 mb-3" id="codeInputContainer">
+              <label class="form-label" for="code">
+                Code <span class="text-danger" id="codeRequired">*</span>
+              </label>
               <input
                 type="text"
                 id="code"
                 name="code"
                 class="form-control"
-                value="Auto-generated"
-                disabled
+                placeholder="Enter 3-digit code (100-999)"
+                maxlength="3"
+                pattern="[0-9]{3}"
               />
-              <small class="text-muted"
-                >Code will be automatically generated</small
-              >
+              <small class="text-muted" id="codeHelpText">
+                Select an Account Code Group first
+              </small>
             </div>
             <div class="col-12 mb-3">
               <label class="form-label" for="title">
@@ -310,6 +313,79 @@
 <script>
   // Handle edit button clicks
   document.addEventListener("DOMContentLoaded", function () {
+    const accountGroupSelect = document.getElementById("account_code_groups_id");
+    const codeInput = document.getElementById("code");
+    const codeHelpText = document.getElementById("codeHelpText");
+    const codeRequired = document.getElementById("codeRequired");
+
+    // Check code requirement when account group changes
+    accountGroupSelect.addEventListener("change", async function () {
+      const groupId = this.value;
+
+      if (!groupId) {
+        codeInput.disabled = true;
+        codeInput.value = "";
+        codeInput.removeAttribute("required");
+        codeRequired.style.display = "none";
+        codeHelpText.textContent = "Select an Account Code Group first";
+        codeHelpText.className = "text-muted";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `/Expenses_head/check-code?account_code_groups_id=${groupId}`
+        );
+        const data = await response.json();
+
+        if (data.success) {
+          if (data.requiresInput) {
+            // First entry - user must provide code
+            codeInput.disabled = false;
+            codeInput.value = "";
+            codeInput.setAttribute("required", "required");
+            codeRequired.style.display = "inline";
+            codeHelpText.textContent =
+              "This is the first entry for this group. Enter a 3-digit code (100-999)";
+            codeHelpText.className = "text-primary";
+            codeInput.focus();
+          } else {
+            // Auto-increment
+            codeInput.disabled = true;
+            codeInput.value = data.suggestedCode;
+            codeInput.removeAttribute("required");
+            codeRequired.style.display = "none";
+            codeHelpText.textContent = `Code will be auto-generated: ${data.suggestedCode}`;
+            codeHelpText.className = "text-success";
+          }
+        }
+      } catch (error) {
+        console.error("Error checking code:", error);
+        codeInput.disabled = true;
+        codeInput.value = "";
+        codeHelpText.textContent = "Error checking code availability";
+        codeHelpText.className = "text-danger";
+      }
+    });
+
+    // Validate 3-digit code input
+    codeInput.addEventListener("input", function () {
+      this.value = this.value.replace(/[^0-9]/g, "");
+      if (this.value.length > 0) {
+        const num = parseInt(this.value);
+        if (this.value.length === 3) {
+          if (num >= 100 && num <= 999) {
+            codeHelpText.textContent = "Valid 3-digit code";
+            codeHelpText.className = "text-success";
+          } else {
+            codeHelpText.textContent = "Code must be between 100 and 999";
+            codeHelpText.className = "text-danger";
+          }
+        }
+      }
+    });
+
+    // Handle edit button clicks
     const editButtons = document.querySelectorAll(".btn-edit");
     const editModal = new bootstrap.Modal(document.getElementById("editModal"));
     const editForm = document.getElementById("editForm");
