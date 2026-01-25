@@ -158,7 +158,7 @@
                 <% if (typeof accountCodeGroups !== 'undefined' &&
                 accountCodeGroups.length > 0) { %> <%
                 accountCodeGroups.forEach(function(group) { %>
-                <option value="<%= group.id %>"><%= group.code %></option>
+                <option value="<%= group.id %>"><%= group.code %>-<%= group.description %></option>
                 <% }); %> <% } %>
               </select>
             </div>

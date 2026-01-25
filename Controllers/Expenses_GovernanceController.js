@@ -1,4 +1,9 @@
-const { Expenses_Governance, Expenses_heads, CostCenter, AccountCodeGroup } = require("../models");
+const {
+  Expenses_Governance,
+  Expenses_heads,
+  CostCenter,
+  AccountCodeGroup,
+} = require("../models");
 
 exports.Expenses_GovernanceManagement = async (req, res) => {
   try {
@@ -35,7 +40,7 @@ exports.Expenses_GovernanceManagement = async (req, res) => {
 
     const costCenters = await CostCenter.findAll({
       where: { status: true },
-      order: [["name", "ASC"]],
+      order: [["title", "ASC"]],
     });
 
     res.render("pages/Expenses_governance", {
@@ -96,7 +101,9 @@ const getNextAutoIncrementCode = async () => {
   }
 
   // Check if next code is already taken
-  const existing = await Expenses_Governance.findOne({ where: { code: nextCode } });
+  const existing = await Expenses_Governance.findOne({
+    where: { code: nextCode },
+  });
   if (existing) {
     return await generateUniqueCode();
   }
@@ -120,27 +127,27 @@ exports.createExpenses_Governance = async (req, res) => {
 
     // Validate required fields
     if (!title) {
-      return res.redirect("/Expenses_governance?error=Title is required");
+      return res.redirect("/ExpensesGovernance?error=Title is required");
     }
 
     if (!cost_center_id) {
-      return res.redirect("/Expenses_governance?error=Cost Center is required");
+      return res.redirect("/ExpensesGovernance?error=Cost Center is required");
     }
 
     if (!expense_head_id) {
-      return res.redirect("/Expenses_governance?error=Expense Head is required");
+      return res.redirect("/ExpensesGovernance?error=Expense Head is required");
     }
 
     // Verify cost center exists
     const costCenter = await CostCenter.findByPk(cost_center_id);
     if (!costCenter) {
-      return res.redirect("/Expenses_governance?error=Invalid Cost Center");
+      return res.redirect("/ExpensesGovernance?error=Invalid Cost Center");
     }
 
     // Verify expense head exists
     const expenseHead = await Expenses_heads.findByPk(expense_head_id);
     if (!expenseHead) {
-      return res.redirect("/Expenses_governance?error=Invalid Expense Head");
+      return res.redirect("/ExpensesGovernance?error=Invalid Expense Head");
     }
 
     let finalCode;
@@ -152,7 +159,7 @@ exports.createExpenses_Governance = async (req, res) => {
       // Validate 3-digit range
       if (userCode < 100 || userCode > 999) {
         return res.redirect(
-          "/Expenses_governance?error=Code must be a 3-digit number (100-999)"
+          "/ExpensesGovernance?error=Code must be a 3-digit number (100-999)",
         );
       }
 
@@ -162,7 +169,7 @@ exports.createExpenses_Governance = async (req, res) => {
       });
       if (existing) {
         return res.redirect(
-          "/Expenses_governance?error=Code already exists. Please use a different code."
+          "/ExpensesGovernance?error=Code already exists. Please use a different code.",
         );
       }
 
@@ -177,19 +184,28 @@ exports.createExpenses_Governance = async (req, res) => {
       expense_head_id: expense_head_id,
       code: finalCode,
       title: title.trim(),
-      head_corporate_office: head_corporate_office === "true" || head_corporate_office === "1" ? true : false,
-      province_office: province_office === "true" || province_office === "1" ? true : false,
+      head_corporate_office:
+        head_corporate_office === "true" || head_corporate_office === "1"
+          ? true
+          : false,
+      province_office:
+        province_office === "true" || province_office === "1" ? true : false,
       branch: branch === "true" || branch === "1" ? true : false,
-      extension_counter: extension_counter === "true" || extension_counter === "1" ? true : false,
+      extension_counter:
+        extension_counter === "true" || extension_counter === "1"
+          ? true
+          : false,
     });
 
     res.redirect(
-      "/Expenses_governance?success=Expenses Governance created successfully with code: " +
-        finalCode
+      "/ExpensesGovernance?success=Expenses Governance created successfully with code: " +
+        finalCode,
     );
   } catch (error) {
     console.error("Error creating expenses governance:", error);
-    res.redirect("/Expenses_governance?error=Failed to create expenses governance");
+    res.redirect(
+      "/ExpensesGovernance?error=Failed to create expenses governance",
+    );
   }
 };
 
@@ -252,33 +268,35 @@ exports.updateExpenses_Governance = async (req, res) => {
 
     // Validate required fields
     if (!title) {
-      return res.redirect("/Expenses_governance?error=Title is required");
+      return res.redirect("/ExpensesGovernance?error=Title is required");
     }
 
     if (!cost_center_id) {
-      return res.redirect("/Expenses_governance?error=Cost Center is required");
+      return res.redirect("/ExpensesGovernance?error=Cost Center is required");
     }
 
     if (!expense_head_id) {
-      return res.redirect("/Expenses_governance?error=Expense Head is required");
+      return res.redirect("/ExpensesGovernance?error=Expense Head is required");
     }
 
     const expensesGovernance = await Expenses_Governance.findByPk(id);
 
     if (!expensesGovernance) {
-      return res.redirect("/Expenses_governance?error=Expenses Governance not found");
+      return res.redirect(
+        "/ExpensesGovernance?error=Expenses Governance not found",
+      );
     }
 
     // Verify cost center exists
     const costCenter = await CostCenter.findByPk(cost_center_id);
     if (!costCenter) {
-      return res.redirect("/Expenses_governance?error=Invalid Cost Center");
+      return res.redirect("/ExpensesGovernance?error=Invalid Cost Center");
     }
 
     // Verify expense head exists
     const expenseHead = await Expenses_heads.findByPk(expense_head_id);
     if (!expenseHead) {
-      return res.redirect("/Expenses_governance?error=Invalid Expense Head");
+      return res.redirect("/ExpensesGovernance?error=Invalid Expense Head");
     }
 
     // Code cannot be changed, only other fields
@@ -286,16 +304,25 @@ exports.updateExpenses_Governance = async (req, res) => {
       cost_center_id: cost_center_id,
       expense_head_id: expense_head_id,
       title: title.trim(),
-      head_corporate_office: head_corporate_office === "1" || head_corporate_office === 1 ? true : false,
-      province_office: province_office === "1" || province_office === 1 ? true : false,
+      head_corporate_office:
+        head_corporate_office === "1" || head_corporate_office === 1
+          ? true
+          : false,
+      province_office:
+        province_office === "1" || province_office === 1 ? true : false,
       branch: branch === "1" || branch === 1 ? true : false,
-      extension_counter: extension_counter === "1" || extension_counter === 1 ? true : false,
+      extension_counter:
+        extension_counter === "1" || extension_counter === 1 ? true : false,
     });
 
-    res.redirect("/Expenses_governance?success=Expenses Governance updated successfully");
+    res.redirect(
+      "/ExpensesGovernance?success=Expenses Governance updated successfully",
+    );
   } catch (error) {
     console.error("Error updating expenses governance:", error);
-    res.redirect("/Expenses_governance?error=Failed to update expenses governance");
+    res.redirect(
+      "/ExpensesGovernance?error=Failed to update expenses governance",
+    );
   }
 };
 
@@ -306,19 +333,25 @@ exports.deleteExpenses_Governance = async (req, res) => {
     const expensesGovernance = await Expenses_Governance.findByPk(id);
 
     if (!expensesGovernance) {
-      return res.redirect("/Expenses_governance?error=Expenses governance not found");
+      return res.redirect(
+        "/ExpensesGovernance?error=Expenses governance not found",
+      );
     }
 
     await expensesGovernance.destroy();
-    res.redirect("/Expenses_governance?success=Expenses governance deleted successfully");
+    res.redirect(
+      "/ExpensesGovernance?success=Expenses governance deleted successfully",
+    );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/Expenses_governance?error=Cannot delete: Expenses governance is used in other records"
+        "/ExpensesGovernance?error=Cannot delete: Expenses governance is used in other records",
       );
     }
     console.error("Error deleting expenses governance:", error);
-    res.redirect("/Expenses_governance?error=Failed to delete expenses governance");
+    res.redirect(
+      "/ExpensesGovernance?error=Failed to delete expenses governance",
+    );
   }
 };

@@ -7,7 +7,6 @@
     "test": "concurrently \"nodemon app.js\" \"npm run tailwind\"",
     "start": "node app.js",
     "build": "npm run build"
-
   },
   "keywords": [],
   "author": "",
@@ -24,6 +23,7 @@
     "@tailwindcss/cli": "^4.1.17",
     "axios": "^1.13.2",
     "body-parser": "^1.20.3",
+    "connect-flash": "^0.1.1",
     "ejs": "^3.1.10",
     "express": "^4.21.0",
     "express-ejs-layouts": "^2.5.1",

@@ -33,6 +33,7 @@
               <th>ID</th>
               <th>Code</th>
               <th>Title</th>
+              <th>Type</th>
               <th>Status</th>
               <th>Created At</th>
               <th>Actions</th>
@@ -47,6 +48,26 @@
                 <span class="badge bg-secondary"><%= center.code %></span>
               </td>
               <td><%= center.title %></td>
+              <td>
+                <% 
+                let typeBadge = 'bg-info';
+                let typeLabel = center.type || 'N/A';
+                if (center.type === 'HEAD_OFFICE') {
+                  typeBadge = 'bg-danger';
+                  typeLabel = 'Head Office';
+                } else if (center.type === 'PROVINCE_OFFICE') {
+                  typeBadge = 'bg-warning';
+                  typeLabel = 'Province Office';
+                } else if (center.type === 'BRANCH') {
+                  typeBadge = 'bg-primary';
+                  typeLabel = 'Branch';
+                } else if (center.type === 'EXTENSION_COUNTER') {
+                  typeBadge = 'bg-success';
+                  typeLabel = 'Extension Counter';
+                }
+                %>
+                <span class="badge <%= typeBadge %>"><%= typeLabel %></span>
+              </td>
               <td>
                 <% if (center.status === 1) { %>
                 <span class="badge bg-success">Active</span>
@@ -73,6 +94,7 @@
                         data-id="<%= center.id %>"
                         data-code="<%= center.code %>"
                         data-title="<%= center.title %>"
+                        data-type="<%= center.type %>"
                         data-status="<%= center.status %>"
                       >
                         <i class="bi bi-pencil text-warning me-2"></i>Edit
@@ -96,7 +118,7 @@
             </tr>
             <% }); %> <% } else { %>
             <tr>
-              <td colspan="6" class="text-center text-muted py-4">
+              <td colspan="7" class="text-center text-muted py-4">
                 <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                 No cost centers found
               </td>
@@ -124,23 +146,35 @@
       <form action="/cost-centers" method="POST">
         <div class="modal-body">
           <div class="mb-3">
-            <label for="code" class="form-label">Code <span class="text-danger">*</span></label>
-            <input
-              type="text"
-              class="form-control"
-              id="code"
-              name="code"
-              placeholder="Enter 3-digit code (e.g., 001, 123)"
-              maxlength="3"
-              pattern="\d{3}"
-              required
-            />
-            <small class="text-muted">Enter exactly 3 digits (001-999)</small>
+            <label for="type" class="form-label">Type <span class="text-danger">*</span></label>
+            <select class="form-select" id="type" name="type" required>
+              <option value="">Select Type</option>
+              <% Object.entries(costCenterTypes).forEach(([key, config]) => { %>
+                <option value="<%= key %>">
+                  <%= config.label %> (<%= String(config.codeRange.min).padStart(3, '0') %>-<%= String(config.codeRange.max).padStart(3, '0') %>)
+                </option>
+              <% }); %>
+            </select>
+            <small class="text-muted">Code will be auto-generated based on selected type</small>
           </div>
           <div class="mb-3">
-            <label for="title" class="form-label"
-              >Title <span class="text-danger">*</span></label
-            >
+            <label class="form-label">Code Preview</label>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="codePreview"
+                value="---"
+                disabled
+              />
+              <button class="btn btn-outline-secondary" type="button" id="previewBtn" disabled>
+                <i class="bi bi-arrow-clockwise"></i> Preview
+              </button>
+            </div>
+            <small class="text-muted">Next available code will be auto-generated</small>
+          </div>
+          <div class="mb-3">
+            <label for="title" class="form-label">Title <span class="text-danger">*</span></label>
             <input
               type="text"
               class="form-control"
@@ -189,6 +223,20 @@
         <div class="modal-body">
           <input type="hidden" id="edit_id" name="id" />
           <div class="mb-3">
+            <label for="edit_type" class="form-label">Type <span class="text-danger">*</span></label>
+            <select class="form-select" id="edit_type" name="type" required>
+              <option value="">Select Type</option>
+              <% Object.entries(costCenterTypes).forEach(([key, config]) => { %>
+                <option value="<%= key %>" 
+                  data-min="<%= config.codeRange.min %>" 
+                  data-max="<%= config.codeRange.max %>">
+                  <%= config.label %> (<%= String(config.codeRange.min).padStart(3, '0') %>-<%= String(config.codeRange.max).padStart(3, '0') %>)
+                </option>
+              <% }); %>
+            </select>
+            <small class="text-muted">Select the type to see valid code range</small>
+          </div>
+          <div class="mb-3">
             <label for="edit_code" class="form-label">Code <span class="text-danger">*</span></label>
             <input
               type="text"
@@ -199,12 +247,10 @@
               pattern="\d{3}"
               required
             />
-            <small class="text-muted">Enter exactly 3 digits (001-999)</small>
+            <small id="editCodeHelp" class="text-muted">Enter code within the valid range for selected type</small>
           </div>
           <div class="mb-3">
-            <label for="edit_title" class="form-label"
-              >Title <span class="text-danger">*</span></label
-            >
+            <label for="edit_title" class="form-label">Title <span class="text-danger">*</span></label>
             <input
               type="text"
               class="form-control"
@@ -237,8 +283,64 @@
 </div>
 
 <script>
-  // Handle edit button clicks
   document.addEventListener("DOMContentLoaded", function () {
+    // Add Modal - Type selection and code preview
+    const typeSelect = document.getElementById("type");
+    const codePreview = document.getElementById("codePreview");
+    const previewBtn = document.getElementById("previewBtn");
+
+    typeSelect.addEventListener("change", function() {
+      if (this.value) {
+        previewBtn.disabled = false;
+        // Auto-fetch preview when type changes
+        fetchCodePreview(this.value);
+      } else {
+        previewBtn.disabled = true;
+        codePreview.value = "---";
+      }
+    });
+
+    previewBtn.addEventListener("click", function() {
+      const selectedType = typeSelect.value;
+      if (selectedType) {
+        fetchCodePreview(selectedType);
+      }
+    });
+
+    async function fetchCodePreview(type) {
+      try {
+        codePreview.value = "Loading...";
+        const response = await fetch(`/cost-centers/next-code?type=${type}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          codePreview.value = data.code;
+        } else {
+          codePreview.value = "Error";
+          alert(data.error || "Failed to generate code preview");
+        }
+      } catch (error) {
+        codePreview.value = "Error";
+        console.error("Error fetching code preview:", error);
+      }
+    }
+
+    // Edit Modal - Type change handler
+    const editTypeSelect = document.getElementById("edit_type");
+    const editCodeInput = document.getElementById("edit_code");
+    const editCodeHelp = document.getElementById("editCodeHelp");
+
+    editTypeSelect.addEventListener("change", function() {
+      const selectedOption = this.options[this.selectedIndex];
+      if (selectedOption.value) {
+        const min = selectedOption.dataset.min;
+        const max = selectedOption.dataset.max;
+        editCodeHelp.textContent = `Enter code between ${String(min).padStart(3, '0')} and ${String(max).padStart(3, '0')}`;
+        editCodeInput.placeholder = `${String(min).padStart(3, '0')}-${String(max).padStart(3, '0')}`;
+      }
+    });
+
+    // Handle edit button clicks
     const editButtons = document.querySelectorAll(".edit-btn");
     const editModal = new bootstrap.Modal(document.getElementById("editModal"));
     const editForm = document.getElementById("editForm");
@@ -248,6 +350,7 @@
         const id = this.getAttribute("data-id");
         const code = this.getAttribute("data-code");
         const title = this.getAttribute("data-title");
+        const type = this.getAttribute("data-type");
         const status = this.getAttribute("data-status");
 
         // Set form action
@@ -257,7 +360,11 @@
         document.getElementById("edit_id").value = id;
         document.getElementById("edit_code").value = code;
         document.getElementById("edit_title").value = title;
+        document.getElementById("edit_type").value = type;
         document.getElementById("edit_status").value = status;
+
+        // Trigger type change to update help text
+        editTypeSelect.dispatchEvent(new Event('change'));
 
         // Show modal
         editModal.show();
@@ -274,22 +381,19 @@
       });
     });
 
-    // Auto-pad code input to 3 digits
-    const codeInputs = [document.getElementById("code"), document.getElementById("edit_code")];
-    codeInputs.forEach((input) => {
-      if (input) {
-        input.addEventListener("input", function (e) {
-          // Only allow numbers
-          this.value = this.value.replace(/\D/g, "");
-        });
-        
-        input.addEventListener("blur", function (e) {
-          // Pad with leading zeros on blur
-          if (this.value.length > 0 && this.value.length < 3) {
-            this.value = this.value.padStart(3, "0");
-          }
-        });
-      }
-    });
+    // Auto-pad code input to 3 digits and restrict to numbers (for edit only)
+    if (editCodeInput) {
+      editCodeInput.addEventListener("input", function (e) {
+        // Only allow numbers
+        this.value = this.value.replace(/\D/g, "");
+      });
+      
+      editCodeInput.addEventListener("blur", function (e) {
+        // Pad with leading zeros on blur
+        if (this.value.length > 0 && this.value.length < 3) {
+          this.value = this.value.padStart(3, "0");
+        }
+      });
+    }
   });
 </script>

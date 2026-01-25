@@ -1,0 +1,764 @@
+
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Success/Error Messages -->
+  <% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> 
+  <% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <!-- Header section-->
+  <div class="row gy-3 align-items-center mb-4">
+    <div class="col-lg-6">
+      <div class="d-flex align-items-start gap-2">
+        <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
+          <span class="avatar-initial rounded">
+           <i class="icon-base ti tabler-building"></i>
+          </span>
+        </div>
+        <div>
+          <h4 class="mb-1">Vendor Tax & Regulatory Details</h4>
+          <p class="text-muted mb-0">
+            Manage vendor tax information including PAN, VAT, and TDS details.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
+      <button
+        type="button"
+        class="btn btn-label-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#addModal"
+      >
+        <i class="icon-base ti tabler-plus me-1"></i></i>Add Tax Details
+      </button>
+    </div>
+  </div>
+  <!--Header section---->
+
+  <div class="col-12">
+    <!-- Vendor Tax Details Table -->
+    <div class="card">
+      <div class="card-datatable table-responsive">
+        <table class="datatables-users table border-top">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Vendor</th>
+              <th>PAN Details</th>
+              <th>VAT Details</th>
+              <th>TDS Details</th>
+              <th>Status</th>
+              <th>updated</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (vendorTaxDetails && vendorTaxDetails.length > 0) { %> 
+            <% vendorTaxDetails.forEach(function(taxDetail) { %>
+            <tr>
+              <td><%= taxDetail.id %></td>
+              <td>
+                <div class="d-flex flex-column">
+                  <strong><%= taxDetail.vendor.tradeName %></strong>
+                  <small class="text-muted">
+                    <span class="badge bg-label-info"><%= taxDetail.vendor.vendorId %></span>
+                  </small>
+                </div>
+              </td>
+              <td>
+                <div class="d-flex flex-column">
+                  <strong class="text-primary"><%= taxDetail.pan_number %></strong>
+                  <small class="text-muted"><%= taxDetail.pan_holder_name %></small>
+                </div>
+              </td>
+              <td>
+                <% if (taxDetail.vat_registered) { %>
+                <div class="d-flex flex-column">
+                  <span class="badge bg-label-success mb-1">
+                     VAT Registered
+                  </span>
+                  <small><strong>VAT Number:</strong> <%= taxDetail.vat_number %></small>
+                  <small><strong>Rate:</strong> <%= taxDetail.vat_rate %>%</small>
+                </div>
+                <% } else { %>
+                <span class="badge bg-label-secondary">
+                  Not VAT Registered
+                </span>
+                <% } %>
+              </td>
+              <td>
+                <% if (taxDetail.tds_applicable) { %>
+                <div class="d-flex flex-column">
+                  <span class="badge bg-label-warning mb-1">
+                     TDS Applicable
+                  </span>
+                  <small><strong>Rate:</strong> <%= taxDetail.tds_rate %>%</small>
+                </div>
+                <% } else { %>
+                <span class="badge bg-label-secondary">
+                   TDS Not Applicable
+                </span>
+                <% } %>
+              </td>
+              <td>
+                <% if (taxDetail.is_active) { %>
+                <span class="badge bg-label-success">Active</span>
+                <% } else { %>
+                <span class="badge bg-label-danger">Inactive</span>
+                <% } %>
+              </td>
+              <td>
+                <small class="text-muted">
+                  <%= new Date(taxDetail.updated_at).toLocaleDateString() %>
+                </small>
+              </td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit"
+                    data-id="<%= taxDetail.id %>"
+                    data-vendor-id="<%= taxDetail.vendor_id %>"
+                    data-vendor-name="<%= taxDetail.vendor.tradeName %>"
+                    data-pan-number="<%= taxDetail.pan_number %>"
+                    data-pan-holder-name="<%= taxDetail.pan_holder_name %>"
+                    data-vat-registered="<%= taxDetail.vat_registered ? '1' : '0' %>"
+                    data-vat-number="<%= taxDetail.vat_number || '' %>"
+                    data-vat-rate="<%= taxDetail.vat_rate || '' %>"
+                    data-tds-applicable="<%= taxDetail.tds_applicable ? '1' : '0' %>"
+                    data-tds-rate="<%= taxDetail.tds_rate || '' %>"
+                    data-is-active="<%= taxDetail.is_active ? '1' : '0' %>"
+                    title="Edit Tax Details"
+                  >
+                     <i class="icon-base ti tabler-edit"></i>
+                </button>
+                <form action="/vendor-tax-details/<%= taxDetail.id %>/toggle-status" method="POST" class="d-inline toggle-status-form">
+                  <button
+                    class="btn btn-sm btn-icon btn-text-success rounded-pill"
+                    type="submit"
+                    title="Toggle Status"
+                  >
+                    <% if (taxDetail.is_active) { %>
+                    <i class="icon-base ti tabler-toggle-left"></i>
+                    <% } else { %>
+                    <i class="icon-base ti tabler-toggle-right"></i>
+                    <% } %>
+                  </button>
+                </form>
+                 <form
+                    action="/vendor-tax-details/<%= taxDetail.id %>/delete"
+                    method="POST"
+                    class="d-inline delete-form"
+                  >
+                    <button
+                      class="btn btn-sm btn-icon btn-text-danger rounded-pill"
+                      type="submit"
+                      title="Delete Tax Details"
+                    >
+                      <i class="icon-base ti tabler-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }); %> 
+            <% } else { %>
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="ti ti-alert-circle fs-3 mb-2"></i>
+                  <p>No vendor tax details found. Please add tax details for vendors.</p>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Vendor Tax Details Table -->
+  </div>
+
+  <!-- Add Modal -->
+  <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-4">
+            <h4 class="mb-2">Add Vendor Tax Details</h4>
+            <p class="text-body-secondary">Enter tax and regulatory information</p>
+          </div>
+          
+          <!-- Add tax details form -->
+          <form action="/vendor-tax-details" method="POST" id="addTaxForm">
+            <div class="row">
+              <!-- Vendor Selection -->
+              <div class="col-12 mb-4">
+                <label class="form-label" for="vendor_id">
+                  Select Vendor <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="vendor_id"
+                  name="vendor_id"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Vendor</option>
+                  <% if (typeof availableVendors !== 'undefined' && availableVendors.length > 0) { %> 
+                  <% availableVendors.forEach(function(vendor) { %>
+                  <option value="<%= vendor.id %>">
+                    <%= vendor.vendorId %> - <%= vendor.tradeName %> (<%= vendor.vendorType || 'N/A' %>)
+                  </option>
+                  <% }); %> 
+                  <% } %>
+                </select>
+                <% if (!availableVendors || availableVendors.length === 0) { %>
+                <small class="text-danger">All vendors already have tax details configured</small>
+                <% } %>
+              </div>
+
+              <!-- PAN Details Section -->
+              <div class="col-12 mb-3">
+                <h5 class="text-primary">
+                PAN Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="pan_number">
+                  PAN Number <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="pan_number"
+                  name="pan_number"
+                  class="form-control"
+                  placeholder="9-digit PAN number"
+                  maxlength="9"
+                  pattern="[0-9]{9}"
+                  required
+                />
+                <small class="text-muted">Must be exactly 9 digits</small>
+                <div id="pan-validation-message" class="mt-1"></div>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="pan_holder_name">
+                  PAN Holder Name <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="pan_holder_name"
+                  name="pan_holder_name"
+                  class="form-control"
+                  placeholder="Name as per PAN registration"
+                  required
+                />
+                <small class="text-muted">Name will be auto-converted to uppercase</small>
+              </div>
+
+              <!-- VAT Details Section -->
+              <div class="col-12 mb-3 mt-3">
+                <h5 class="text-primary">
+                VAT Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="vat_registered"
+                    name="vat_registered"
+                  />
+                  <label class="form-check-label" for="vat_registered">
+                    <strong>VAT Registered</strong>
+                    <small class="d-block text-muted">
+                      If checked, VAT number will be auto-set to PAN and rate will be 13%
+                    </small>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3" id="vat-number-field" style="display: none;">
+                <label class="form-label">
+                  VAT Number (Auto-filled)
+                </label>
+                <input
+                  type="text"
+                  id="vat_number_display"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+                <small class="text-muted">VAT number is same as PAN in Nepal</small>
+              </div>
+
+              <div class="col-md-6 mb-3" id="vat-rate-field" style="display: none;">
+                <label class="form-label">
+                  VAT Rate (%)
+                </label>
+                <input
+                  type="text"
+                  value="13.00"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+                <small class="text-muted">Standard VAT rate in Nepal</small>
+              </div>
+
+              <!-- TDS Details Section -->
+              <div class="col-12 mb-3 mt-3">
+                <h5 class="text-primary">
+                  TDS Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="tds_applicable"
+                    name="tds_applicable"
+                  />
+                  <label class="form-check-label" for="tds_applicable">
+                    <strong>TDS Applicable</strong>
+                    <small class="d-block text-muted">
+                      Check if Tax Deducted at Source applies to this vendor
+                    </small>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3" id="tds-rate-field" style="display: none;">
+                <label class="form-label" for="tds_rate">
+                  TDS Rate (%) <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="tds_rate"
+                  name="tds_rate"
+                  class="form-select"
+                >
+                  <option value="">Select TDS Rate</option>
+                  <option value="1.5">1.5%</option>
+                  <option value="2">2%</option>
+                  <option value="5">5%</option>
+                  <option value="10">10%</option>
+                  <option value="15">15%</option>
+                </select>
+                <small class="text-muted">Select applicable TDS rate</small>
+              </div>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-3">
+                </i>
+                Save Tax Details
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Add tax details form  -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Add Modal -->
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-4">
+            <h4 class="mb-2">Edit Vendor Tax Details</h4>
+            <p class="text-body-secondary">Update tax and regulatory information</p>
+          </div>
+          
+          <!-- Edit tax details form -->
+          <form id="editForm" method="POST">
+            <input type="hidden" id="edit_id" name="id" />
+            
+            <div class="row">
+              <!-- Vendor Info (Read-only) -->
+              <div class="col-12 mb-4">
+                <label class="form-label">Vendor</label>
+                <input
+                  type="text"
+                  id="edit_vendor_name"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+              </div>
+
+              <!-- PAN Details Section -->
+              <div class="col-12 mb-3">
+                <h5 class="text-primary">
+                  <i class="ti ti-id me-2"></i>PAN Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label">
+                  PAN Number
+                </label>
+                <input
+                  type="text"
+                  id="edit_pan_number"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+                <small class="text-muted">PAN number cannot be changed</small>
+              </div>
+              
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_pan_holder_name">
+                  PAN Holder Name <span class="text-danger">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="edit_pan_holder_name"
+                  name="pan_holder_name"
+                  class="form-control"
+                  required
+                />
+              </div>
+
+              <!-- VAT Details Section -->
+              <div class="col-12 mb-3 mt-3">
+                <h5 class="text-primary">
+                  <i class="ti ti-receipt-tax me-2"></i>VAT Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_vat_registered"
+                    name="vat_registered"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_vat_registered">
+                    <strong>VAT Registered</strong>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3" id="edit-vat-number-field" style="display: none;">
+                <label class="form-label">
+                  VAT Number (Auto-filled)
+                </label>
+                <input
+                  type="text"
+                  id="edit_vat_number_display"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+              </div>
+
+              <div class="col-md-6 mb-3" id="edit-vat-rate-field" style="display: none;">
+                <label class="form-label">
+                  VAT Rate (%)
+                </label>
+                <input
+                  type="text"
+                  value="13.00"
+                  class="form-control bg-light"
+                  disabled
+                  readonly
+                />
+              </div>
+
+              <!-- TDS Details Section -->
+              <div class="col-12 mb-3 mt-3">
+                <h5 class="text-primary">
+                  <i class="ti ti-percentage me-2"></i>TDS Information
+                </h5>
+                <hr class="mt-2 mb-3">
+              </div>
+              
+              <div class="col-12 mb-3">
+                <div class="form-check form-switch">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="edit_tds_applicable"
+                    name="tds_applicable"
+                    value="1"
+                  />
+                  <label class="form-check-label" for="edit_tds_applicable">
+                    <strong>TDS Applicable</strong>
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6 mb-3" id="edit-tds-rate-field" style="display: none;">
+                <label class="form-label" for="edit_tds_rate">
+                  TDS Rate (%)
+                </label>
+                <select
+                  id="edit_tds_rate"
+                  name="tds_rate"
+                  class="form-select"
+                >
+                  <option value="">Select TDS Rate</option>
+                  <option value="1.5">1.5%</option>
+                  <option value="2">2%</option>
+                  <option value="5">5%</option>
+                  <option value="10">10%</option>
+                  <option value="15">15%</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-warning me-3">
+                <i class="ti ti-device-floppy me-1"></i>
+                Update Tax Details
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Edit tax details form -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Edit Modal -->
+</div>
+<!-- / Content -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // ========================================
+    // ADD FORM: VAT/TDS Toggle Logic
+    // ========================================
+    const vatRegistered = document.getElementById("vat_registered");
+    const tdsApplicable = document.getElementById("tds_applicable");
+    const panNumberInput = document.getElementById("pan_number");
+    const vatNumberDisplay = document.getElementById("vat_number_display");
+
+    // Toggle VAT fields
+    vatRegistered.addEventListener("change", function () {
+      const vatFields = document.querySelectorAll("#vat-number-field, #vat-rate-field");
+      vatFields.forEach(field => {
+        field.style.display = this.checked ? "block" : "none";
+      });
+      
+      // Auto-fill VAT number from PAN
+      if (this.checked && panNumberInput.value) {
+        vatNumberDisplay.value = panNumberInput.value;
+      }
+    });
+
+    // Auto-update VAT number when PAN changes
+    panNumberInput.addEventListener("input", function () {
+      if (vatRegistered.checked) {
+        vatNumberDisplay.value = this.value;
+      }
+      
+      // Real-time PAN validation
+      validatePAN(this.value);
+    });
+
+    // Toggle TDS fields
+    tdsApplicable.addEventListener("change", function () {
+      const tdsField = document.getElementById("tds-rate-field");
+      const tdsRateSelect = document.getElementById("tds_rate");
+      tdsField.style.display = this.checked ? "block" : "none";
+      
+      if (this.checked) {
+        tdsRateSelect.setAttribute("required", "required");
+      } else {
+        tdsRateSelect.removeAttribute("required");
+        tdsRateSelect.value = "";
+      }
+    });
+
+    // ========================================
+    // EDIT FORM: VAT/TDS Toggle Logic
+    // ========================================
+    const editVatRegistered = document.getElementById("edit_vat_registered");
+    const editTdsApplicable = document.getElementById("edit_tds_applicable");
+    const editPanNumber = document.getElementById("edit_pan_number");
+    const editVatNumberDisplay = document.getElementById("edit_vat_number_display");
+
+    editVatRegistered.addEventListener("change", function () {
+      const editVatFields = document.querySelectorAll("#edit-vat-number-field, #edit-vat-rate-field");
+      editVatFields.forEach(field => {
+        field.style.display = this.checked ? "block" : "none";
+      });
+      
+      if (this.checked) {
+        editVatNumberDisplay.value = editPanNumber.value;
+      }
+    });
+
+    editTdsApplicable.addEventListener("change", function () {
+      const editTdsField = document.getElementById("edit-tds-rate-field");
+      editTdsField.style.display = this.checked ? "block" : "none";
+    });
+
+    // ========================================
+    // PAN Validation Function
+    // ========================================
+    let panValidationTimeout;
+    function validatePAN(panNumber) {
+      clearTimeout(panValidationTimeout);
+      
+      const messageDiv = document.getElementById("pan-validation-message");
+      
+      if (panNumber.length === 0) {
+        messageDiv.innerHTML = "";
+        return;
+      }
+      
+      if (panNumber.length !== 9) {
+        messageDiv.innerHTML = '<small class="text-warning"><i class="ti ti-alert-circle"></i> PAN must be 9 digits</small>';
+        return;
+      }
+      
+      if (!/^\d+$/.test(panNumber)) {
+        messageDiv.innerHTML = '<small class="text-danger"><i class="ti ti-x"></i> PAN must contain only numbers</small>';
+        return;
+      }
+      
+      // Debounced AJAX validation
+      panValidationTimeout = setTimeout(() => {
+        fetch(`/vendor-tax-details/validate-pan?pan_number=${panNumber}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.valid) {
+              messageDiv.innerHTML = '<small class="text-success"><i class="ti ti-check"></i> PAN number is available</small>';
+            } else {
+              messageDiv.innerHTML = `<small class="text-danger"><i class="ti ti-x"></i> ${data.message}</small>`;
+            }
+          })
+          .catch(error => {
+            console.error("PAN validation error:", error);
+          });
+      }, 500);
+    }
+
+    // ========================================
+    // Handle Edit Button Clicks
+    // ========================================
+    const editButtons = document.querySelectorAll(".btn-edit");
+    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    const editForm = document.getElementById("editForm");
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        const vendorName = this.getAttribute("data-vendor-name");
+        const panNumber = this.getAttribute("data-pan-number");
+        const panHolderName = this.getAttribute("data-pan-holder-name");
+        const vatRegistered = this.getAttribute("data-vat-registered");
+        const vatNumber = this.getAttribute("data-vat-number");
+        const tdsApplicable = this.getAttribute("data-tds-applicable");
+        const tdsRate = this.getAttribute("data-tds-rate");
+
+        // Set form action
+        editForm.action = "/vendor-tax-details/" + id;
+
+        // Populate form fields
+        document.getElementById("edit_id").value = id;
+        document.getElementById("edit_vendor_name").value = vendorName;
+        document.getElementById("edit_pan_number").value = panNumber;
+        document.getElementById("edit_pan_holder_name").value = panHolderName;
+
+        // Set VAT checkbox and fields
+        const vatChecked = vatRegistered === "1";
+        document.getElementById("edit_vat_registered").checked = vatChecked;
+        document.getElementById("edit-vat-number-field").style.display = vatChecked ? "block" : "none";
+        document.getElementById("edit-vat-rate-field").style.display = vatChecked ? "block" : "none";
+        if (vatChecked) {
+          document.getElementById("edit_vat_number_display").value = vatNumber;
+        }
+
+        // Set TDS checkbox and fields
+        const tdsChecked = tdsApplicable === "1";
+        document.getElementById("edit_tds_applicable").checked = tdsChecked;
+        document.getElementById("edit-tds-rate-field").style.display = tdsChecked ? "block" : "none";
+        if (tdsChecked && tdsRate) {
+          document.getElementById("edit_tds_rate").value = tdsRate;
+        }
+
+        // Show modal
+        editModal.show();
+      });
+    });
+
+    // ========================================
+    // Confirm Delete
+    // ========================================
+    const deleteForms = document.querySelectorAll(".delete-form");
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        if (!confirm("Are you sure you want to delete these tax details? This action cannot be undone.")) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    // ========================================
+    // Confirm Toggle Status
+    // ========================================
+    const toggleStatusForms = document.querySelectorAll(".toggle-status-form");
+    toggleStatusForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        const action = this.getAttribute("data-action");
+        if (!confirm(`Are you sure you want to ${action} these tax details?`)) {
+          e.preventDefault();
+        }
+      });
+    });
+  });
+</script>

@@ -2,7 +2,7 @@
 
 module.exports = (sequelize, DataTypes) => {
   const CostCenter = sequelize.define(
-    "CostCenter",          // Model name
+    "CostCenter", // Model name
     {
       id: {
         type: DataTypes.INTEGER,
@@ -19,6 +19,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      type: {
+        type: DataTypes.ENUM(
+          "HEAD_OFFICE",
+          "PROVINCE_OFFICE",
+          "BRANCH",
+          "EXTENSION_COUNTER",
+        ),
+        allowNull: false,
+      },
       status: {
         type: DataTypes.BOOLEAN,
         allowNull: false,
@@ -27,8 +36,8 @@ module.exports = (sequelize, DataTypes) => {
     },
     {
       tableName: "cost_centers", // Maps to your existing table
-      timestamps: true,          // Adds createdAt and updatedAt fields       
-    }
+      timestamps: true, // Adds createdAt and updatedAt fields
+    },
   );
 
   return CostCenter;

@@ -71,7 +71,7 @@
               <td>
                 <% if (governance.costCenter) { %>
                 <span class="badge bg-label-info">
-                  <%= governance.costCenter.name %>
+                  <%= governance.costCenter.code %> - <%= governance.costCenter.title %>
                 </span>
                 <% } else { %>
                 <span class="text-muted">N/A</span>
@@ -133,7 +133,7 @@
                     <i class="icon-base ti tabler-edit"></i>
                   </button>
                   <form
-                    action="/Expenses_governance/<%= governance.id %>/delete"
+                    action="/ExpensesGovernance/<%= governance.id %>/delete"
                     method="POST"
                     class="d-inline delete-form"
                   >
@@ -181,7 +181,7 @@
             <p class="text-body-secondary">Enter expenses governance details</p>
           </div>
           <!-- Add expenses governance form -->
-          <form action="/Expenses_governance" method="POST">
+          <form action="/ExpensesGovernance" method="POST">
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="cost_center_id">
@@ -197,7 +197,7 @@
                   <% if (typeof costCenters !== 'undefined' &&
                   costCenters.length > 0) { %> <%
                   costCenters.forEach(function(center) { %>
-                  <option value="<%= center.id %>"><%= center.name %></option>
+                  <option value="<%= center.id %>"><%= center.code %> - <%= center.title %></option>
                   <% }); %> <% } %>
                 </select>
               </div>
@@ -366,7 +366,7 @@
                   <% if (typeof costCenters !== 'undefined' &&
                   costCenters.length > 0) { %> <%
                   costCenters.forEach(function(center) { %>
-                  <option value="<%= center.id %>"><%= center.name %></option>
+                  <option value="<%= center.id %>"><%= center.code %> - <%= center.title %></option>
                   <% }); %> <% } %>
                 </select>
               </div>
@@ -518,7 +518,7 @@
         const extensionCounter = this.getAttribute("data-extension-counter");
 
         // Set form action
-        editForm.action = "/Expenses_governance/" + id;
+        editForm.action = "/ExpensesGovernance/" + id;
 
         // Populate form fields
         document.getElementById("edit_id").value = id;
