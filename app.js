@@ -11,6 +11,10 @@ const chartofAccount = require("./routes/COARouter");
 const ExpensesGovernance = require("./routes/Expenses_Governance");
 const venderRouter = require("./routes/venderRouter");
 const vendorTaxDetailRoutes = require("./routes/vendor_taxRouter");
+const paymentBankingRoutes = require("./routes/paymentBankingRouter");
+const complianceRiskRoutes = require("./routes/ComplianceRouter");
+const addressContactRoutes = require('./routes/AddresscontactRoutes');
+
 const session = require("express-session");
 
 // Initialize the app
@@ -64,23 +68,15 @@ app.use("/", chartofAccount);
 app.use("/", ExpensesGovernance);
 app.use("/", venderRouter);
 app.use("/vendor-tax-details", vendorTaxDetailRoutes);
-
-// 404 handler
+app.use("/", paymentBankingRoutes);
+app.use("/", complianceRiskRoutes);
+app.use('/', addressContactRoutes);
+// 404 page
 app.use((req, res) => {
   res.status(404).render("error", {
     title: "Page Not Found",
     error: "404 - Page Not Found",
     message: "The page you are looking for does not exist.",
-  });
-});
-
-// Error handler
-app.use((err, req, res, next) => {
-  console.error("Error:", err);
-  res.status(err.status || 500).render("error", {
-    title: "Error",
-    error: err.message || "Internal Server Error",
-    message: err.stack || "",
   });
 });
 

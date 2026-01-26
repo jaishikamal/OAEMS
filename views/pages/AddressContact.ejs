@@ -1,0 +1,521 @@
+<!-- Content -->
+<div class="container-xxl flex-grow-1 container-p-y">
+  <!-- Success/Error Messages -->
+  <% if (typeof success !== 'undefined' && success) { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= success %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %> <% if (typeof error !== 'undefined' && error) { %>
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    <%= error %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  <% } %>
+
+  <!-- Header section-->
+  <div class="row gy-3 align-items-center mb-4">
+    <div class="col-lg-6">
+      <div class="d-flex align-items-start gap-2">
+        <div class="avatar avatar-md flex-shrink-0 bg-label-primary">
+          <span class="avatar-initial rounded">
+            <i class="icon-base ti tabler-map-pin"></i>
+          </span>
+        </div>
+        <div>
+          <h4 class="mb-1">Address and Contact Details Management</h4>
+          <p class="text-muted mb-0">
+            Manage vendor address and contact information here.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex flex-wrap justify-content-lg-end gap-2">
+      <button
+        type="button"
+        class="btn btn-label-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#addModal"
+      >
+        <i class="icon-base ti tabler-plus me-1"></i>Add Address Details
+      </button>
+    </div>
+  </div>
+  <!--Header section---->
+
+  <div class="col-12">
+    <!-- Address Contact Table -->
+    <div class="card">
+      <div class="card-datatable">
+        <table class="datatables-users table border-top">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Registered Address</th>
+              <th>District</th>
+              <th>Province</th>
+              <th>Contact Person</th>
+              <th>Phone Number</th>
+              <th>Email ID</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if (addressContacts && addressContacts.length > 0) { %>
+            <% addressContacts.forEach(function(address) { %>
+            <tr>
+              <td><%= address.id %></td>
+              <td>
+                <span class="text-truncate d-inline-block" style="max-width: 200px;" title="<%= address.registeredAddress %>">
+                  <%= address.registeredAddress %>
+                </span>
+              </td>
+              <td>
+                <span class="badge bg-label-info">
+                  <%= address.district %>
+                </span>
+              </td>
+              <td>
+                <span class="badge bg-label-primary">
+                  <%= address.province %>
+                </span>
+              </td>
+              <td><%= address.contactPerson || 'N/A' %></td>
+              <td><%= address.phoneNumber || 'N/A' %></td>
+              <td><%= address.emailId || 'N/A' %></td>
+              <td class="text-end">
+                <div class="d-inline-flex gap-2">
+                  <button
+                    class="btn btn-sm btn-icon btn-text-secondary rounded-pill btn-edit"
+                    data-id="<%= address.id %>"
+                    data-registered-address="<%= address.registeredAddress %>"
+                    data-district="<%= address.district %>"
+                    data-province="<%= address.province %>"
+                    data-contact-person="<%= address.contactPerson || '' %>"
+                    data-phone-number="<%= address.phoneNumber || '' %>"
+                    data-email-id="<%= address.emailId || '' %>"
+                    title="Edit Address Details"
+                  >
+                    <i class="icon-base ti tabler-edit"></i>
+                  </button>
+                  <form
+                    action="/AddressContact/<%= address.id %>/delete"
+                    method="POST"
+                    class="d-inline delete-form"
+                  >
+                    <button
+                      class="btn btn-sm btn-icon btn-text-danger rounded-pill"
+                      type="submit"
+                      title="Delete Address Details"
+                    >
+                      <i class="icon-base ti tabler-trash"></i>
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            <% }); %> <% } else { %>
+            <tr>
+              <td colspan="8" class="text-center py-4">
+                <div class="text-muted">
+                  <i class="icon-base ti tabler-alert-circle fs-3 mb-2"></i>
+                  <p>No address details found. Please add new address details.</p>
+                </div>
+              </td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!--/ Address Contact Table -->
+  </div>
+
+  <!-- Add Modal -->
+  <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Add New Address and Contact Details</h4>
+            <p class="text-body-secondary">Enter address and contact information</p>
+          </div>
+          <!-- Add address contact form -->
+          <form action="/AddressContact" method="POST" id="addForm">
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label" for="registeredAddress">
+                  Registered Address <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  id="registeredAddress"
+                  name="registeredAddress"
+                  class="form-control"
+                  placeholder="Enter registered address"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="province">
+                  Province <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="province"
+                  name="province"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Province</option>
+                  <option value="Koshi">Koshi</option>
+                  <option value="Madhesh">Madhesh</option>
+                  <option value="Bagmati">Bagmati</option>
+                  <option value="Gandaki">Gandaki</option>
+                  <option value="Lumbini">Lumbini</option>
+                  <option value="Karnali">Karnali</option>
+                  <option value="Sudurpashchim">Sudurpashchim</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="district">
+                  District <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="district"
+                  name="district"
+                  class="form-select"
+                  required
+                  disabled
+                >
+                  <option value="">Select Province First</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="contactPerson">
+                  Contact Person
+                </label>
+                <input
+                  type="text"
+                  id="contactPerson"
+                  name="contactPerson"
+                  class="form-control"
+                  placeholder="Enter contact person name"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="phoneNumber">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  id="phoneNumber"
+                  name="phoneNumber"
+                  class="form-control"
+                  placeholder="Enter phone number"
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label" for="emailId">
+                  Email ID
+                </label>
+                <input
+                  type="email"
+                  id="emailId"
+                  name="emailId"
+                  class="form-control"
+                  placeholder="Enter email address"
+                />
+              </div>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-primary me-3">
+                Add Address Details
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Add address contact form  -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Add Modal -->
+
+  <!-- Edit Modal -->
+  <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-body">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+          <div class="text-center mb-6">
+            <h4 class="mb-2">Edit Address and Contact Details</h4>
+            <p class="text-body-secondary">Update address and contact information</p>
+          </div>
+          <!-- Edit address contact form -->
+          <form id="editForm" method="POST">
+            <input type="hidden" id="edit_id" name="id" />
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label" for="edit_registeredAddress">
+                  Registered Address <span class="text-danger">*</span>
+                </label>
+                <textarea
+                  id="edit_registeredAddress"
+                  name="registeredAddress"
+                  class="form-control"
+                  placeholder="Enter registered address"
+                  rows="3"
+                  required
+                ></textarea>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_province">
+                  Province <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_province"
+                  name="province"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Province</option>
+                  <option value="Koshi">Koshi</option>
+                  <option value="Madhesh">Madhesh</option>
+                  <option value="Bagmati">Bagmati</option>
+                  <option value="Gandaki">Gandaki</option>
+                  <option value="Lumbini">Lumbini</option>
+                  <option value="Karnali">Karnali</option>
+                  <option value="Sudurpashchim">Sudurpashchim</option>
+                </select>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_district">
+                  District <span class="text-danger">*</span>
+                </label>
+                <select
+                  id="edit_district"
+                  name="district"
+                  class="form-select"
+                  required
+                >
+                  <option value="">Select Province First</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_contactPerson">
+                  Contact Person
+                </label>
+                <input
+                  type="text"
+                  id="edit_contactPerson"
+                  name="contactPerson"
+                  class="form-control"
+                  placeholder="Enter contact person name"
+                />
+              </div>
+              <div class="col-md-6 mb-3">
+                <label class="form-label" for="edit_phoneNumber">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  id="edit_phoneNumber"
+                  name="phoneNumber"
+                  class="form-control"
+                  placeholder="Enter phone number"
+                />
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-12 mb-3">
+                <label class="form-label" for="edit_emailId">
+                  Email ID
+                </label>
+                <input
+                  type="email"
+                  id="edit_emailId"
+                  name="emailId"
+                  class="form-control"
+                  placeholder="Enter email address"
+                />
+              </div>
+            </div>
+
+            <div class="col-12 text-center mt-4">
+              <button type="submit" class="btn btn-warning me-3">
+                Update Address Details
+              </button>
+              <button
+                type="reset"
+                class="btn btn-label-secondary"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+          <!--/ Edit address contact form -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--/ Edit Modal -->
+</div>
+<!-- / Content -->
+
+<script>
+  // Districts by Province data
+  const districtsByProvince = <%- districtsByProvince %>;
+
+  document.addEventListener("DOMContentLoaded", function () {
+    // Add Form - Handle province change
+    const provinceSelect = document.getElementById("province");
+    const districtSelect = document.getElementById("district");
+
+    provinceSelect.addEventListener("change", function () {
+      const selectedProvince = this.value;
+      
+      // Clear and disable district dropdown
+      districtSelect.innerHTML = '<option value="">Select District</option>';
+      
+      if (selectedProvince && districtsByProvince[selectedProvince]) {
+        // Enable district dropdown
+        districtSelect.disabled = false;
+        
+        // Populate districts
+        districtsByProvince[selectedProvince].forEach(function(district) {
+          const option = document.createElement("option");
+          option.value = district;
+          option.textContent = district;
+          districtSelect.appendChild(option);
+        });
+      } else {
+        districtSelect.disabled = true;
+        districtSelect.innerHTML = '<option value="">Select Province First</option>';
+      }
+    });
+
+    // Edit Form - Handle province change
+    const editProvinceSelect = document.getElementById("edit_province");
+    const editDistrictSelect = document.getElementById("edit_district");
+
+    editProvinceSelect.addEventListener("change", function () {
+      const selectedProvince = this.value;
+      const currentDistrict = editDistrictSelect.value;
+      
+      // Clear district dropdown
+      editDistrictSelect.innerHTML = '<option value="">Select District</option>';
+      
+      if (selectedProvince && districtsByProvince[selectedProvince]) {
+        // Populate districts
+        districtsByProvince[selectedProvince].forEach(function(district) {
+          const option = document.createElement("option");
+          option.value = district;
+          option.textContent = district;
+          if (district === currentDistrict) {
+            option.selected = true;
+          }
+          editDistrictSelect.appendChild(option);
+        });
+      }
+    });
+
+    // Handle edit button clicks
+    const editButtons = document.querySelectorAll(".btn-edit");
+    const editModal = new bootstrap.Modal(document.getElementById("editModal"));
+    const editForm = document.getElementById("editForm");
+
+    editButtons.forEach((button) => {
+      button.addEventListener("click", function () {
+        const id = this.getAttribute("data-id");
+        const registeredAddress = this.getAttribute("data-registered-address");
+        const district = this.getAttribute("data-district");
+        const province = this.getAttribute("data-province");
+        const contactPerson = this.getAttribute("data-contact-person");
+        const phoneNumber = this.getAttribute("data-phone-number");
+        const emailId = this.getAttribute("data-email-id");
+
+        // Set form action
+        editForm.action = "/AddressContact/" + id;
+
+        // Populate form fields
+        document.getElementById("edit_id").value = id;
+        document.getElementById("edit_registeredAddress").value = registeredAddress;
+        document.getElementById("edit_province").value = province;
+        document.getElementById("edit_contactPerson").value = contactPerson;
+        document.getElementById("edit_phoneNumber").value = phoneNumber;
+        document.getElementById("edit_emailId").value = emailId;
+
+        // Populate districts based on province
+        editDistrictSelect.innerHTML = '<option value="">Select District</option>';
+        if (province && districtsByProvince[province]) {
+          districtsByProvince[province].forEach(function(dist) {
+            const option = document.createElement("option");
+            option.value = dist;
+            option.textContent = dist;
+            if (dist === district) {
+              option.selected = true;
+            }
+            editDistrictSelect.appendChild(option);
+          });
+        }
+
+        // Show modal
+        editModal.show();
+      });
+    });
+
+    // Confirm delete
+    const deleteForms = document.querySelectorAll(".delete-form");
+    deleteForms.forEach((form) => {
+      form.addEventListener("submit", function (e) {
+        if (!confirm("Are you sure you want to delete this address detail?")) {
+          e.preventDefault();
+        }
+      });
+    });
+
+    // Reset form on modal close
+    document.getElementById("addModal").addEventListener("hidden.bs.modal", function () {
+      document.getElementById("addForm").reset();
+      districtSelect.disabled = true;
+      districtSelect.innerHTML = '<option value="">Select Province First</option>';
+    });
+  });
+</script>
