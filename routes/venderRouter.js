@@ -5,6 +5,9 @@ const vendorController = require("../Controllers/Vendor_Master_Management");
 // Get all vendors (page render)
 router.get("/Vendor", vendorController.getAllVendors);
 
+// Get all auto-generated vendor IDs (API)
+router.get("/Vendor/generate-vendor-id", vendorController.generatedVendorID);
+
 // Create vendor
 router.post("/Vendor", vendorController.createVendor);
 

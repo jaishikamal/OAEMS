@@ -1,5 +1,5 @@
 "use strict";
-modules.exports = {
+module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("Compliance_Risk", {
       id: {

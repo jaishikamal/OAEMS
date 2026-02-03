@@ -158,20 +158,24 @@
             <p class="text-body-secondary">Enter vendor identification details</p>
           </div>
           <!-- Add vendor form -->
-          <form action="/Vendor" method="POST">
+          <form id="addForm" action="/Vendor" method="POST">
             <div class="row">
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="vendorId">
-                  Vendor ID <span class="text-danger">*</span>
+                  Vendor ID <span class="text-muted">(6 digits)</span>
                 </label>
-                <input
-                  type="text"
-                  id="vendorId"
-                  name="vendorId"
-                  class="form-control"
-                  placeholder="Enter vendor ID"
-                  required
-                />
+                <div class="input-group">
+                  <input
+                    type="text"
+                    id="vendorId"
+                    name="vendorId"
+                    class="form-control"
+                    placeholder="Auto-generate or enter 6-digit ID"
+                    maxlength="6"
+                  />
+                  <button class="btn btn-outline-secondary" type="button" id="btnGenerateVendorId">Generate</button>
+                </div>
+                <small class="text-muted">Click 'Generate' to auto-create a unique 6-digit ID. You can also enter one manually.</small>
               </div>
               <div class="col-md-6 mb-3">
                 <label class="form-label" for="tradeName">
@@ -468,7 +472,61 @@
         }
       });
     });
+
+    // Generate Vendor ID
+    const btnGenerate = document.getElementById("btnGenerateVendorId");
+    const vendorIdInput = document.getElementById("vendorId");
+    const addModalEl = document.getElementById("addModal");
+
+    async function fetchAndSetVendorId() {
+      if (!btnGenerate) return;
+      try {
+        btnGenerate.disabled = true;
+        btnGenerate.innerHTML = 'Generating...';
+        const res = await fetch('/Vendor/generate-vendor-id');
+        if (!res.ok) throw new Error('Failed to generate ID');
+        const id = await res.text();
+        if (vendorIdInput) vendorIdInput.value = id;
+      } catch (err) {
+        console.error(err);
+        alert('Unable to generate Vendor ID. Please try again.');
+      } finally {
+        if (btnGenerate) {
+          btnGenerate.disabled = false;
+          btnGenerate.innerHTML = 'Generate';
+        }
+      }
+    }
+
+    if (btnGenerate) {
+      btnGenerate.addEventListener('click', fetchAndSetVendorId);
+    }
+
+    // Validate vendorId on add form submit (if provided)
+    const addForm = document.getElementById('addForm');
+    if (addForm) {
+      addForm.addEventListener('submit', function (e) {
+        const val = vendorIdInput && vendorIdInput.value.trim();
+        if (val && !/^\d{6}$/.test(val)) {
+          e.preventDefault();
+          alert('Vendor ID must be a 6-digit number.');
+          return false;
+        }
+      });
+    }
+
+    // Auto-generate when add modal is shown (if empty)
+    if (addModalEl) {
+      addModalEl.addEventListener('shown.bs.modal', function () {
+        if (vendorIdInput && !vendorIdInput.value.trim()) {
+          fetchAndSetVendorId();
+        }
+      });
+      // Clear vendorId on modal hide
+      addModalEl.addEventListener('hidden.bs.modal', function () {
+        if (vendorIdInput) vendorIdInput.value = '';
+      });
+    }
   });
 </script>
 
-<%- include('../partials/footer') %>

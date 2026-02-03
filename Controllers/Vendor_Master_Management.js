@@ -6,7 +6,7 @@ exports.getAllVendors = async (req, res) => {
     const vendors = await Vendor_Identification.findAll({
       order: [["createdAt", "DESC"]],
     });
-    
+
     res.render("pages/Vendor_Identification_Details", {
       pageTitle: "Vendor Details",
       layout: "main",
@@ -16,19 +16,43 @@ exports.getAllVendors = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching vendors:", error);
-    res.status(500).render("error", { 
+    res.status(500).render("error", {
       error: "Failed to load vendors",
-      message: error.message 
+      message: error.message,
     });
   }
 };
 
+// Helper: generate a unique 6-digit vendor ID
+async function generateUniqueVendorId() {
+  const maxAttempts = 10;
+  for (let i = 0; i < maxAttempts; i++) {
+    const candidate = Math.floor(100000 + Math.random() * 900000).toString();
+    const exists = await Vendor_Identification.findOne({
+      where: { vendorId: candidate },
+    });
+    if (!exists) return candidate;
+  }
+  // Fallback: use last 6 digits of timestamp padded
+  return (Date.now() % 1000000).toString().padStart(6, "0");
+}
+
+// auto-generate vendor ID by 6 digits random number (ensures uniqueness)
+exports.generatedVendorID = async (req, res) => {
+  try {
+    const VendorID = await generateUniqueVendorId();
+    res.send(VendorID);
+  } catch (err) {
+    console.error("Error generating vendor ID:", err);
+    res.status(500).send("000000");
+  }
+};
 
 // Create a new vendor
 exports.createVendor = async (req, res) => {
   try {
     const {
-      vendorId,
+      vendorId: providedVendorId,
       vendorLegalName,
       tradeName,
       vendorType,
@@ -37,23 +61,44 @@ exports.createVendor = async (req, res) => {
       status,
     } = req.body;
 
-    // Validate required fields
-    if (!vendorId || !tradeName) {
-      return res.redirect("/Vendor?error=" + encodeURIComponent("Vendor ID and Trade Name are required"));
+    // Validate trade name is required
+    if (!tradeName) {
+      return res.redirect(
+        "/Vendor?error=" + encodeURIComponent("Trade Name is required"),
+      );
     }
 
-  // validate vendor type
-  if (!vendorType && !vendorCategory) {
-    return res.redirect("/Vendor?error=" + encodeURIComponent("Vendor Type or Category is required"));
-  }
+    // validate vendor type
+    if (!vendorType && !vendorCategory) {
+      return res.redirect(
+        "/Vendor?error=" +
+          encodeURIComponent("Vendor Type or Category is required"),
+      );
+    }
+
+    // Determine vendorId (generate if not provided)
+    let vendorId = providedVendorId;
+    if (!vendorId || vendorId.toString().trim() === "") {
+      vendorId = await generateUniqueVendorId();
+    } else {
+      // Ensure provided vendorId is a 6-digit number
+      if (!/^\d{6}$/.test(vendorId.toString())) {
+        return res.redirect(
+          "/Vendor?error=" +
+            encodeURIComponent("Vendor ID must be a 6-digit number"),
+        );
+      }
+    }
 
     // Check if vendorId already exists
     const existingVendor = await Vendor_Identification.findOne({
-      where: { vendorId }
+      where: { vendorId },
     });
 
     if (existingVendor) {
-      return res.redirect("/Vendor?error=" + encodeURIComponent("Vendor ID already exists"));
+      return res.redirect(
+        "/Vendor?error=" + encodeURIComponent("Vendor ID already exists"),
+      );
     }
 
     await Vendor_Identification.create({
@@ -66,7 +111,9 @@ exports.createVendor = async (req, res) => {
       status: status || "Draft",
     });
 
-    res.redirect("/Vendor?success=" + encodeURIComponent("Vendor created successfully"));
+    res.redirect(
+      "/Vendor?success=" + encodeURIComponent("Vendor created successfully"),
+    );
   } catch (error) {
     console.error("Error creating vendor:", error);
     res.redirect("/Vendor?error=" + encodeURIComponent(error.message));
@@ -89,12 +136,16 @@ exports.updateVendor = async (req, res) => {
     const vendor = await Vendor_Identification.findByPk(id);
 
     if (!vendor) {
-      return res.redirect("/Vendor?error=" + encodeURIComponent("Vendor not found"));
+      return res.redirect(
+        "/Vendor?error=" + encodeURIComponent("Vendor not found"),
+      );
     }
 
     // Validate trade name is not empty
-    if (!tradeName || tradeName.trim() === '') {
-      return res.redirect("/Vendor?error=" + encodeURIComponent("Trade Name is required"));
+    if (!tradeName || tradeName.trim() === "") {
+      return res.redirect(
+        "/Vendor?error=" + encodeURIComponent("Trade Name is required"),
+      );
     }
 
     await vendor.update({
@@ -106,7 +157,9 @@ exports.updateVendor = async (req, res) => {
       status: status || vendor.status,
     });
 
-    res.redirect("/Vendor?success=" + encodeURIComponent("Vendor updated successfully"));
+    res.redirect(
+      "/Vendor?success=" + encodeURIComponent("Vendor updated successfully"),
+    );
   } catch (error) {
     console.error("Error updating vendor:", error);
     res.redirect("/Vendor?error=" + encodeURIComponent(error.message));
@@ -121,12 +174,16 @@ exports.deleteVendor = async (req, res) => {
     const vendor = await Vendor_Identification.findByPk(id);
 
     if (!vendor) {
-      return res.redirect("/Vendor?error=" + encodeURIComponent("Vendor not found"));
+      return res.redirect(
+        "/Vendor?error=" + encodeURIComponent("Vendor not found"),
+      );
     }
 
     await vendor.destroy();
 
-    res.redirect("/Vendor?success=" + encodeURIComponent("Vendor deleted successfully"));
+    res.redirect(
+      "/Vendor?success=" + encodeURIComponent("Vendor deleted successfully"),
+    );
   } catch (error) {
     console.error("Error deleting vendor:", error);
     res.redirect("/Vendor?error=" + encodeURIComponent(error.message));
@@ -143,10 +200,10 @@ exports.getVendorsByStatus = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.status(200).json({ 
-      success: true, 
-      data: vendors, 
-      count: vendors.length 
+    res.status(200).json({
+      success: true,
+      data: vendors,
+      count: vendors.length,
     });
   } catch (error) {
     console.error("Error fetching vendors by status:", error);
@@ -164,10 +221,10 @@ exports.getVendorsByType = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.status(200).json({ 
-      success: true, 
-      data: vendors, 
-      count: vendors.length 
+    res.status(200).json({
+      success: true,
+      data: vendors,
+      count: vendors.length,
     });
   } catch (error) {
     console.error("Error fetching vendors by type:", error);
@@ -185,10 +242,10 @@ exports.getVendorsByCategory = async (req, res) => {
       order: [["createdAt", "DESC"]],
     });
 
-    res.status(200).json({ 
-      success: true, 
-      data: vendors, 
-      count: vendors.length 
+    res.status(200).json({
+      success: true,
+      data: vendors,
+      count: vendors.length,
     });
   } catch (error) {
     console.error("Error fetching vendors by category:", error);
@@ -225,9 +282,4 @@ exports.updateVendorStatus = async (req, res) => {
   }
 };
 
-// 
-
-
-
-
-
+//
