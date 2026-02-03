@@ -1,5 +1,5 @@
 "use strict";
-const { PaymentBankingDetail } = require("../models");
+const { PaymentBankingDetail } = require("../Models");
 
 exports.paymentBankingManagement = async (req, res) => {
   try {
@@ -12,7 +12,7 @@ exports.paymentBankingManagement = async (req, res) => {
       layout: "main",
       paymentBankingDetails,
       success: req.query.success,
-      error: req.query.error, 
+      error: req.query.error,
     });
   } catch (error) {
     console.error(error);
@@ -38,7 +38,7 @@ exports.createPaymentBanking = async (req, res) => {
     // Validate required fields
     if (!preferredPaymentMode) {
       return res.redirect(
-        "/PaymentBanking?error=Preferred Payment Mode is required"
+        "/PaymentBanking?error=Preferred Payment Mode is required",
       );
     }
 
@@ -50,17 +50,17 @@ exports.createPaymentBanking = async (req, res) => {
     if (preferredPaymentMode === "Bank Transfer") {
       if (!bankName || !bankName.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Bank Name is required for Bank Transfer"
+          "/PaymentBanking?error=Bank Name is required for Bank Transfer",
         );
       }
       if (!accountName || !accountName.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Account Name is required for Bank Transfer"
+          "/PaymentBanking?error=Account Name is required for Bank Transfer",
         );
       }
       if (!accountNumber || !accountNumber.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Account Number is required for Bank Transfer"
+          "/PaymentBanking?error=Account Number is required for Bank Transfer",
         );
       }
     }
@@ -75,13 +75,13 @@ exports.createPaymentBanking = async (req, res) => {
     });
 
     res.redirect(
-      "/PaymentBanking?success=Payment & Banking Details created successfully"
+      "/PaymentBanking?success=Payment & Banking Details created successfully",
     );
   } catch (error) {
     console.error("Error creating payment banking detail:", error);
     res.redirect(
       "/PaymentBanking?error=" +
-        (error.message || "Failed to create payment banking detail")
+        (error.message || "Failed to create payment banking detail"),
     );
   }
 };
@@ -128,7 +128,7 @@ exports.updatePaymentBanking = async (req, res) => {
     // Validate required fields
     if (!preferredPaymentMode) {
       return res.redirect(
-        "/PaymentBanking?error=Preferred Payment Mode is required"
+        "/PaymentBanking?error=Preferred Payment Mode is required",
       );
     }
 
@@ -140,7 +140,7 @@ exports.updatePaymentBanking = async (req, res) => {
 
     if (!paymentBanking) {
       return res.redirect(
-        "/PaymentBanking?error=Payment & Banking Detail not found"
+        "/PaymentBanking?error=Payment & Banking Detail not found",
       );
     }
 
@@ -148,17 +148,17 @@ exports.updatePaymentBanking = async (req, res) => {
     if (preferredPaymentMode === "Bank Transfer") {
       if (!bankName || !bankName.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Bank Name is required for Bank Transfer"
+          "/PaymentBanking?error=Bank Name is required for Bank Transfer",
         );
       }
       if (!accountName || !accountName.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Account Name is required for Bank Transfer"
+          "/PaymentBanking?error=Account Name is required for Bank Transfer",
         );
       }
       if (!accountNumber || !accountNumber.trim()) {
         return res.redirect(
-          "/PaymentBanking?error=Account Number is required for Bank Transfer"
+          "/PaymentBanking?error=Account Number is required for Bank Transfer",
         );
       }
     }
@@ -173,12 +173,12 @@ exports.updatePaymentBanking = async (req, res) => {
     });
 
     res.redirect(
-      "/PaymentBanking?success=Payment & Banking Details updated successfully"
+      "/PaymentBanking?success=Payment & Banking Details updated successfully",
     );
   } catch (error) {
     console.error("Error updating payment banking detail:", error);
     res.redirect(
-      "/PaymentBanking?error=Failed to update payment banking detail"
+      "/PaymentBanking?error=Failed to update payment banking detail",
     );
   }
 };
@@ -191,24 +191,24 @@ exports.deletePaymentBanking = async (req, res) => {
 
     if (!paymentBanking) {
       return res.redirect(
-        "/PaymentBanking?error=Payment & Banking Detail not found"
+        "/PaymentBanking?error=Payment & Banking Detail not found",
       );
     }
 
     await paymentBanking.destroy();
     res.redirect(
-      "/PaymentBanking?success=Payment & Banking Details deleted successfully"
+      "/PaymentBanking?success=Payment & Banking Details deleted successfully",
     );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/PaymentBanking?error=Cannot delete: Payment & Banking Detail is used in other records"
+        "/PaymentBanking?error=Cannot delete: Payment & Banking Detail is used in other records",
       );
     }
     console.error("Error deleting payment banking detail:", error);
     res.redirect(
-      "/PaymentBanking?error=Failed to delete payment banking detail"
+      "/PaymentBanking?error=Failed to delete payment banking detail",
     );
   }
 };

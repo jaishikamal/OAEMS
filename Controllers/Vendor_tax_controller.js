@@ -1,4 +1,4 @@
-const { VendorTaxDetail, Vendor_Identification } = require("../models");
+const { VendorTaxDetail, Vendor_Identification } = require("../Models");
 const { Op } = require("sequelize");
 
 // main page
@@ -11,7 +11,7 @@ exports.index = async (req, res) => {
           model: Vendor_Identification,
           as: "vendor",
           attributes: ["id", "vendorId", "tradeName", "vendorType"],
-          required: false // LEFT JOIN instead of INNER JOIN
+          required: false, // LEFT JOIN instead of INNER JOIN
         },
       ],
       order: [["created_at", "DESC"]],
@@ -20,11 +20,11 @@ exports.index = async (req, res) => {
     // Get vendors without tax details - FIXED QUERY
     const allVendors = await Vendor_Identification.findAll({
       attributes: ["id", "vendorId", "tradeName", "vendorType"],
-      where: { 
-        status: "Active" 
+      where: {
+        status: "Active",
       },
       order: [["tradeName", "ASC"]],
-      raw: false // Important: don't use raw mode with includes
+      raw: false, // Important: don't use raw mode with includes
     });
 
     // Filter vendors that don't have tax details yet
@@ -35,7 +35,8 @@ exports.index = async (req, res) => {
 
     console.log("Available vendors count:", availableVendors.length); // Debug log
 
-    res.render("pages/Vendor_tax_details", { // lowercase
+    res.render("pages/Vendor_tax_details", {
+      // lowercase
       title: "Vendor Tax Details Management",
       vendorTaxDetails,
       allVendors,
@@ -48,7 +49,7 @@ exports.index = async (req, res) => {
     console.error("Error name:", error.name);
     console.error("Error message:", error.message);
     console.error("Stack trace:", error.stack);
-    
+
     req.flash("error", "Failed to fetch vendor tax details: " + error.message);
     res.redirect("/");
   }

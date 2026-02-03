@@ -1,4 +1,4 @@
-const { Expenses_heads, AccountCodeGroup } = require("../models");
+const { Expenses_heads, AccountCodeGroup } = require("../Models");
 
 exports.Expenses_headManagement = async (req, res) => {
   try {
@@ -63,7 +63,9 @@ const getNextCodeForGroup = async (account_code_groups_id) => {
 // Validate 3-digit code
 const validateCode = (code) => {
   const codeNum = parseInt(code);
-  return code.length === 3 && codeNum >= 100 && codeNum <= 999 && !isNaN(codeNum);
+  return (
+    code.length === 3 && codeNum >= 100 && codeNum <= 999 && !isNaN(codeNum)
+  );
 };
 
 // Create expenses head
@@ -137,7 +139,8 @@ exports.createExpenses_head = async (req, res) => {
   } catch (error) {
     console.error("Error creating expenses head:", error);
     res.redirect(
-      "/Expenses_head?error=" + (error.message || "Failed to create expenses head"),
+      "/Expenses_head?error=" +
+        (error.message || "Failed to create expenses head"),
     );
   }
 };

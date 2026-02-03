@@ -3,7 +3,7 @@ const {
   Expenses_heads,
   CostCenter,
   AccountCodeGroup,
-} = require("../models");
+} = require("../Models");
 
 exports.Expenses_GovernanceManagement = async (req, res) => {
   try {

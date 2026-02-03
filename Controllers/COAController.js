@@ -3,7 +3,7 @@ const {
   AccountCodeGroup,
   Expenses_heads,
   CostCenter,
-} = require("../models");
+} = require("../Models");
 
 // Chart of Accounts Management page
 exports.ChartOfAccountsManagement = async (req, res) => {

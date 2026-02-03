@@ -1,5 +1,5 @@
 "use strict";
-const { AddressContactDetail } = require("../models");
+const { AddressContactDetail } = require("../Models");
 
 // Define districts by province for frontend use
 const districtsByProvince = {
@@ -135,7 +135,7 @@ exports.createAddressContact = async (req, res) => {
     // Validate required fields
     if (!registeredAddress || !registeredAddress.trim()) {
       return res.redirect(
-        "/AddressContact?error=Registered Address is required"
+        "/AddressContact?error=Registered Address is required",
       );
     }
 
@@ -160,7 +160,7 @@ exports.createAddressContact = async (req, res) => {
       const phoneRegex = /^[0-9+\-() ]*$/;
       if (!phoneRegex.test(phoneNumber.trim())) {
         return res.redirect(
-          "/AddressContact?error=Invalid phone number format"
+          "/AddressContact?error=Invalid phone number format",
         );
       }
     }
@@ -175,13 +175,13 @@ exports.createAddressContact = async (req, res) => {
     });
 
     res.redirect(
-      "/AddressContact?success=Address and Contact Details created successfully"
+      "/AddressContact?success=Address and Contact Details created successfully",
     );
   } catch (error) {
     console.error("Error creating address contact:", error);
     res.redirect(
       "/AddressContact?error=" +
-        (error.message || "Failed to create address contact detail")
+        (error.message || "Failed to create address contact detail"),
     );
   }
 };
@@ -228,7 +228,7 @@ exports.updateAddressContact = async (req, res) => {
     // Validate required fields
     if (!registeredAddress || !registeredAddress.trim()) {
       return res.redirect(
-        "/AddressContact?error=Registered Address is required"
+        "/AddressContact?error=Registered Address is required",
       );
     }
 
@@ -244,7 +244,7 @@ exports.updateAddressContact = async (req, res) => {
 
     if (!addressContact) {
       return res.redirect(
-        "/AddressContact?error=Address and Contact Detail not found"
+        "/AddressContact?error=Address and Contact Detail not found",
       );
     }
 
@@ -261,7 +261,7 @@ exports.updateAddressContact = async (req, res) => {
       const phoneRegex = /^[0-9+\-() ]*$/;
       if (!phoneRegex.test(phoneNumber.trim())) {
         return res.redirect(
-          "/AddressContact?error=Invalid phone number format"
+          "/AddressContact?error=Invalid phone number format",
         );
       }
     }
@@ -276,12 +276,12 @@ exports.updateAddressContact = async (req, res) => {
     });
 
     res.redirect(
-      "/AddressContact?success=Address and Contact Details updated successfully"
+      "/AddressContact?success=Address and Contact Details updated successfully",
     );
   } catch (error) {
     console.error("Error updating address contact:", error);
     res.redirect(
-      "/AddressContact?error=Failed to update address contact detail"
+      "/AddressContact?error=Failed to update address contact detail",
     );
   }
 };
@@ -294,24 +294,24 @@ exports.deleteAddressContact = async (req, res) => {
 
     if (!addressContact) {
       return res.redirect(
-        "/AddressContact?error=Address and Contact Detail not found"
+        "/AddressContact?error=Address and Contact Detail not found",
       );
     }
 
     await addressContact.destroy();
     res.redirect(
-      "/AddressContact?success=Address and Contact Details deleted successfully"
+      "/AddressContact?success=Address and Contact Details deleted successfully",
     );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/AddressContact?error=Cannot delete: Address contact is used in other records"
+        "/AddressContact?error=Cannot delete: Address contact is used in other records",
       );
     }
     console.error("Error deleting address contact:", error);
     res.redirect(
-      "/AddressContact?error=Failed to delete address contact detail"
+      "/AddressContact?error=Failed to delete address contact detail",
     );
   }
 };

@@ -1,5 +1,5 @@
 "use strict";
-const { ComplianceRisk } = require("../models");
+const { ComplianceRisk } = require("../Models");
 
 exports.complianceRiskManagement = async (req, res) => {
   try {
@@ -37,7 +37,7 @@ exports.createComplianceRisk = async (req, res) => {
     // Validate required fields
     if (!vendorRiskCategory) {
       return res.redirect(
-        "/ComplianceRisk?error=Vendor Risk Category is required"
+        "/ComplianceRisk?error=Vendor Risk Category is required",
       );
     }
 
@@ -50,7 +50,7 @@ exports.createComplianceRisk = async (req, res) => {
     // Validate conditional field - remarks required if blacklisted
     if (isBlacklisted && (!remarks || !remarks.trim())) {
       return res.redirect(
-        "/ComplianceRisk?error=Remarks are required for blacklisted vendors"
+        "/ComplianceRisk?error=Remarks are required for blacklisted vendors",
       );
     }
 
@@ -63,13 +63,13 @@ exports.createComplianceRisk = async (req, res) => {
     });
 
     res.redirect(
-      "/ComplianceRisk?success=Compliance and Risk record created successfully"
+      "/ComplianceRisk?success=Compliance and Risk record created successfully",
     );
   } catch (error) {
     console.error("Error creating compliance risk:", error);
     res.redirect(
       "/ComplianceRisk?error=" +
-        (error.message || "Failed to create compliance risk record")
+        (error.message || "Failed to create compliance risk record"),
     );
   }
 };
@@ -115,7 +115,7 @@ exports.updateComplianceRisk = async (req, res) => {
     // Validate required fields
     if (!vendorRiskCategory) {
       return res.redirect(
-        "/ComplianceRisk?error=Vendor Risk Category is required"
+        "/ComplianceRisk?error=Vendor Risk Category is required",
       );
     }
 
@@ -123,7 +123,7 @@ exports.updateComplianceRisk = async (req, res) => {
 
     if (!complianceRisk) {
       return res.redirect(
-        "/ComplianceRisk?error=Compliance and Risk record not found"
+        "/ComplianceRisk?error=Compliance and Risk record not found",
       );
     }
 
@@ -136,7 +136,7 @@ exports.updateComplianceRisk = async (req, res) => {
     // Validate conditional field - remarks required if blacklisted
     if (isBlacklisted && (!remarks || !remarks.trim())) {
       return res.redirect(
-        "/ComplianceRisk?error=Remarks are required for blacklisted vendors"
+        "/ComplianceRisk?error=Remarks are required for blacklisted vendors",
       );
     }
 
@@ -149,12 +149,12 @@ exports.updateComplianceRisk = async (req, res) => {
     });
 
     res.redirect(
-      "/ComplianceRisk?success=Compliance and Risk record updated successfully"
+      "/ComplianceRisk?success=Compliance and Risk record updated successfully",
     );
   } catch (error) {
     console.error("Error updating compliance risk:", error);
     res.redirect(
-      "/ComplianceRisk?error=Failed to update compliance risk record"
+      "/ComplianceRisk?error=Failed to update compliance risk record",
     );
   }
 };
@@ -167,24 +167,24 @@ exports.deleteComplianceRisk = async (req, res) => {
 
     if (!complianceRisk) {
       return res.redirect(
-        "/ComplianceRisk?error=Compliance and Risk record not found"
+        "/ComplianceRisk?error=Compliance and Risk record not found",
       );
     }
 
     await complianceRisk.destroy();
     res.redirect(
-      "/ComplianceRisk?success=Compliance and Risk record deleted successfully"
+      "/ComplianceRisk?success=Compliance and Risk record deleted successfully",
     );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/ComplianceRisk?error=Cannot delete: Compliance record is used in other records"
+        "/ComplianceRisk?error=Cannot delete: Compliance record is used in other records",
       );
     }
     console.error("Error deleting compliance risk:", error);
     res.redirect(
-      "/ComplianceRisk?error=Failed to delete compliance risk record"
+      "/ComplianceRisk?error=Failed to delete compliance risk record",
     );
   }
 };

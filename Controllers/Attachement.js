@@ -1,4 +1,4 @@
-const { Attachment } = require("../models");
+const { Attachment } = require("../Models");
 const fs = require("fs");
 const path = require("path");
 
@@ -118,7 +118,7 @@ exports.createAttachment = async (req, res) => {
     const isMandatory = mandatoryTypes.includes(attachment_type);
 
     // Store relative path from project root
-    const filePath = req.file.path.replace(/\\/g, '/'); // Normalize path separators
+    const filePath = req.file.path.replace(/\\/g, "/"); // Normalize path separators
 
     // Create new attachment
     await Attachment.create({
@@ -242,7 +242,7 @@ exports.updateAttachment = async (req, res) => {
       }
 
       // Store new file path (normalized)
-      updateData.file_path = req.file.path.replace(/\\/g, '/');
+      updateData.file_path = req.file.path.replace(/\\/g, "/");
       updateData.uploaded_at = new Date();
     }
 
@@ -281,7 +281,9 @@ exports.downloadAttachment = async (req, res) => {
     const filePath = path.resolve(attachment.file_path);
 
     if (!fs.existsSync(filePath)) {
-      return res.redirect("/Attachments?error=File not found on server: " + attachment.file_path);
+      return res.redirect(
+        "/Attachments?error=File not found on server: " + attachment.file_path,
+      );
     }
 
     // Extract original filename from path

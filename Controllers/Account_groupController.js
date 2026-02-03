@@ -1,4 +1,4 @@
-const { AccountCodeGroup } = require("../models");
+const { AccountCodeGroup } = require("../Models");
 
 // Account Code Group Management page
 exports.AccountCodeGroupManagement = async (req, res) => {
@@ -34,7 +34,11 @@ exports.AccountCodeGroupManagement = async (req, res) => {
 // Helper function to validate 3-digit code
 const isValidCode = (code) => {
   const codeStr = code.toString();
-  return /^\d{3}$/.test(codeStr) && parseInt(codeStr) >= 100 && parseInt(codeStr) <= 999;
+  return (
+    /^\d{3}$/.test(codeStr) &&
+    parseInt(codeStr) >= 100 &&
+    parseInt(codeStr) <= 999
+  );
 };
 
 // Helper function to generate next sequential code
@@ -48,7 +52,9 @@ const generateNextCode = async () => {
 
     if (!lastGroup) {
       // This shouldn't happen as we check count before calling this
-      throw new Error("No existing codes found. First code must be user-defined.");
+      throw new Error(
+        "No existing codes found. First code must be user-defined.",
+      );
     }
 
     const lastCode = parseInt(lastGroup.code);
@@ -56,7 +62,9 @@ const generateNextCode = async () => {
 
     // Ensure we stay within 3-digit range
     if (nextCode > 999) {
-      throw new Error("Maximum code limit (999) reached. Cannot create more groups.");
+      throw new Error(
+        "Maximum code limit (999) reached. Cannot create more groups.",
+      );
     }
 
     return nextCode.toString().padStart(3, "0");
@@ -72,9 +80,9 @@ const findAvailableCode = async (requestedCode, excludeId = null) => {
   if (excludeId) {
     whereClause.id = { [require("sequelize").Op.ne]: excludeId };
   }
-  
+
   const existing = await AccountCodeGroup.findOne({ where: whereClause });
-  
+
   if (!existing) {
     return requestedCode; // Requested code is available
   }
@@ -86,8 +94,8 @@ const findAvailableCode = async (requestedCode, excludeId = null) => {
     raw: true,
   });
 
-  const usedCodes = new Set(allCodes.map(g => parseInt(g.code)));
-  
+  const usedCodes = new Set(allCodes.map((g) => parseInt(g.code)));
+
   // Start from requested code and find next available
   let nextCode = parseInt(requestedCode);
   while (nextCode <= 999) {
@@ -124,14 +132,18 @@ exports.createAccountCodeGroup = async (req, res) => {
     if (existingCount === 0) {
       // First entry - user must provide code
       if (!code || code.trim() === "") {
-        return res.redirect("/AccountCodeGroup?error=Code is required for the first entry");
+        return res.redirect(
+          "/AccountCodeGroup?error=Code is required for the first entry",
+        );
       }
 
       const userCode = code.trim();
 
       // Validate 3-digit format
       if (!isValidCode(userCode)) {
-        return res.redirect("/AccountCodeGroup?error=Code must be exactly 3 digits (100-999)");
+        return res.redirect(
+          "/AccountCodeGroup?error=Code must be exactly 3 digits (100-999)",
+        );
       }
 
       finalCode = userCode.padStart(3, "0");
@@ -145,7 +157,9 @@ exports.createAccountCodeGroup = async (req, res) => {
     }
 
     // Check for duplicate code (extra safety)
-    const existing = await AccountCodeGroup.findOne({ where: { code: finalCode } });
+    const existing = await AccountCodeGroup.findOne({
+      where: { code: finalCode },
+    });
     if (existing) {
       return res.redirect("/AccountCodeGroup?error=Code already exists");
     }
@@ -158,7 +172,8 @@ exports.createAccountCodeGroup = async (req, res) => {
     });
 
     res.redirect(
-      "/AccountCodeGroup?success=Account code group created successfully with code: " + finalCode
+      "/AccountCodeGroup?success=Account code group created successfully with code: " +
+        finalCode,
     );
   } catch (error) {
     console.error("Error creating account code group:", error);
@@ -210,14 +225,18 @@ exports.updateAccountCodeGroup = async (req, res) => {
     const accountCodeGroup = await AccountCodeGroup.findByPk(id);
 
     if (!accountCodeGroup) {
-      return res.redirect("/AccountCodeGroup?error=Account code group not found");
+      return res.redirect(
+        "/AccountCodeGroup?error=Account code group not found",
+      );
     }
 
     const requestedCode = code.trim().padStart(3, "0");
 
     // Validate 3-digit format
     if (!isValidCode(requestedCode)) {
-      return res.redirect("/AccountCodeGroup?error=Code must be exactly 3 digits (100-999)");
+      return res.redirect(
+        "/AccountCodeGroup?error=Code must be exactly 3 digits (100-999)",
+      );
     }
 
     let finalCode = requestedCode;
@@ -229,8 +248,8 @@ exports.updateAccountCodeGroup = async (req, res) => {
       const existing = await AccountCodeGroup.findOne({
         where: {
           code: requestedCode,
-          id: { [require("sequelize").Op.ne]: id }
-        }
+          id: { [require("sequelize").Op.ne]: id },
+        },
       });
 
       if (existing) {
@@ -272,16 +291,20 @@ exports.deleteAccountCodeGroup = async (req, res) => {
     const accountCodeGroup = await AccountCodeGroup.findByPk(id);
 
     if (!accountCodeGroup) {
-      return res.redirect("/AccountCodeGroup?error=Account code group not found");
+      return res.redirect(
+        "/AccountCodeGroup?error=Account code group not found",
+      );
     }
 
     await accountCodeGroup.destroy();
-    res.redirect("/AccountCodeGroup?success=Account code group deleted successfully");
+    res.redirect(
+      "/AccountCodeGroup?success=Account code group deleted successfully",
+    );
   } catch (error) {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/AccountCodeGroup?error=Cannot delete: Group is used in other records"
+        "/AccountCodeGroup?error=Cannot delete: Group is used in other records",
       );
     }
     console.error("Error deleting account code group:", error);

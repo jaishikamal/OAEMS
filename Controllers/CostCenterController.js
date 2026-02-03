@@ -1,62 +1,62 @@
-const { CostCenter } = require("../models");
+const { CostCenter } = require("../Models");
 const { Op } = require("sequelize");
 
 // Cost Center Type Configuration
 const COST_CENTER_TYPES = {
   HEAD_OFFICE: {
-    label: 'Head Office/Corporate Office',
-    codeRange: { min: 999, max: 999 }
+    label: "Head Office/Corporate Office",
+    codeRange: { min: 999, max: 999 },
   },
   PROVINCE_OFFICE: {
-    label: 'Province Office',
-    codeRange: { min: 992, max: 998 }
+    label: "Province Office",
+    codeRange: { min: 992, max: 998 },
   },
   BRANCH: {
-    label: 'Branch',
-    codeRange: { min: 1, max: 300 }
+    label: "Branch",
+    codeRange: { min: 1, max: 300 },
   },
   EXTENSION_COUNTER: {
-    label: 'Extension Counter',
-    codeRange: { min: 301, max: 500 }
-  }
+    label: "Extension Counter",
+    codeRange: { min: 301, max: 500 },
+  },
 };
 
 // Helper function to pad code to 3 digits
 const padCode = (code) => {
-  return code.toString().padStart(3, '0');
+  return code.toString().padStart(3, "0");
 };
 
 // Generate next available code for a type
 const generateNextCode = async (type) => {
   const typeConfig = COST_CENTER_TYPES[type];
-  
+
   if (!typeConfig) {
-    throw new Error('Invalid cost center type');
+    throw new Error("Invalid cost center type");
   }
 
   const { min, max } = typeConfig.codeRange;
 
   // Special case for HEAD_OFFICE (fixed code 999)
-  if (type === 'HEAD_OFFICE') {
-    const existing = await CostCenter.findOne({ where: { code: '999' } });
+  if (type === "HEAD_OFFICE") {
+    const existing = await CostCenter.findOne({ where: { code: "999" } });
     if (existing) {
-      throw new Error('Head Office cost center already exists with code 999');
+      throw new Error("Head Office cost center already exists with code 999");
     }
-    return '999';
+    return "999";
   }
 
   // Find all existing codes in this range
   const existingCodes = await CostCenter.findAll({
     where: {
       code: {
-        [Op.between]: [padCode(min), padCode(max)]
-      }
+        [Op.between]: [padCode(min), padCode(max)],
+      },
     },
-    attributes: ['code'],
-    raw: true
+    attributes: ["code"],
+    raw: true,
   });
 
-  const usedCodes = new Set(existingCodes.map(c => parseInt(c.code, 10)));
+  const usedCodes = new Set(existingCodes.map((c) => parseInt(c.code, 10)));
 
   // Find first available code in range
   for (let code = min; code <= max; code++) {
@@ -65,32 +65,34 @@ const generateNextCode = async (type) => {
     }
   }
 
-  throw new Error(`No available codes for ${typeConfig.label}. Range ${padCode(min)}-${padCode(max)} is full.`);
+  throw new Error(
+    `No available codes for ${typeConfig.label}. Range ${padCode(min)}-${padCode(max)} is full.`,
+  );
 };
 
 // Validate code is within correct range for type
 const validateCodeForType = (code, type) => {
   const typeConfig = COST_CENTER_TYPES[type];
   if (!typeConfig) {
-    return { valid: false, message: 'Invalid cost center type' };
+    return { valid: false, message: "Invalid cost center type" };
   }
 
   const numericCode = parseInt(code, 10);
   const { min, max } = typeConfig.codeRange;
 
   if (isNaN(numericCode)) {
-    return { valid: false, message: 'Code must be numeric' };
+    return { valid: false, message: "Code must be numeric" };
   }
 
   if (numericCode < min || numericCode > max) {
-    return { 
-      valid: false, 
-      message: `Code ${code} is outside valid range ${padCode(min)}-${padCode(max)} for ${typeConfig.label}` 
+    return {
+      valid: false,
+      message: `Code ${code} is outside valid range ${padCode(min)}-${padCode(max)} for ${typeConfig.label}`,
     };
   }
 
   if (code.length !== 3) {
-    return { valid: false, message: 'Code must be exactly 3 digits' };
+    return { valid: false, message: "Code must be exactly 3 digits" };
   }
 
   return { valid: true };
@@ -150,11 +152,13 @@ exports.createCostCenter = async (req, res) => {
     });
 
     res.redirect(
-      `/CostCenter?success=Cost center created successfully with code: ${code}`
+      `/CostCenter?success=Cost center created successfully with code: ${code}`,
     );
   } catch (error) {
     console.error("Error creating cost center:", error);
-    res.redirect(`/CostCenter?error=${encodeURIComponent(error.message || 'Failed to create cost center')}`);
+    res.redirect(
+      `/CostCenter?error=${encodeURIComponent(error.message || "Failed to create cost center")}`,
+    );
   }
 };
 
@@ -192,7 +196,9 @@ exports.updateCostCenter = async (req, res) => {
 
     // Validate required fields
     if (!code || !title || !type) {
-      return res.redirect("/CostCenter?error=Code, Title, and Type are required");
+      return res.redirect(
+        "/CostCenter?error=Code, Title, and Type are required",
+      );
     }
 
     const costCenter = await CostCenter.findByPk(id);
@@ -209,7 +215,9 @@ exports.updateCostCenter = async (req, res) => {
     // Validate code format and range
     const validation = validateCodeForType(code, type);
     if (!validation.valid) {
-      return res.redirect(`/CostCenter?error=${encodeURIComponent(validation.message)}`);
+      return res.redirect(
+        `/CostCenter?error=${encodeURIComponent(validation.message)}`,
+      );
     }
 
     // Check if code is already used by another cost center
@@ -217,8 +225,8 @@ exports.updateCostCenter = async (req, res) => {
       const existing = await CostCenter.findOne({
         where: {
           code: code.trim(),
-          id: { [Op.ne]: id }
-        }
+          id: { [Op.ne]: id },
+        },
       });
 
       if (existing) {
@@ -227,15 +235,17 @@ exports.updateCostCenter = async (req, res) => {
     }
 
     // Special check for HEAD_OFFICE - only one allowed
-    if (type === 'HEAD_OFFICE' && costCenter.type !== 'HEAD_OFFICE') {
-      const headOfficeExists = await CostCenter.findOne({ 
-        where: { 
-          type: 'HEAD_OFFICE',
-          id: { [Op.ne]: id }
-        } 
+    if (type === "HEAD_OFFICE" && costCenter.type !== "HEAD_OFFICE") {
+      const headOfficeExists = await CostCenter.findOne({
+        where: {
+          type: "HEAD_OFFICE",
+          id: { [Op.ne]: id },
+        },
       });
       if (headOfficeExists) {
-        return res.redirect("/CostCenter?error=Head Office cost center already exists");
+        return res.redirect(
+          "/CostCenter?error=Head Office cost center already exists",
+        );
       }
     }
 
@@ -249,7 +259,9 @@ exports.updateCostCenter = async (req, res) => {
     res.redirect("/CostCenter?success=Cost center updated successfully");
   } catch (error) {
     console.error("Error updating cost center:", error);
-    res.redirect(`/CostCenter?error=${encodeURIComponent(error.message || 'Failed to update cost center')}`);
+    res.redirect(
+      `/CostCenter?error=${encodeURIComponent(error.message || "Failed to update cost center")}`,
+    );
   }
 };
 
@@ -269,7 +281,7 @@ exports.deleteCostCenter = async (req, res) => {
     // Handle foreign key constraint violation
     if (error.name === "SequelizeForeignKeyConstraintError") {
       return res.redirect(
-        "/CostCenter?error=Cannot delete: This cost center is referenced in other records"
+        "/CostCenter?error=Cannot delete: This cost center is referenced in other records",
       );
     }
     console.error("Error deleting cost center:", error);
@@ -285,7 +297,7 @@ exports.getNextAvailableCode = async (req, res) => {
     if (!type) {
       return res.status(400).json({
         success: false,
-        message: "Type is required"
+        message: "Type is required",
       });
     }
 
@@ -294,13 +306,13 @@ exports.getNextAvailableCode = async (req, res) => {
     res.status(200).json({
       success: true,
       code: code,
-      typeConfig: COST_CENTER_TYPES[type]
+      typeConfig: COST_CENTER_TYPES[type],
     });
   } catch (error) {
     console.error("Error generating code preview:", error);
     res.status(500).json({
       success: false,
-      error: error.message
+      error: error.message,
     });
   }
 };

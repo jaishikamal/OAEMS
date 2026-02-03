@@ -1,4 +1,4 @@
-const { Vendor_Identification } = require("../models");
+const { Vendor_Identification } = require("../Models");
 
 // Page rendering function to get all vendors
 exports.getAllVendors = async (req, res) => {
