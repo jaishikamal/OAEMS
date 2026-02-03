@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const vendorTaxDetailController = require("../controllers/vendor_tax_controller");
+const vendorTaxDetailController = require("../Controllers/vendor_tax_controller");
 
 // IMPORTANT: Put specific routes BEFORE parameterized routes to avoid conflicts
 
