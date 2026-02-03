@@ -3,7 +3,7 @@
 
 const express = require("express");
 const router = express.Router();
-const AttachmentsController = require("../controllers/Attachement");
+const AttachmentsController = require("../Controllers/Attachement");
 const upload = require("../config/multerconfig"); // Your existing multer config
 
 // View attachments management page
@@ -36,7 +36,10 @@ router.post(
 );
 
 // Download attachment
-router.get("/Attachments/:id/download", AttachmentsController.downloadAttachment);
+router.get(
+  "/Attachments/:id/download",
+  AttachmentsController.downloadAttachment,
+);
 
 // Delete attachment
 router.post("/Attachments/:id/delete", AttachmentsController.deleteAttachment);

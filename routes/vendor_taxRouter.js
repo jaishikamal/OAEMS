@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const vendorTaxDetailController = require("../Controllers/vendor_tax_controller");
+const vendorTaxDetailController = require("../Controllers/Vendor_tax_controller");
 
 // IMPORTANT: Put specific routes BEFORE parameterized routes to avoid conflicts
 
@@ -13,7 +13,7 @@ router.get("/", vendorTaxDetailController.index);
 // Create new vendor tax detail
 router.post("/", vendorTaxDetailController.create);
 
-// Parameterized routes (must come after specific routes) 
+// Parameterized routes (must come after specific routes)
 router.post("/:id", vendorTaxDetailController.update);
 router.post("/:id/delete", vendorTaxDetailController.delete);
 router.post("/:id/toggle-status", vendorTaxDetailController.toggleStatus);
