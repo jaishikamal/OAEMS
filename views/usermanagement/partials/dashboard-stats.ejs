@@ -1,0 +1,124 @@
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Users</h6>
+                        <h2 style="color: #667eea;"><%- stats?.totalUsers || 0 %></h2>
+                    </div>
+                    <div class="ms-auto">
+                        <i class="bi bi-people" style="font-size: 32px; color: #667eea; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Active Users</h6>
+                        <h2 style="color: #28a745;"><%- stats?.activeUsers || 0 %></h2>
+                    </div>
+                    <div class="ms-auto">
+                        <i class="bi bi-check-circle" style="font-size: 32px; color: #28a745; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Total Roles</h6>
+                        <h2 style="color: #667eea;"><%- stats?.totalRoles || 0 %></h2>
+                    </div>
+                    <div class="ms-auto">
+                        <i class="bi bi-tag" style="font-size: 32px; color: #667eea; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div>
+                        <h6 class="text-muted mb-1">Branches</h6>
+                        <h2 style="color: #ffc107;"><%- stats?.totalBranches || 0 %></h2>
+                    </div>
+                    <div class="ms-auto">
+                        <i class="bi bi-diagram-3" style="font-size: 32px; color: #ffc107; opacity: 0.2;"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-calendar-event"></i> Recent Activity</h6>
+            </div>
+            <div class="card-body">
+                <% if (recentLogs && recentLogs.length > 0) { %>
+                    <div class="list-group list-group-flush">
+                        <% recentLogs.forEach(log => { %>
+                            <div class="list-group-item px-0 py-3">
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <span class="badge bg-primary"><%= log.action %></span>
+                                    </div>
+                                    <div class="ms-3 flex-grow-1">
+                                        <p class="mb-1"><strong><%- log.module %></strong></p>
+                                        <small class="text-muted"><%- log.createdAt ? new Date(log.createdAt).toLocaleString() : 'N/A' %></small>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-center text-muted">No recent activity</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-graph-up"></i> User Statistics</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td>Total Users</td>
+                        <td class="text-end"><strong><%- stats?.totalUsers || 0 %></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Active Users</td>
+                        <td class="text-end"><strong><span class="badge bg-success"><%- stats?.activeUsers || 0 %></span></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Suspended Users</td>
+                        <td class="text-end"><strong><span class="badge bg-warning"><%- stats?.suspendedUsers || 0 %></span></strong></td>
+                    </tr>
+                    <tr>
+                        <td>Locked Accounts</td>
+                        <td class="text-end"><strong><span class="badge bg-danger"><%- stats?.lockedUsers || 0 %></span></strong></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

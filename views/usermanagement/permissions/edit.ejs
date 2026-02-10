@@ -1,0 +1,51 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Permission</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/permissions/<%- permission.id %>" method="POST" class="row">
+            <input type="hidden" name="_method" value="PUT">
+
+            <div class="col-md-6 mb-3">
+                <label for="code" class="form-label">Code *</label>
+                <input type="text" class="form-control" id="code" name="code" 
+                       value="<%- permission.code %>" required disabled>
+                <small class="text-muted">Code cannot be changed</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="<%- permission.name %>" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active" <% if (permission.status === 'active') { %>selected<% } %>>Active</option>
+                    <option value="inactive" <% if (permission.status === 'inactive') { %>selected<% } %>>Inactive</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="module" class="form-label">Module</label>
+                <input type="text" class="form-control" id="module" name="module" 
+                       value="<%- permission.module %>" disabled>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"><%- permission.description %></textarea>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a href="/usermanagement/permissions" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

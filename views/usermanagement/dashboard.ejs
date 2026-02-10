@@ -1,0 +1,108 @@
+<%- include('../partials/layout', {page: 'dashboard', title: 'Dashboard'}) %>
+
+<div class="row">
+    <div class="col-12">
+        <%- include('../partials/dashboard-stats') %>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-collection"></i> Quick Links</h6>
+            </div>
+            <div class="list-group list-group-flush">
+                <a href="/usermanagement/users" class="list-group-item list-group-item-action">
+                    <i class="bi bi-people"></i> Manage Users
+                </a>
+                <a href="/usermanagement/roles" class="list-group-item list-group-item-action">
+                    <i class="bi bi-tag"></i> Manage Roles
+                </a>
+                <a href="/usermanagement/permissions" class="list-group-item list-group-item-action">
+                    <i class="bi bi-lock"></i> Manage Permissions
+                </a>
+                <a href="/usermanagement/branches" class="list-group-item list-group-item-action">
+                    <i class="bi bi-diagram-3"></i> Manage Branches
+                </a>
+                <a href="/usermanagement/audit-logs" class="list-group-item list-group-item-action">
+                    <i class="bi bi-file-text"></i> View Audit Logs
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-info-circle"></i> System Information</h6>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm mb-0">
+                    <tr>
+                        <td><strong>System Name</strong></td>
+                        <td>OAEMS - Open Accounting & Expense Management System</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Module</strong></td>
+                        <td>User Management System</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Version</strong></td>
+                        <td>1.0.0</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Last Updated</strong></td>
+                        <td>February 10, 2026</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Database</strong></td>
+                        <td>MySQL 8.0+</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Environment</strong></td>
+                        <td><span class="badge bg-info">Production</span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-shield-check"></i> Security Status</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>JWT Authentication</strong> - Enabled
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>RBAC</strong> - Enabled
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>Audit Logging</strong> - Enabled
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>Password Hashing</strong> - BCrypt
+                        </p>
+                        <p class="mb-2">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>Account Locking</strong> - Enabled
+                        </p>
+                        <p class="mb-0">
+                            <i class="bi bi-check-circle text-success"></i> 
+                            <strong>Rate Limiting</strong> - Enabled
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,114 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Create New User</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/users" method="POST" class="row">
+            <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name *</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name *</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+                <small class="text-muted">Must be unique in system</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="username" class="form-label">Username *</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+                <small class="text-muted">Must be unique in system</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="password" class="form-label">Password *</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+                <small class="text-muted">Min 8 chars, must include uppercase, lowercase, and numbers</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="confirmPassword" class="form-label">Confirm Password *</label>
+                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="defaultBranchId" class="form-label">Default Branch</label>
+                <select class="form-control" id="defaultBranchId" name="defaultBranchId">
+                    <option value="">-- Select Branch --</option>
+                    <% if (branches && branches.length > 0) { %>
+                        <% branches.forEach(branch => { %>
+                            <option value="<%- branch.id %>"><%- branch.name %></option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Assign Roles</label>
+                <div class="row">
+                    <% if (roles && roles.length > 0) { %>
+                        <% roles.forEach(role => { %>
+                            <div class="col-md-6 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="role_<%- role.id %>" 
+                                           name="roleIds" value="<%- role.id %>">
+                                    <label class="form-check-label" for="role_<%- role.id %>">
+                                        <%- role.name %> <small class="text-muted">(<%- role.code %>)</small>
+                                    </label>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label class="form-label">Assign Branches</label>
+                <div class="row">
+                    <% if (branches && branches.length > 0) { %>
+                        <% branches.forEach(branch => { %>
+                            <div class="col-md-6 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="branch_<%- branch.id %>" 
+                                           name="branchIds" value="<%- branch.id %>">
+                                    <label class="form-check-label" for="branch_<%- branch.id %>">
+                                        <%- branch.name %> <small class="text-muted">(<%- branch.code %>)</small>
+                                    </label>
+                                </div>
+                            </div>
+                        <% }); %>
+                    <% } %>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Create User
+                </button>
+                <a href="/usermanagement/users" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

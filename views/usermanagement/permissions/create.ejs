@@ -1,0 +1,73 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Create Permission</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/permissions" method="POST" class="row">
+            <div class="col-md-6 mb-3">
+                <label for="code" class="form-label">Code *</label>
+                <input type="text" class="form-control" id="code" name="code" required 
+                       placeholder="e.g., user.create">
+                <small class="text-muted">Format: module.resource.action</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Name *</label>
+                <input type="text" class="form-control" id="name" name="name" required 
+                       placeholder="e.g., Create User">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="module" class="form-label">Module *</label>
+                <select class="form-control" id="module" name="module" required>
+                    <option value="">-- Select Module --</option>
+                    <option value="UserManagement">User Management</option>
+                    <option value="Accounting">Accounting</option>
+                    <option value="Reports">Reports</option>
+                    <option value="Administration">Administration</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="resource" class="form-label">Resource *</label>
+                <input type="text" class="form-control" id="resource" name="resource" required 
+                       placeholder="e.g., user">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="action" class="form-label">Action *</label>
+                <select class="form-control" id="action" name="action" required>
+                    <option value="">-- Select Action --</option>
+                    <option value="create">Create</option>
+                    <option value="read">Read</option>
+                    <option value="update">Update</option>
+                    <option value="delete">Delete</option>
+                    <option value="execute">Execute</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" 
+                          placeholder="Permission description"></textarea>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Create Permission
+                </button>
+                <a href="/usermanagement/permissions" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

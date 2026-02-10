@@ -1,0 +1,98 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Create Branch</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/branches" method="POST" class="row">
+            <div class="col-md-6 mb-3">
+                <label for="code" class="form-label">Branch Code *</label>
+                <input type="text" class="form-control" id="code" name="code" required>
+                <small class="text-muted">Unique identifier</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Branch Name *</label>
+                <input type="text" class="form-control" id="name" name="name" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="level" class="form-label">Branch Level *</label>
+                <select class="form-control" id="level" name="level" required>
+                    <option value="">-- Select Level --</option>
+                    <option value="head_office">Head Office</option>
+                    <option value="regional">Regional</option>
+                    <option value="local">Local</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="parentBranchId" class="form-label">Parent Branch</label>
+                <select class="form-control" id="parentBranchId" name="parentBranchId">
+                    <option value="">-- None (Head Office) --</option>
+                    <% if (branches && branches.length > 0) { %>
+                        <% branches.forEach(branch => { %>
+                            <option value="<%- branch.id %>"><%- branch.name %></option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="location" class="form-label">Location *</label>
+                <input type="text" class="form-control" id="location" name="location" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="country" class="form-label">Country *</label>
+                <input type="text" class="form-control" id="country" name="country" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="state" class="form-label">State/Province</label>
+                <input type="text" class="form-control" id="state" name="state">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="city" class="form-label">City</label>
+                <input type="text" class="form-control" id="city" name="city">
+            </div>
+
+            <div class="col-12 mb-3">
+                <label for="address" class="form-label">Address</label>
+                <textarea class="form-control" id="address" name="address" rows="2"></textarea>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="manager" class="form-label">Manager</label>
+                <input type="text" class="form-control" id="manager" name="manager">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Create Branch
+                </button>
+                <a href="/usermanagement/branches" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

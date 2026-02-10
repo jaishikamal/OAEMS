@@ -1,0 +1,97 @@
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-tag"></i> Role Management</h5>
+        <a href="/usermanagement/roles/create" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Role
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Type</th>
+                        <th>Permissions</th>
+                        <th>Users</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (roles && roles.length > 0) { %>
+                        <% roles.forEach(role => { %>
+                            <tr>
+                                <td><code><%- role.code %></code></td>
+                                <td><strong><%- role.name %></strong></td>
+                                <td><%- role.description %></td>
+                                <td>
+                                    <% if (role.status === 'active') { %>
+                                        <span class="badge bg-success">Active</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (role.isSystem) { %>
+                                        <span class="badge bg-info">System</span>
+                                    <% } else { %>
+                                        <span class="badge bg-warning">Custom</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (role.permissions && role.permissions.length > 0) { %>
+                                        <span class="badge bg-secondary"><%- role.permissions.length %></span>
+                                    <% } else { %>
+                                        <span class="text-muted">0</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <% if (role.users && role.users.length > 0) { %>
+                                        <span><%- role.users.length %></span>
+                                    <% } else { %>
+                                        <span class="text-muted">0</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/usermanagement/roles/<%- role.id %>/view" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <% if (!role.isSystem) { %>
+                                            <a href="/usermanagement/roles/<%- role.id %>/edit" class="btn btn-outline-primary">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <button class="btn btn-outline-danger" onclick="confirmDelete('<%- role.id %>')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        <% } %>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No roles found
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(roleId) {
+    if (confirm('Are you sure? This will remove the role from all users.')) {
+        fetch(`/usermanagement/roles/${roleId}`, {method: 'DELETE'})
+            .then(response => {
+                if (response.ok) location.reload();
+            });
+    }
+}
+</script>

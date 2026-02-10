@@ -4,20 +4,32 @@
     "password": "",
     "database": "oaems",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "seederStorage": "sequelize",
+    "seederStoragePath": "UserManagement/seeders",
+    "migrationStorage": "sequelize",
+    "migrationStoragePath": "UserManagement/migrations"
   },
   "test": {
     "username": "root",
     "password": "",
     "database": "oaems_test",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "seederStorage": "sequelize",
+    "seederStoragePath": "UserManagement/seeders",
+    "migrationStorage": "sequelize",
+    "migrationStoragePath": "UserManagement/migrations"
   },
   "production": {
     "username": "root",
     "password": "",
     "database": "oaems_production",
     "host": "localhost",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "seederStorage": "sequelize",
+    "seederStoragePath": "UserManagement/seeders",
+    "migrationStorage": "sequelize",
+    "migrationStoragePath": "UserManagement/migrations"
   }
 }

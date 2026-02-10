@@ -1,0 +1,93 @@
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-diagram-3"></i> Branches</h5>
+        <a href="/usermanagement/branches/create" class="btn btn-sm btn-primary">
+            <i class="bi bi-plus-circle"></i> Create Branch
+        </a>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Name</th>
+                        <th>Level</th>
+                        <th>Location</th>
+                        <th>Country</th>
+                        <th>Status</th>
+                        <th>Manager</th>
+                        <th>Users</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (branches && branches.length > 0) { %>
+                        <% branches.forEach(branch => { %>
+                            <tr>
+                                <td><code><%- branch.code %></code></td>
+                                <td><strong><%- branch.name %></strong></td>
+                                <td>
+                                    <% if (branch.level === 'head_office') { %>
+                                        <span class="badge bg-danger">Head Office</span>
+                                    <% } else if (branch.level === 'regional') { %>
+                                        <span class="badge bg-warning">Regional</span>
+                                    <% } else { %>
+                                        <span class="badge bg-info">Local</span>
+                                    <% } %>
+                                </td>
+                                <td><%- branch.location %></td>
+                                <td><%- branch.country %></td>
+                                <td>
+                                    <% if (branch.status === 'active') { %>
+                                        <span class="badge bg-success">Active</span>
+                                    <% } else { %>
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    <% } %>
+                                </td>
+                                <td><%- branch.manager || '-' %></td>
+                                <td>
+                                    <% if (branch.users && branch.users.length > 0) { %>
+                                        <span><%- branch.users.length %></span>
+                                    <% } else { %>
+                                        <span class="text-muted">0</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="/usermanagement/branches/<%- branch.id %>/view" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="/usermanagement/branches/<%- branch.id %>/edit" class="btn btn-outline-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button class="btn btn-outline-danger" onclick="confirmDelete('<%- branch.id %>')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                No branches found
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(branchId) {
+    if (confirm('Are you sure? This action cannot be undone.')) {
+        fetch(`/usermanagement/branches/${branchId}`, {method: 'DELETE'})
+            .then(response => {
+                if (response.ok) location.reload();
+            });
+    }
+}
+</script>

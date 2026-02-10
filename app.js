@@ -3,6 +3,13 @@ const express = require("express");
 const path = require("path");
 const expressLayouts = require("express-ejs-layouts");
 const flash = require("connect-flash"); // Add this package if using flash messages
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+
+// Auth routes
+const authRouter = require("./routes/authRouter");
+
+// Existing routers
 const userRouter = require("./routes/userRouter");
 const costRouter = require("./routes/CostRouter");
 const AccountRouter = require("./routes/AccoutRouter");
@@ -15,7 +22,14 @@ const paymentBankingRoutes = require("./routes/paymentBankingRouter");
 const complianceRiskRoutes = require("./routes/ComplianceRouter");
 const addressContactRoutes = require('./routes/AddresscontactRoutes');
 const Attachment=require('./routes/attachments_routes');
-const session = require("express-session");
+
+// UserManagement routes
+try {
+  var userManagementRoutes = require("./UserManagement/routes/userManagementRoutes");
+  var viewRoutes = require("./UserManagement/routes/viewRoutes");
+} catch (error) {
+  console.warn("UserManagement routes not available:", error.message);
+}
 
 
 // Initialize the app
@@ -32,6 +46,9 @@ app.set("layout", "main");
 // Body parser middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+
+// Cookie parser middleware
+app.use(cookieParser());
 
 // Static files
 app.use(express.static(path.join(__dirname, "public")));
@@ -61,6 +78,24 @@ app.use((req, res, next) => {
 });
 
 // Routes
+// ============================================
+
+// AUTH ROUTES (First Priority)
+app.use("/auth", authRouter);
+console.log("✓ Auth routes registered: /auth/*");
+
+// USER MANAGEMENT ROUTES
+if (userManagementRoutes) {
+  app.use("/api/usermanagement", userManagementRoutes);
+  console.log("✓ UserManagement API routes registered: /api/usermanagement/*");
+}
+
+if (viewRoutes) {
+  app.use("/usermanagement", viewRoutes);
+  console.log("✓ UserManagement view routes registered: /usermanagement/*");
+}
+
+// LEGACY ROUTES
 app.use("/", userRouter);
 app.use("/", costRouter);
 app.use("/", AccountRouter);

@@ -1,0 +1,126 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit User</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/users/<%- user.id %>" method="POST" class="row">
+            <input type="hidden" name="_method" value="PUT">
+
+            <div class="col-md-6 mb-3">
+                <label for="firstName" class="form-label">First Name *</label>
+                <input type="text" class="form-control" id="firstName" name="firstName" 
+                       value="<%- user.firstName %>" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="lastName" class="form-label">Last Name *</label>
+                <input type="text" class="form-control" id="lastName" name="lastName" 
+                       value="<%- user.lastName %>" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="email" class="form-label">Email *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="<%- user.email %>" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="username" class="form-label">Username *</label>
+                <input type="text" class="form-control" id="username" name="username" 
+                       value="<%- user.username %>" required>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" class="form-control" id="phone" name="phone" 
+                       value="<%- user.phone || '' %>">
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active" <% if (user.status === 'active') { %>selected<% } %>>Active</option>
+                    <option value="inactive" <% if (user.status === 'inactive') { %>selected<% } %>>Inactive</option>
+                    <option value="suspended" <% if (user.status === 'suspended') { %>selected<% } %>>Suspended</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="defaultBranchId" class="form-label">Default Branch</label>
+                <select class="form-control" id="defaultBranchId" name="defaultBranchId">
+                    <option value="">-- Select Branch --</option>
+                    <% if (branches && branches.length > 0) { %>
+                        <% branches.forEach(branch => { %>
+                            <option value="<%- branch.id %>" <% if (user.defaultBranchId === branch.id) { %>selected<% } %>>
+                                <%- branch.name %>
+                            </option>
+                        <% }); %>
+                    <% } %>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a href="/usermanagement/users/<%- user.id %>/view" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-tag"></i> Manage Roles</h6>
+    </div>
+    <div class="card-body">
+        <form id="rolesForm" method="POST" action="/usermanagement/users/<%- user.id %>/roles/assign">
+            <div class="row">
+                <% if (availableRoles && availableRoles.length > 0) { %>
+                    <% availableRoles.forEach(role => { %>
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="role_<%- role.id %>" 
+                                       name="roleIds" value="<%- role.id %>"
+                                       <% if (user.roles && user.roles.some(r => r.id === role.id)) { %>checked<% } %>>
+                                <label class="form-check-label" for="role_<%- role.id %>">
+                                    <%- role.name %>
+                                </label>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary mt-2">Update Roles</button>
+        </form>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">
+        <h6 class="mb-0"><i class="bi bi-diagram-3"></i> Manage Branches</h6>
+    </div>
+    <div class="card-body">
+        <form id="branchesForm" method="POST" action="/usermanagement/users/<%- user.id %>/branches/assign">
+            <div class="row">
+                <% if (branches && branches.length > 0) { %>
+                    <% branches.forEach(branch => { %>
+                        <div class="col-md-6 mb-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="branch_<%- branch.id %>" 
+                                       name="branchIds" value="<%- branch.id %>"
+                                       <% if (user.branches && user.branches.some(b => b.id === branch.id)) { %>checked<% } %>>
+                                <label class="form-check-label" for="branch_<%- branch.id %>">
+                                    <%- branch.name %>
+                                </label>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } %>
+            </div>
+            <button type="submit" class="btn btn-sm btn-primary mt-2">Update Branches</button>
+        </form>
+    </div>
+</div>

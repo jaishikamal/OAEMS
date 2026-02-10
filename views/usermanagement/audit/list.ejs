@@ -1,0 +1,182 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-file-text"></i> Audit Logs</h5>
+    </div>
+    <div class="card-body">
+        <!-- Filters -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <input type="text" class="form-control form-control-sm" placeholder="Search..." 
+                       id="searchInput" onkeyup="filterTable()">
+            </div>
+            <div class="col-md-3">
+                <select class="form-control form-control-sm" id="moduleFilter" onchange="filterTable()">
+                    <option value="">All Modules</option>
+                    <option value="users">Users</option>
+                    <option value="roles">Roles</option>
+                    <option value="permissions">Permissions</option>
+                    <option value="branches">Branches</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control form-control-sm" id="actionFilter" onchange="filterTable()">
+                    <option value="">All Actions</option>
+                    <option value="create">Create</option>
+                    <option value="read">Read</option>
+                    <option value="update">Update</option>
+                    <option value="delete">Delete</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control form-control-sm" id="statusFilter" onchange="filterTable()">
+                    <option value="">All Status</option>
+                    <option value="success">Success</option>
+                    <option value="failure">Failure</option>
+                    <option value="warning">Warning</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-responsive">
+            <table class="table table-hover table-sm" id="auditTable">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Module</th>
+                        <th>Action</th>
+                        <th>Entity</th>
+                        <th>Status</th>
+                        <th>IP Address</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (auditLogs && auditLogs.length > 0) { %>
+                        <% auditLogs.forEach(log => { %>
+                            <tr>
+                                <td>
+                                    <small><%- new Date(log.createdAt).toLocaleString() %></small>
+                                </td>
+                                <td>
+                                    <% if (log.user) { %>
+                                        <small><%- log.user.firstName %> <%- log.user.lastName %></small>
+                                    <% } else { %>
+                                        <span class="text-muted">System</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <span class="badge bg-light text-dark"><%- log.module %></span>
+                                </td>
+                                <td>
+                                    <span class="badge bg-info"><%- log.action %></span>
+                                </td>
+                                <td>
+                                    <small><%- log.entityType %> #<%- log.entityId %></small>
+                                </td>
+                                <td>
+                                    <% if (log.status === 'success') { %>
+                                        <span class="badge bg-success">Success</span>
+                                    <% } else if (log.status === 'failure') { %>
+                                        <span class="badge bg-danger">Failure</span>
+                                    <% } else { %>
+                                        <span class="badge bg-warning">Warning</span>
+                                    <% } %>
+                                </td>
+                                <td>
+                                    <small class="text-muted"><%- log.ipAddress %></small>
+                                </td>
+                                <td>
+                                    <button class="btn btn-xs btn-outline-primary" data-bs-toggle="modal" 
+                                            data-bs-target="#detailsModal" 
+                                            onclick="showDetails('<%- JSON.stringify(log).replace(/'/g, "&apos;") %>')">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                No audit logs found
+                            </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <% if (totalPages && totalPages > 1) { %>
+            <nav aria-label="Page navigation" class="mt-3">
+                <ul class="pagination justify-content-center">
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                        <li class="page-item <% if (i === currentPage) { %>active<% } %>">
+                            <a class="page-link" href="/usermanagement/audit-logs?page=<%- i %>"><%- i %></a>
+                        </li>
+                    <% } %>
+                </ul>
+            </nav>
+        <% } %>
+    </div>
+</div>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Audit Log Details</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <pre id="detailsContent" style="background: #f5f5f5; padding: 15px; border-radius: 4px;"></pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function filterTable() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const moduleFilter = document.getElementById('moduleFilter').value;
+    const actionFilter = document.getElementById('actionFilter').value;
+    const statusFilter = document.getElementById('statusFilter').value;
+    
+    const table = document.getElementById('auditTable');
+    const rows = table.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+    
+    for (let i = 0; i < rows.length; i++) {
+        let showRow = true;
+        const row = rows[i];
+        const text = row.textContent.toLowerCase();
+        
+        if (searchInput && !text.includes(searchInput)) showRow = false;
+        
+        row.style.display = showRow ? '' : 'none';
+    }
+}
+
+function showDetails(logJson) {
+    try {
+        const log = JSON.parse(logJson);
+        const details = `Module: ${log.module}
+Action: ${log.action}
+Entity Type: ${log.entityType}
+Entity ID: ${log.entityId}
+Status: ${log.status}
+IP Address: ${log.ipAddress}
+User Agent: ${log.userAgent}
+
+Old Values:
+${JSON.stringify(log.oldValues, null, 2)}
+
+New Values:
+${JSON.stringify(log.newValues, null, 2)}`;
+        document.getElementById('detailsContent').textContent = details;
+    } catch(e) {
+        document.getElementById('detailsContent').textContent = 'Error displaying details';
+    }
+}
+</script>

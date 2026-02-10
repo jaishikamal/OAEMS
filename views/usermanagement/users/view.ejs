@@ -1,0 +1,206 @@
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-person-circle"></i> User Details</h5>
+                <a href="/usermanagement/users" class="btn btn-sm btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">First Name</h6>
+                        <p class="mb-3"><%- user.firstName %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Name</h6>
+                        <p class="mb-3"><%- user.lastName %></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Email</h6>
+                        <p class="mb-3"><%- user.email %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Username</h6>
+                        <p class="mb-3"><%- user.username %></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Phone</h6>
+                        <p class="mb-3"><%- user.phone || 'N/A' %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Status</h6>
+                        <p class="mb-3">
+                            <% if (user.status === 'active') { %>
+                                <span class="badge bg-success">Active</span>
+                            <% } else if (user.status === 'suspended') { %>
+                                <span class="badge bg-warning">Suspended</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary"><%- user.status %></span>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Account Locked</h6>
+                        <p class="mb-3">
+                            <% if (user.isLocked) { %>
+                                <span class="badge bg-danger">Yes</span>
+                            <% } else { %>
+                                <span class="badge bg-success">No</span>
+                            <% } %>
+                        </p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Login</h6>
+                        <p class="mb-3"><%- user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never' %></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Created</h6>
+                        <p class="mb-0"><%- new Date(user.createdAt).toLocaleString() %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Updated</h6>
+                        <p class="mb-0"><%- new Date(user.updatedAt).toLocaleString() %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-tag"></i> Roles</h6>
+            </div>
+            <div class="card-body">
+                <% if (user.roles && user.roles.length > 0) { %>
+                    <div class="list-group list-group-flush">
+                        <% user.roles.forEach(role => { %>
+                            <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong><%- role.name %></strong>
+                                    <br><small class="text-muted"><%- role.code %></small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" 
+                                        onclick="removeRole('<%- user.id %>', '<%- role.id %>')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-muted mb-0">No roles assigned</p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-diagram-3"></i> Branches</h6>
+            </div>
+            <div class="card-body">
+                <% if (user.branches && user.branches.length > 0) { %>
+                    <div class="list-group list-group-flush">
+                        <% user.branches.forEach(branch => { %>
+                            <div class="list-group-item px-0 d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong><%- branch.name %></strong>
+                                    <br><small class="text-muted"><%- branch.code %></small>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger" 
+                                        onclick="removeBranch('<%- user.id %>', '<%- branch.id %>')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-muted mb-0">No branches assigned</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-12">
+        <div class="d-flex gap-2">
+            <a href="/usermanagement/users/<%- user.id %>/edit" class="btn btn-primary">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="/usermanagement/users/<%- user.id %>/change-password" class="btn btn-warning">
+                <i class="bi bi-key"></i> Change Password
+            </a>
+            <% if (user.status === 'active') { %>
+                <button class="btn btn-outline-warning" onclick="suspendUser('<%- user.id %>')">
+                    <i class="bi bi-pause-circle"></i> Suspend
+                </button>
+            <% } else { %>
+                <button class="btn btn-outline-success" onclick="activateUser('<%- user.id %>')">
+                    <i class="bi bi-play-circle"></i> Activate
+                </button>
+            <% } %>
+            <% if (user.isLocked) { %>
+                <button class="btn btn-outline-danger" onclick="unlockUser('<%- user.id %>')">
+                    <i class="bi bi-unlock"></i> Unlock
+                </button>
+            <% } %>
+        </div>
+    </div>
+</div>
+
+<script>
+function removeRole(userId, roleId) {
+    if (confirm('Remove this role?')) {
+        fetch(`/usermanagement/users/${userId}/roles/${roleId}`, {method: 'DELETE'})
+            .then(() => location.reload());
+    }
+}
+
+function removeBranch(userId, branchId) {
+    if (confirm('Remove this branch?')) {
+        fetch(`/usermanagement/users/${userId}/branches/${branchId}`, {method: 'DELETE'})
+            .then(() => location.reload());
+    }
+}
+
+function suspendUser(userId) {
+    if (confirm('Suspend this user?')) {
+        fetch(`/usermanagement/users/${userId}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status: 'suspended'})
+        }).then(() => location.reload());
+    }
+}
+
+function activateUser(userId) {
+    if (confirm('Activate this user?')) {
+        fetch(`/usermanagement/users/${userId}`, {
+            method: 'PATCH',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({status: 'active'})
+        }).then(() => location.reload());
+    }
+}
+
+function unlockUser(userId) {
+    if (confirm('Unlock this user?')) {
+        fetch(`/usermanagement/users/${userId}/unlock`, {method: 'POST'})
+            .then(() => location.reload());
+    }
+}
+</script>

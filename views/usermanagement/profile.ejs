@@ -1,0 +1,149 @@
+<%- include('./partials/layout', {page: 'profile', title: 'My Profile'}) %>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card text-center">
+            <div class="card-body">
+                <div style="font-size: 48px; margin-bottom: 15px;">
+                    👤
+                </div>
+                <h5><%- currentUser.firstName %> <%- currentUser.lastName %></h5>
+                <p class="text-muted"><%- currentUser.email %></p>
+                <div class="mb-3">
+                    <% if (currentUser.status === 'active') { %>
+                        <span class="badge bg-success">Active</span>
+                    <% } else { %>
+                        <span class="badge bg-secondary"><%- currentUser.status %></span>
+                    <% } %>
+                </div>
+                <hr>
+                <a href="/usermanagement/profile/edit" class="btn btn-primary btn-sm w-100 mb-2">
+                    <i class="bi bi-pencil"></i> Edit Profile
+                </a>
+                <a href="/usermanagement/users/<%- currentUser.id %>/change-password" class="btn btn-warning btn-sm w-100">
+                    <i class="bi bi-key"></i> Change Password
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-person"></i> Profile Information</h6>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">First Name</h6>
+                        <p><%- currentUser.firstName %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Name</h6>
+                        <p><%- currentUser.lastName %></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Email</h6>
+                        <p><%- currentUser.email %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Username</h6>
+                        <p><%- currentUser.username %></p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Phone</h6>
+                        <p><%- currentUser.phone || 'Not provided' %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Account Status</h6>
+                        <p>
+                            <% if (currentUser.status === 'active') { %>
+                                <span class="badge bg-success">Active</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary"><%- currentUser.status %></span>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Login</h6>
+                        <p><%- currentUser.lastLogin ? new Date(currentUser.lastLogin).toLocaleString() : 'Never' %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Account Locked</h6>
+                        <p>
+                            <% if (currentUser.isLocked) { %>
+                                <span class="badge bg-danger">Yes</span>
+                            <% } else { %>
+                                <span class="badge bg-success">No</span>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Member Since</h6>
+                        <p><%- new Date(currentUser.createdAt).toLocaleDateString() %></p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted">Last Updated</h6>
+                        <p><%- new Date(currentUser.updatedAt).toLocaleDateString() %></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-tag"></i> Roles</h6>
+            </div>
+            <div class="card-body">
+                <% if (currentUser.roles && currentUser.roles.length > 0) { %>
+                    <div class="row">
+                        <% currentUser.roles.forEach(role => { %>
+                            <div class="col-md-6 mb-2">
+                                <div class="p-2" style="background: #f9f9f9; border-radius: 4px;">
+                                    <strong><%- role.name %></strong>
+                                    <br><small class="text-muted"><%- role.code %></small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-muted mb-0">No roles assigned</p>
+                <% } %>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="bi bi-diagram-3"></i> Branches</h6>
+            </div>
+            <div class="card-body">
+                <% if (currentUser.branches && currentUser.branches.length > 0) { %>
+                    <div class="row">
+                        <% currentUser.branches.forEach(branch => { %>
+                            <div class="col-md-6 mb-2">
+                                <div class="p-2" style="background: #f9f9f9; border-radius: 4px;">
+                                    <strong><%- branch.name %></strong>
+                                    <br><small class="text-muted"><%- branch.code %></small>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } else { %>
+                    <p class="text-muted mb-0">No branches assigned</p>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>

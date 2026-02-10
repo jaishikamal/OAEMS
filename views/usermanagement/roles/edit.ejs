@@ -1,0 +1,71 @@
+<div class="card">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit Role</h5>
+    </div>
+    <div class="card-body">
+        <form action="/usermanagement/roles/<%- role.id %>" method="POST" class="row">
+            <input type="hidden" name="_method" value="PUT">
+
+            <div class="col-md-6 mb-3">
+                <label for="code" class="form-label">Role Code *</label>
+                <input type="text" class="form-control" id="code" name="code" 
+                       value="<%- role.code %>" required disabled>
+                <small class="text-muted">Code cannot be changed</small>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="name" class="form-label">Role Name *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="<%- role.name %>" required>
+            </div>
+
+            <div class="col-12 mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3"><%- role.description %></textarea>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="status" class="form-label">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="active" <% if (role.status === 'active') { %>selected<% } %>>Active</option>
+                    <option value="inactive" <% if (role.status === 'inactive') { %>selected<% } %>>Inactive</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="priority" class="form-label">Priority</label>
+                <input type="number" class="form-control" id="priority" name="priority" 
+                       value="<%- role.priority || 1 %>">
+            </div>
+
+            <div class="col-12 mb-3">
+                <h6>Assign Permissions</h6>
+                <% if (permissions && permissions.length > 0) { %>
+                    <div class="row">
+                        <% permissions.forEach(perm => { %>
+                            <div class="col-md-6 mb-2">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="perm_<%- perm.id %>" 
+                                           name="permissionIds" value="<%- perm.id %>"
+                                           <% if (role.permissions && role.permissions.some(p => p.id === perm.id)) { %>checked<% } %>>
+                                    <label class="form-check-label" for="perm_<%- perm.id %>">
+                                        <%- perm.name %>
+                                    </label>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                <% } %>
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-save"></i> Save Changes
+                </button>
+                <a href="/usermanagement/roles/<%- role.id %>/view" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

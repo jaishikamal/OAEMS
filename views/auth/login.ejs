@@ -267,14 +267,40 @@
 
     <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
     <script>
-      const Toast = Swal.mixin({
+      const ErrorToast = Swal.mixin({
         toast: true,
         position: "top-end",
         showConfirmButton: true,
         confirmButtonText: "Close",
         customClass: {
           title: "fw-semibold",
-          confirmButton: "btn btn-sm btn-outline-secondary",
+          confirmButton: "btn btn-sm btn-outline-danger",
+        },
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener("mouseenter", Swal.stopTimer);
+          toast.addEventListener("mouseleave", Swal.resumeTimer);
+        },
+      });
+
+      ErrorToast.fire({
+        icon: "error",
+        title: "<%= errorMessage %>",
+      });
+    </script>
+    <% } %>
+
+    <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+    <script>
+      const SuccessToast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: true,
+        confirmButtonText: "Close",
+        customClass: {
+          title: "fw-semibold",
+          confirmButton: "btn btn-sm btn-outline-success",
         },
         timer: 4000,
         timerProgressBar: true,
@@ -284,9 +310,9 @@
         },
       });
 
-      Toast.fire({
-        icon: "error",
-        title: "<%= errorMessage %>",
+      SuccessToast.fire({
+        icon: "success",
+        title: "<%= successMessage %>",
       });
     </script>
     <% } %>
