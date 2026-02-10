@@ -7,7 +7,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.createTable("attachments", {
       id: {
-        allowNull: false,
+        allowNull: false,   
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
@@ -17,8 +17,7 @@ module.exports = {
           "PAN Certificate",
           "VAT Certificate",
           "Bank Cheque / Letter",
-          "Contract / Agreement"
-
+          "Contract / Agreement",
         ),
         allowNull: false,
       },
@@ -47,9 +46,7 @@ module.exports = {
     });
 
     // Add index for faster queries
-    await queryInterface.addIndex("attachments", [
-      "attachment_type",
-    ]);
+    await queryInterface.addIndex("attachments", ["attachment_type"]);
   },
 
   down: async (queryInterface, Sequelize) => {
