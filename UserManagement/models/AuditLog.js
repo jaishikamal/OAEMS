@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       userId: {
         type: DataTypes.UUID,
         allowNull: false,
+        field: 'user_id',
         references: {
           model: "users",
           key: "id",
@@ -29,10 +30,12 @@ module.exports = (sequelize, DataTypes) => {
       entityType: {
         type: DataTypes.STRING,
         allowNull: false,
+        field: 'entity_type',
       },
       entityId: {
         type: DataTypes.STRING,
         allowNull: false,
+        field: 'entity_id',
       },
       changes: {
         type: DataTypes.JSON,
@@ -41,18 +44,22 @@ module.exports = (sequelize, DataTypes) => {
       oldValues: {
         type: DataTypes.JSON,
         allowNull: true,
+        field: 'old_values',
       },
       newValues: {
         type: DataTypes.JSON,
         allowNull: true,
+        field: 'new_values',
       },
       ipAddress: {
         type: DataTypes.STRING,
         allowNull: true,
+        field: 'ip_address',
       },
       userAgent: {
         type: DataTypes.TEXT,
         allowNull: true,
+        field: 'user_agent',
       },
       status: {
         type: DataTypes.ENUM("success", "failure", "warning"),
@@ -62,11 +69,15 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.TEXT,
         allowNull: true,
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
     },
     {
       tableName: "audit_logs",
       timestamps: true,
-      createdAt: true,
       updatedAt: false,
       indexes: [
         {

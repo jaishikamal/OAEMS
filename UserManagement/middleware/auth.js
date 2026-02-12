@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 /**
- * JWT Authentication Middleware
+ * JWT Authentication Middleware (for API endpoints - returns JSON)
  */
 const authMiddleware = (req, res, next) => {
   try {
@@ -28,6 +28,32 @@ const authMiddleware = (req, res, next) => {
       success: false,
       message: "Invalid or expired token",
     });
+  }
+};
+
+/**
+ * JWT Authentication Middleware for Views (redirects to login on failure)
+ */
+const viewAuthMiddleware = (req, res, next) => {
+  try {
+    const token =
+      req.headers.authorization?.replace("Bearer ", "") ||
+      req.cookies?.accessToken;
+
+    if (!token) {
+      return res.redirect("/auth/login");
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECRET || "access-secret",
+    );
+
+    req.user = decoded;
+    next();
+  } catch (error) {
+    req.flash("error", "Session expired. Please login again.");
+    return res.redirect("/auth/login");
   }
 };
 
@@ -166,6 +192,7 @@ const loginRateLimiter = (models) => {
 
 module.exports = {
   authMiddleware,
+  viewAuthMiddleware,
   roleMiddleware,
   branchAccessMiddleware,
   auditMiddleware,

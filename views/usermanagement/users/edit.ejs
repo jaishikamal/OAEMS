@@ -1,126 +1,329 @@
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-pencil"></i> Edit User</h5>
-    </div>
-    <div class="card-body">
-        <form action="/usermanagement/users/<%- user.id %>" method="POST" class="row">
-            <input type="hidden" name="_method" value="PUT">
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/usermanagement">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/usermanagement/users">Users</a></li>
+            <li class="breadcrumb-item"><a href="/usermanagement/users/<%- user.id %>/view"><%- user.firstName %> <%- user.lastName %></a></li>
+            <li class="breadcrumb-item active">Edit</li>
+        </ol>
+    </nav>
 
-            <div class="col-md-6 mb-3">
-                <label for="firstName" class="form-label">First Name *</label>
-                <input type="text" class="form-control" id="firstName" name="firstName" 
-                       value="<%- user.firstName %>" required>
-            </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- User Basic Info -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-fill"></i> Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <form id="basicInfoForm" onsubmit="submitBasicInfo(event)">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" 
+                                       value="<%- user.firstName %>" required minlength="2">
+                            </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="lastName" class="form-label">Last Name *</label>
-                <input type="text" class="form-control" id="lastName" name="lastName" 
-                       value="<%- user.lastName %>" required>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">Email *</label>
-                <input type="email" class="form-control" id="email" name="email" 
-                       value="<%- user.email %>" required>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="username" class="form-label">Username *</label>
-                <input type="text" class="form-control" id="username" name="username" 
-                       value="<%- user.username %>" required>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="phone" class="form-label">Phone</label>
-                <input type="tel" class="form-control" id="phone" name="phone" 
-                       value="<%- user.phone || '' %>">
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status">
-                    <option value="active" <% if (user.status === 'active') { %>selected<% } %>>Active</option>
-                    <option value="inactive" <% if (user.status === 'inactive') { %>selected<% } %>>Inactive</option>
-                    <option value="suspended" <% if (user.status === 'suspended') { %>selected<% } %>>Suspended</option>
-                </select>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label for="defaultBranchId" class="form-label">Default Branch</label>
-                <select class="form-control" id="defaultBranchId" name="defaultBranchId">
-                    <option value="">-- Select Branch --</option>
-                    <% if (branches && branches.length > 0) { %>
-                        <% branches.forEach(branch => { %>
-                            <option value="<%- branch.id %>" <% if (user.defaultBranchId === branch.id) { %>selected<% } %>>
-                                <%- branch.name %>
-                            </option>
-                        <% }); %>
-                    <% } %>
-                </select>
-            </div>
-
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-save"></i> Save Changes
-                </button>
-                <a href="/usermanagement/users/<%- user.id %>/view" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Cancel
-                </a>
-            </div>
-        </form>
-    </div>
-</div>
-
-<div class="card mt-3">
-    <div class="card-header">
-        <h6 class="mb-0"><i class="bi bi-tag"></i> Manage Roles</h6>
-    </div>
-    <div class="card-body">
-        <form id="rolesForm" method="POST" action="/usermanagement/users/<%- user.id %>/roles/assign">
-            <div class="row">
-                <% if (availableRoles && availableRoles.length > 0) { %>
-                    <% availableRoles.forEach(role => { %>
-                        <div class="col-md-6 mb-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="role_<%- role.id %>" 
-                                       name="roleIds" value="<%- role.id %>"
-                                       <% if (user.roles && user.roles.some(r => r.id === role.id)) { %>checked<% } %>>
-                                <label class="form-check-label" for="role_<%- role.id %>">
-                                    <%- role.name %>
-                                </label>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" 
+                                       value="<%- user.lastName %>" required minlength="2">
                             </div>
                         </div>
-                    <% }); %>
-                <% } %>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" 
+                                       value="<%- user.email %>" required disabled>
+                                <small class="text-muted">Email cannot be changed</small>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="username" name="username" 
+                                       value="<%- user.username %>" required disabled>
+                                <small class="text-muted">Username cannot be changed</small>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="<%- user.phone || '' %>">
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="active" <% if (user.status === 'active') { %>selected<% } %>>Active</option>
+                                    <option value="inactive" <% if (user.status === 'inactive') { %>selected<% } %>>Inactive</option>
+                                    <option value="suspended" <% if (user.status === 'suspended') { %>selected<% } %>>Suspended</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="defaultBranchId" class="form-label">Default Branch</label>
+                            <select class="form-select" id="defaultBranchId" name="defaultBranchId">
+                                <option value="">-- Select Branch --</option>
+                                <% if (branches && branches.length > 0) { %>
+                                    <% branches.forEach(branch => { %>
+                                        <option value="<%- branch.id %>" <% if (user.defaultBranchId === branch.id) { %>selected<% } %>>
+                                            <%- branch.name %>
+                                        </option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Save Changes
+                        </button>
+                        <a href="/usermanagement/users/<%- user.id %>/view" class="btn btn-outline-secondary">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </form>
+                </div>
             </div>
-            <button type="submit" class="btn btn-sm btn-primary mt-2">Update Roles</button>
-        </form>
+
+            <!-- User Roles -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0"><i class="bi bi-shield-check"></i> Assign Roles</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <% if (availableRoles && availableRoles.length > 0) { %>
+                            <% availableRoles.forEach(role => { %>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input role-checkbox" type="checkbox" id="role_<%- role.id %>" 
+                                               value="<%- role.id %>"
+                                               <% if (user.roles && user.roles.some(r => r.id === role.id)) { %>checked<% } %>>
+                                        <label class="form-check-label" for="role_<%- role.id %>">
+                                            <strong><%- role.name %></strong>
+                                            <small class="text-muted d-block"><%- role.code %></small>
+                                        </label>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="updateRoles('<%- user.id %>')">
+                        <i class="bi bi-check-circle"></i> Update Roles
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Branches -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-diagram-3"></i> Assign Branches</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <% if (branches && branches.length > 0) { %>
+                            <% branches.forEach(branch => { %>
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input branch-checkbox" type="checkbox" id="branch_<%- branch.id %>" 
+                                               value="<%- branch.id %>"
+                                               <% if (user.branches && user.branches.some(b => b.id === branch.id)) { %>checked<% } %>>
+                                        <label class="form-check-label" for="branch_<%- branch.id %>">
+                                            <strong><%- branch.name %></strong>
+                                            <small class="text-muted d-block"><%- branch.code %></small>
+                                        </label>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="updateBranches('<%- user.id %>')">
+                        <i class="bi bi-check-circle"></i> Update Branches
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Account Status Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-info-circle"></i> Account Status</h6>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="small text-muted">Status</label>
+                        <div>
+                            <% if (user.status === 'active') { %>
+                                <span class="badge bg-success"><i class="bi bi-check-circle"></i> Active</span>
+                            <% } else if (user.status === 'suspended') { %>
+                                <span class="badge bg-warning"><i class="bi bi-exclamation-circle"></i> Suspended</span>
+                            <% } else { %>
+                                <span class="badge bg-secondary"><i class="bi bi-dash-circle"></i> Inactive</span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small text-muted">Lock Status</label>
+                        <div>
+                            <% if (user.isLocked) { %>
+                                <span class="badge bg-danger"><i class="bi bi-lock"></i> Locked</span>
+                                <p class="small mt-2 mb-0">Locked until: <%- user.lockUntil ? new Date(user.lockUntil).toLocaleString() : 'N/A' %></p>
+                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="unlockUser('<%- user.id %>')">
+                                    <i class="bi bi-unlock"></i> Unlock
+                                </button>
+                            <% } else { %>
+                                <span class="badge bg-success"><i class="bi bi-unlock"></i> Unlocked</span>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Card -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-clock-history"></i> Activity</h6>
+                </div>
+                <div class="card-body small">
+                    <div class="mb-2">
+                        <label class="text-muted">Last Login</label>
+                        <p class="mb-0"><%- user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never' %></p>
+                    </div>
+                    <div class="mb-2">
+                        <label class="text-muted">Created</label>
+                        <p class="mb-0"><%- user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A' %></p>
+                    </div>
+                    <div>
+                        <label class="text-muted">Last Updated</label>
+                        <p class="mb-0"><%- user.updatedAt ? new Date(user.updatedAt).toLocaleDateString() : 'N/A' %></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h6>
+                </div>
+                <div class="card-body">
+                    <a href="/usermanagement/users/<%- user.id %>/change-password" class="btn btn-outline-pri mary w-100 mb-2">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
+                    <a href="/usermanagement/users/<%- user.id %>/view" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-eye"></i> View Details
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-<div class="card mt-3">
-    <div class="card-header">
-        <h6 class="mb-0"><i class="bi bi-diagram-3"></i> Manage Branches</h6>
-    </div>
-    <div class="card-body">
-        <form id="branchesForm" method="POST" action="/usermanagement/users/<%- user.id %>/branches/assign">
-            <div class="row">
-                <% if (branches && branches.length > 0) { %>
-                    <% branches.forEach(branch => { %>
-                        <div class="col-md-6 mb-2">
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="branch_<%- branch.id %>" 
-                                       name="branchIds" value="<%- branch.id %>"
-                                       <% if (user.branches && user.branches.some(b => b.id === branch.id)) { %>checked<% } %>>
-                                <label class="form-check-label" for="branch_<%- branch.id %>">
-                                    <%- branch.name %>
-                                </label>
-                            </div>
-                        </div>
-                    <% }); %>
-                <% } %>
-            </div>
-            <button type="submit" class="btn btn-sm btn-primary mt-2">Update Branches</button>
-        </form>
-    </div>
-</div>
+<script>
+function submitBasicInfo(event) {
+    event.preventDefault();
+
+    const formData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        phone: document.getElementById('phone').value || null,
+        status: document.getElementById('status').value,
+        defaultBranchId: document.getElementById('defaultBranchId').value || null
+    };
+
+    fetch(`/api/um/users/<%- user.id %>`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('User updated successfully!');
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update user'));
+        }
+    })
+    .catch(error => alert('Error: ' + error.message));
+}
+
+function updateRoles(userId) {
+    const selectedRoles = Array.from(document.querySelectorAll('.role-checkbox:checked')).map(cb => cb.value);
+    
+    // Get currently assigned roles
+    const currentRoles = [];
+    document.querySelectorAll('.role-checkbox').forEach(cb => {
+        if (cb.checked) currentRoles.push(cb.value);
+    });
+
+    // Sync roles via API
+    fetch(`/api/um/users/${userId}/roles/sync`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ roleIds: selectedRoles })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Roles updated successfully!');
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update roles'));
+        }
+    })
+    .catch(error => alert('Error: ' + error.message));
+}
+
+function updateBranches(userId) {
+    const selectedBranches = Array.from(document.querySelectorAll('.branch-checkbox:checked')).map(cb => cb.value);
+
+    fetch(`/api/um/users/${userId}/branches/sync`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ branchIds: selectedBranches })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Branches updated successfully!');
+            window.location.reload();
+        } else {
+            alert('Error: ' + (data.message || 'Failed to update branches'));
+        }
+    })
+    .catch(error => alert('Error: ' + error.message));
+}
+
+function unlockUser(userId) {
+    if (confirm('Unlock this user account?')) {
+        fetch(`/api/um/users/${userId}/unlock`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('User unlocked successfully!');
+                window.location.reload();
+            } else {
+                alert('Error: ' + (data.message || 'Failed to unlock user'));
+            }
+        })
+        .catch(error => alert('Error: ' + error.message));
+    }
+}
+</script>

@@ -1,114 +1,229 @@
-<div class="card">
-    <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-person-plus"></i> Create New User</h5>
-    </div>
-    <div class="card-body">
-        <form action="/usermanagement/users" method="POST" class="row">
-            <div class="col-md-6 mb-3">
-                <label for="firstName" class="form-label">First Name *</label>
-                <input type="text" class="form-control" id="firstName" name="firstName" required>
-            </div>
+<div class="container-xxl flex-grow-1 container-p-y">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/usermanagement">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/usermanagement/users">Users</a></li>
+            <li class="breadcrumb-item active">Create User</li>
+        </ol>
+    </nav>
 
-            <div class="col-md-6 mb-3">
-                <label for="lastName" class="form-label">Last Name *</label>
-                <input type="text" class="form-control" id="lastName" name="lastName" required>
-            </div>
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person-plus"></i> Create New User</h5>
+                </div>
+                <div class="card-body">
+                    <form id="createUserForm" onsubmit="submitForm(event)">
+                        <h6 class="mb-3 text-muted"><i class="bi bi-info-circle"></i> Basic Information</h6>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label">First Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="firstName" name="firstName" required minlength="2">
+                                <small class="text-muted">Enter user's first name</small>
+                            </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="email" class="form-label">Email *</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-                <small class="text-muted">Must be unique in system</small>
-            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label">Last Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="lastName" name="lastName" required minlength="2">
+                                <small class="text-muted">Enter user's last name</small>
+                            </div>
+                        </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="username" class="form-label">Username *</label>
-                <input type="text" class="form-control" id="username" name="username" required>
-                <small class="text-muted">Must be unique in system</small>
-            </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" name="email" required>
+                                <small class="text-muted">Must be unique in system</small>
+                            </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="phone" class="form-label">Phone</label>
-                <input type="tel" class="form-control" id="phone" name="phone">
-            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="username" name="username" required minlength="3">
+                                <small class="text-muted">Must be unique in system</small>
+                            </div>
+                        </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="password" class="form-label">Password *</label>
-                <input type="password" class="form-control" id="password" name="password" required>
-                <small class="text-muted">Min 8 chars, must include uppercase, lowercase, and numbers</small>
-            </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="password" class="form-label">Password <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" name="password" required minlength="8">
+                                <small class="text-muted">Min 8 chars: uppercase, lowercase, number</small>
+                            </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="confirmPassword" class="form-label">Confirm Password *</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Phone Number</label>
+                                <input type="tel" class="form-control" id="phone" name="phone">
+                                <small class="text-muted">Optional contact number</small>
+                            </div>
+                        </div>
 
-            <div class="col-md-6 mb-3">
-                <label for="status" class="form-label">Status</label>
-                <select class="form-control" id="status" name="status">
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
-                </select>
-            </div>
+                        <hr class="my-4">
 
-            <div class="col-md-6 mb-3">
-                <label for="defaultBranchId" class="form-label">Default Branch</label>
-                <select class="form-control" id="defaultBranchId" name="defaultBranchId">
-                    <option value="">-- Select Branch --</option>
-                    <% if (branches && branches.length > 0) { %>
-                        <% branches.forEach(branch => { %>
-                            <option value="<%- branch.id %>"><%- branch.name %></option>
-                        <% }); %>
-                    <% } %>
-                </select>
-            </div>
+                        <h6 class="mb-3 text-muted"><i class="bi bi-briefcase"></i> Access Configuration</h6>
 
-            <div class="col-12 mb-3">
-                <label class="form-label">Assign Roles</label>
-                <div class="row">
-                    <% if (roles && roles.length > 0) { %>
-                        <% roles.forEach(role => { %>
-                            <div class="col-md-6 mb-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="role_<%- role.id %>" 
-                                           name="roleIds" value="<%- role.id %>">
-                                    <label class="form-check-label" for="role_<%- role.id %>">
-                                        <%- role.name %> <small class="text-muted">(<%- role.code %>)</small>
-                                    </label>
+                        <div class="mb-3">
+                            <label for="defaultBranchId" class="form-label">Default Branch</label>
+                            <select class="form-select" id="defaultBranchId" name="defaultBranchId">
+                                <option value="">-- Select a branch --</option>
+                                <% if (branches && branches.length > 0) { %>
+                                    <% branches.forEach(branch => { %>
+                                        <option value="<%- branch.id %>"><%- branch.name %></option>
+                                    <% }); %>
+                                <% } %>
+                            </select>
+                            <small class="text-muted">Primary branch for this user</small>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="mb-3 text-muted"><i class="bi bi-shield-check"></i> Roles & Permissions</h6>
+
+                        <div class="card border-0 bg-light">
+                            <div class="card-body">
+                                <label class="form-label">Assign Roles</label>
+                                <div style="max-height: 250px; overflow-y: auto;">
+                                    <% if (roles && roles.length > 0) { %>
+                                        <% roles.forEach(role => { %>
+                                            <div class="form-check mb-2">
+                                                <input class="form-check-input" type="checkbox" id="role_<%- role.id %>" 
+                                                       name="roleIds" value="<%- role.id %>">
+                                                <label class="form-check-label" for="role_<%- role.id %>">
+                                                    <strong><%- role.name %></strong>
+                                                    <small class="text-muted d-block"><%- role.description || 'No description' %></small>
+                                                </label>
+                                            </div>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <p class="text-muted small">No roles available</p>
+                                    <% } %>
                                 </div>
                             </div>
-                        <% }); %>
-                    <% } %>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Create User
+                            </button>
+                            <a href="/usermanagement/users" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
                 </div>
             </div>
+        </div>
 
-            <div class="col-12 mb-3">
-                <label class="form-label">Assign Branches</label>
-                <div class="row">
-                    <% if (branches && branches.length > 0) { %>
-                        <% branches.forEach(branch => { %>
-                            <div class="col-md-6 mb-2">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="branch_<%- branch.id %>" 
-                                           name="branchIds" value="<%- branch.id %>">
-                                    <label class="form-check-label" for="branch_<%- branch.id %>">
-                                        <%- branch.name %> <small class="text-muted">(<%- branch.code %>)</small>
-                                    </label>
-                                </div>
-                            </div>
-                        <% }); %>
-                    <% } %>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0"><i class="bi bi-lightbulb"></i> Requirements</h6>
+                </div>
+                <div class="card-body">
+                    <h6 class="text-muted">Password Must Have:</h6>
+                    <ul class="small ps-3 mb-3">
+                        <li>Minimum 8 characters</li>
+                        <li>At least one UPPERCASE letter</li>
+                        <li>At least one lowercase letter</li>
+                        <li>At least one number (0-9)</li>
+                    </ul>
+
+                    <h6 class="text-muted">Email & Username:</h6>
+                    <ul class="small ps-3 mb-3">
+                        <li>Must be unique</li>
+                        <li>Cannot be changed later</li>
+                    </ul>
+
+                    <h6 class="text-muted">Default Status:</h6>
+                    <p class="small text-muted">New users are created with <span class="badge bg-success">active</span> status by default.</p>
+
+                    <div class="alert alert-info" role="alert">
+                        <small><i class="bi bi-info-circle"></i> After creating the user, you can manage their roles, branches, and permissions from the edit page.</small>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-12">
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Create User
-                </button>
-                <a href="/usermanagement/users" class="btn btn-secondary">
-                    <i class="bi bi-x-circle"></i> Cancel
-                </a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+
+<script>
+function submitForm(event) {
+    event.preventDefault();
+
+    const formData = {
+        firstName: document.getElementById('firstName').value,
+        lastName: document.getElementById('lastName').value,
+        email: document.getElementById('email').value,
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value,
+        phone: document.getElementById('phone').value || null,
+        defaultBranchId: document.getElementById('defaultBranchId').value || null
+    };
+
+    // Get selected roles
+    const roleCheckboxes = document.querySelectorAll('input[name="roleIds"]:checked');
+    const roleIds = Array.from(roleCheckboxes).map(cb => cb.value);
+
+    fetch('/api/um/users', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Assign roles if selected
+            if (roleIds.length > 0) {
+                assignRoles(data.data.id, roleIds);
+            } else {
+                alert('User created successfully!');
+                window.location.href = '/usermanagement/users';
+            }
+        } else {
+            alert('Error: ' + (data.message || 'Failed to create user'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    });
+}
+
+function assignRoles(userId, roleIds) {
+    let completed = 0;
+    let hasError = false;
+
+    roleIds.forEach(roleId => {
+        fetch(`/api/um/users/${userId}/roles/${roleId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            completed++;
+            if (!data.success) hasError = true;
+            if (completed === roleIds.length) {
+                if (!hasError) {
+                    alert('User and roles created successfully!');
+                    window.location.href = '/usermanagement/users';
+                } else {
+                    alert('User created but some roles could not be assigned');
+                    window.location.href = '/usermanagement/users';
+                }
+            }
+        })
+        .catch(() => {
+            completed++;
+            hasError = true;
+            if (completed === roleIds.length) {
+                window.location.href = '/usermanagement/users';
+            }
+        });
+    });
+}

@@ -89,11 +89,12 @@ exports.postLogin = async (req, res) => {
 
     console.log(`🔍 [LOGIN] Querying database for user...`);
 
-    // Find user by email or username
-    const user = await User.findOne({
+    // Find user by email or username (unscoped to include password)
+    const user = await User.unscoped().findOne({
       where: {
         [db.Sequelize.Op.or]: [{ email }, { username: email }],
       },
+      attributes: { include: ["password"] }, // Explicitly include password for auth
     });
 
     // User not found or invalid credentials

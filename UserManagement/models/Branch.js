@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
       parentBranchId: {
         type: DataTypes.UUID,
         allowNull: true,
+        field: 'parent_branch_id',
         references: {
           model: "branches",
           key: "id",
@@ -85,10 +86,22 @@ module.exports = (sequelize, DataTypes) => {
       createdBy: {
         type: DataTypes.UUID,
         allowNull: true,
+        field: 'created_by',
       },
       updatedBy: {
         type: DataTypes.UUID,
         allowNull: true,
+        field: 'updated_by',
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'updated_at',
       },
     },
     {

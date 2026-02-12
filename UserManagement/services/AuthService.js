@@ -19,7 +19,8 @@ class AuthService {
    */
   async login(emailOrUsername, password, ipAddress, userAgent) {
     try {
-      const user = await this.userRepository.findByEmailOrUsername(
+      // Use special method that includes password for authentication
+      const user = await this.userRepository.findByEmailOrUsernameForAuth(
         emailOrUsername,
         {
           include: [

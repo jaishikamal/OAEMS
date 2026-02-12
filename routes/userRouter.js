@@ -28,7 +28,7 @@ userRouter.get("/budget", Budget.budget);
 userRouter.get("/audit", Audit_Trail.aduit);
 userRouter.get("/report", Report.report);
 userRouter.get("/fromBuilder", FormData.fromBuilder);
-userRouter.get("/userManagement", User_Management.userManagement);
+// User Management is now handled by UserManagement routes at /usermanagement
 userRouter.get("/setting", Setting.setting);
 userRouter.get("/branches", Branches.branches);
 userRouter.get("/approve_type", Approve_Type.approve_type);
@@ -41,19 +41,19 @@ userRouter.post("/login", authController.postLogin);
 userRouter.post("/logout", authController.logout);
 
 // ============================================
-// User Management API Routes
+// NOTE: User Management API Routes have been moved to
+// /api/um/* - See UserManagement/routes/userManagementRoutes.js
+// User Management Views now at /usermanagement/* - See UserManagement/routes/viewRoutes.js
 // ============================================
 
-// CRUD operations
-userRouter.post("/api/users", User_Management.createUser);
-userRouter.put("/api/users/:id", User_Management.updateUser);
-userRouter.delete("/api/users/:id", User_Management.deleteUser);
-
-// Role management
-userRouter.post("/api/users/:userId/assign-role", User_Management.assignRole);
+// Deprecated: CRUD operations now at /api/um/users
+// userRouter.post("/api/users", User_Management.createUser);
+// userRouter.put("/api/users/:id", User_Management.updateUser);
+// userRouter.delete("/api/users/:id", User_Management.deleteUser);
+// userRouter.post("/api/users/:userId/assign-role", User_Management.assignRole);
 
 // ============================================
-// Roles Management CRUD Operations
+// Roles Management CRUD Operations (Legacy - Consider migrating to /api/um/roles)
 // ============================================
 userRouter.get("/roles", RolesController.getRoles);
 // Create a new role

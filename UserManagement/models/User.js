@@ -109,6 +109,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         field: 'deleted_at',
       },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'created_at',
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: 'updated_at',
+      },
     },
     {
       tableName: "users",

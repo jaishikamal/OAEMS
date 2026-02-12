@@ -1,10 +1,20 @@
-const { User, Role, Permission, Branch, AuditLog } = require('../../Models');
-
 /**
  * View Controller - Handles rendering of views
+ * Factory function that takes models
  */
 
-module.exports = {
+module.exports = (models) => {
+  if (!models) {
+    throw new Error('Models not provided to ViewController');
+  }
+
+  const User = models.User;
+  const Role = models.Role;
+  const Permission = models.Permission;
+  const Branch = models.Branch;
+  const AuditLog = models.AuditLog;
+
+  return {
     /**
      * Render Dashboard
      */
@@ -459,4 +469,5 @@ module.exports = {
             title: 'Login - OAEMS'
         });
     }
+  };
 };

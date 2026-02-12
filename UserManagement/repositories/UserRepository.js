@@ -38,6 +38,25 @@ class UserRepository extends BaseRepository {
     }
   }
 
+  async findByEmailOrUsernameForAuth(emailOrUsername, options = {}) {
+    try {
+      // Use unscoped() to bypass defaultScope which excludes password
+      return await this.model.unscoped().findOne(
+        {
+          where: {
+            [Op.or]: [{ email: emailOrUsername }, { username: emailOrUsername }],
+          },
+          attributes: { include: ["password"] }, // Explicitly include password for auth
+          ...options,
+        },
+      );
+    } catch (error) {
+      throw new Error(
+        `Error finding user by email or username for auth: ${error.message}`,
+      );
+    }
+  }
+
   async findActiveUsers(options = {}) {
     try {
       return await this.findAll({

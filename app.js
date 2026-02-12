@@ -77,6 +77,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Import database models
+const db = require("./Models");
+
 // Routes
 // ============================================
 
@@ -85,14 +88,24 @@ app.use("/auth", authRouter);
 console.log("✓ Auth routes registered: /auth/*");
 
 // USER MANAGEMENT ROUTES
-if (userManagementRoutes) {
-  app.use("/api/usermanagement", userManagementRoutes);
-  console.log("✓ UserManagement API routes registered: /api/usermanagement/*");
+if (userManagementRoutes && db) {
+  // Initialize with models
+  const umRoutes = userManagementRoutes(db);
+  app.use("/api/um", umRoutes);
+  console.log("✓ UserManagement API routes registered: /api/um/*");
 }
 
-if (viewRoutes) {
-  app.use("/usermanagement", viewRoutes);
+if (viewRoutes && db) {
+  // Initialize with models
+  const vRoutes = viewRoutes(db);
+  app.use("/usermanagement", vRoutes);
   console.log("✓ UserManagement view routes registered: /usermanagement/*");
+  
+  // Convenience redirect from old route to new route
+  app.get("/userManagement", (req, res) => {
+    res.redirect("/usermanagement/users");
+  });
+  console.log("✓ UserManagement redirect registered: /userManagement → /usermanagement/users");
 }
 
 // LEGACY ROUTES

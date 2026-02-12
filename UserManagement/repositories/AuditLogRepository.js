@@ -1,146 +1,18 @@
-const BaseRepository = require("./BaseRepository");const BaseRepository = require("./BaseRepository");
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-module.exports = LoginAttemptRepository;}  }    }      throw new Error(`Error getting security insights: ${error.message}`);    } catch (error) {      };        lastFailedLogin: failedAttempts[0] || null,        lastSuccessfulLogin: successfulAttempts[0] || null,        successfulCount: successfulAttempts.length,        failedCount: failedAttempts.length,        recentAttempts: recentAttempts.data.slice(0, 10),        totalAttempts: recentAttempts.pagination.total,      return {      );        (a) => a.isSuccessful,      const successfulAttempts = recentAttempts.data.filter(      );        (a) => !a.isSuccessful,      const failedAttempts = recentAttempts.data.filter(      });        limit: 100,      const recentAttempts = await this.getUserLoginHistory(userId, {    try {  async getSecurityInsights(userId, options = {}) {  }    }      throw new Error(`Error getting logins by email: ${error.message}`);    } catch (error) {      });        ...options,        order: [["createdAt", "DESC"]],        where: { email },      return await this.paginate({    try {  async getLoginsByEmail(email, options = {}) {  }    }      throw new Error(`Error getting failed logins: ${error.message}`);    } catch (error) {      });        ...options,        order: [["createdAt", "DESC"]],        where: { userId, isSuccessful: false },      return await this.paginate({    try {  async getFailedLogins(userId, options = {}) {  }    }      throw new Error(`Error getting successful logins: ${error.message}`);    } catch (error) {      });        ...options,        order: [["createdAt", "DESC"]],        where: { userId, isSuccessful: true },      return await this.paginate({    try {  async getSuccessfulLogins(userId, options = {}) {  }    }      throw new Error(`Error getting user login history: ${error.message}`);    } catch (error) {      });        ...options,        limit: options.limit || 50,        order: [["createdAt", "DESC"]],        where: { userId },      return await this.paginate({    try {  async getUserLoginHistory(userId, options = {}) {  }    }      );        `Error getting failed attempt count: ${error.message}`,      throw new Error(    } catch (error) {      return attempts.length;      );        minutesBack,        userId,      const attempts = await this.getRecentFailedAttempts(    try {  async getFailedAttemptCount(userId, minutesBack = 30) {  }    }      );        `Error getting recent failed attempts: ${error.message}`,      throw new Error(    } catch (error) {      });        order: [["createdAt", "DESC"]],        },          },            [Op.gte]: timeAgo,          createdAt: {          isSuccessful: false,          userId,        where: {      return await this.findAll({      const timeAgo = new Date(Date.now() - minutesBack * 60 * 1000);      const { Op } = require("sequelize");    try {  async getRecentFailedAttempts(userId, minutesBack = 30) {  }    }      throw new Error(`Error logging login attempt: ${error.message}`);    } catch (error) {      });        userAgent,        ipAddress,        reason,        isSuccessful,        email,        userId,      return await this.create({    try {  async logLoginAttempt(userId, email, isSuccessful, reason, ipAddress, userAgent) {  }    this.model = model;    super(model);  constructor(model) {class LoginAttemptRepository extends BaseRepository {
+﻿const BaseRepository = require("./BaseRepository");
+
+/**
+ * Audit Log Repository
+ * Handles all audit log database operations
+ */
 class AuditLogRepository extends BaseRepository {
   constructor(model) {
     super(model);
     this.model = model;
   }
 
+  /**
+   * Log an action
+   */
   async logAction(auditData) {
     try {
       return await this.create(auditData);
@@ -149,6 +21,9 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
+  /**
+   * Find audit logs by user
+   */
   async findUserAuditLogs(userId, options = {}) {
     try {
       return await this.paginate({
@@ -161,6 +36,9 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
+  /**
+   * Find audit logs by entity
+   */
   async findEntityAuditLogs(entityType, entityId, options = {}) {
     try {
       return await this.paginate({
@@ -173,6 +51,9 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
+  /**
+   * Find audit logs by module
+   */
   async findModuleAuditLogs(module, options = {}) {
     try {
       return await this.paginate({
@@ -185,6 +66,9 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
+  /**
+   * Find audit logs by action
+   */
   async findActionAuditLogs(action, options = {}) {
     try {
       return await this.paginate({
@@ -197,7 +81,10 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
-  async findAuditsByDateRange(startDate, endDate, options = {}) {
+  /**
+   * Find audit logs by date range
+   */
+  async findAuditsByDateRange(startDate, endDate,options = {}) {
     try {
       const { Op } = require("sequelize");
       return await this.paginate({
@@ -214,20 +101,16 @@ class AuditLogRepository extends BaseRepository {
     }
   }
 
+  /**
+   * Get audit summary
+   */
   async getAuditSummary(options = {}) {
     try {
-      const { Op } = require("sequelize");
       const summary = await this.model.sequelize.query(
-        `
-        SELECT 
-          module,
-          action,
-          status,
-          COUNT(*) as count
-        FROM audit_logs
-        GROUP BY module, action, status
-        ORDER BY module, action
-      `,
+        `SELECT module, action, status, COUNT(*) as count
+         FROM audit_logs
+         GROUP BY module, action, status
+         ORDER BY module, action`,
         { type: "SELECT" },
       );
       return summary;
