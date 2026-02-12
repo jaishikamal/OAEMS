@@ -14,7 +14,7 @@ module.exports = {
         allowNull: false,
         unique: true,
         references: {
-          model: "Vendor_identifications", // Verify this matches your table name
+          model: "Vendor_Identification", // Verify this matches your table name
           key: "id",
         },
         onDelete: "RESTRICT",

@@ -13,10 +13,9 @@ const venderRouter = require("./routes/venderRouter");
 const vendorTaxDetailRoutes = require("./routes/vendor_taxRouter");
 const paymentBankingRoutes = require("./routes/paymentBankingRouter");
 const complianceRiskRoutes = require("./routes/ComplianceRouter");
-const addressContactRoutes = require('./routes/AddresscontactRoutes');
-const Attachment=require('./routes/attachments_routes');
+const addressContactRoutes = require("./routes/AddresscontactRoutes");
+const Attachment = require("./routes/attachments_routes");
 const session = require("express-session");
-
 
 // Initialize the app
 const app = express();
@@ -71,8 +70,8 @@ app.use("/", venderRouter);
 app.use("/vendor-tax-details", vendorTaxDetailRoutes);
 app.use("/", paymentBankingRoutes);
 app.use("/", complianceRiskRoutes);
-app.use('/', addressContactRoutes);
-app.use('/', Attachment);
+app.use("/", addressContactRoutes);
+app.use("/", Attachment);
 // 404 page
 app.use((req, res) => {
   res.status(404).render("error", {

@@ -37,6 +37,10 @@ fs.readdirSync(__dirname)
     );
     db[model.name] = model;
   });
+async function start() {
+  await sequelize.sync({ alter: true }); // ✅ auto create tables & update columns
+  console.log("All tables synced!");
+}
 
 Object.keys(db).forEach((modelName) => {
   if (db[modelName].associate) {
